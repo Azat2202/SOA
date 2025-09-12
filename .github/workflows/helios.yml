@@ -1,0 +1,17 @@
+name: deploy
+on:
+  push
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: deploy swagger to helios
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: helios.cs.ifmo.ru
+          username: s368796
+          key: ${{ secrets.KEY }}
+          port: 2222
+          source: "./lab1/*"
+          target: "/home/studs/s368796/public_html"
