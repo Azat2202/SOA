@@ -1,0 +1,427 @@
+openapi: 3.0.3
+info:
+  title: Organization Management API
+  description: API для управления организацями
+  version: 1.0.0
+servers:
+  - url: https://se.ifmo.ru/~s368796/
+    description: Helios
+
+tags:
+  - name: Organizations
+    description: Управление организациями
+  - name: OrgDirectories
+    description: Сервис дополнительных функций для управления организациями
+
+components:
+  schemas:
+    Coordinates:
+      type: object
+      required:
+        - x
+        - y
+      properties:
+        x:
+          type: integer
+          format: int32
+          minimum: -365
+          description: Значение должно быть больше -366
+        y:
+          type: number
+          format: double
+
+    Location:
+      type: object
+      required:
+        - x
+        - y
+        - z
+      properties:
+        x:
+          type: number
+          format: float
+        y:
+          type: number
+          format: double
+        z:
+          type: integer
+          format: int64
+          description: Поле не может быть null
+        name:
+          type: string
+          nullable: true
+
+    Address:
+      type: object
+      required:
+        - street
+        - town
+      properties:
+        street:
+          type: string
+          minLength: 1
+          description: Строка не может быть пустой
+        town:
+          $ref: '#/components/schemas/Location'
+
+    Organization:
+      type: object
+      required:
+        - name
+        - coordinates
+        - annualTurnover
+        - type
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          minimum: 1
+          description: Генерируется автоматически, должно быть больше 0
+        name:
+          type: string
+          minLength: 1
+          description: Поле не может быть null или пустым
+        coordinates:
+          $ref: '#/components/schemas/Coordinates'
+        creationDate:
+          type: string
+          format: date
+          readOnly: true
+          description: Генерируется автоматически
+        annualTurnover:
+          type: integer
+          format: int64
+          minimum: 1
+          description: Значение должно быть больше 0
+        fullName:
+          type: string
+          maxLength: 918
+          nullable: true
+        employeesCount:
+          type: integer
+          minimum: 1
+          nullable: true
+          description: Значение должно быть больше 0 если указано
+        type:
+          type: string
+          enum: [PUBLIC, TRUST, OPEN_JOINT_STOCK_COMPANY]
+        postalAddress:
+          $ref: '#/components/schemas/Address'
+          nullable: true
+
+    OrganizationArray:
+      type: object
+      properties:
+        organizations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Organization'
+        totalCount:
+          type: integer
+        page:
+          type: integer
+        size:
+          type: integer
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+  parameters:
+    pageParam:
+      name: page
+      in: query
+      description: Номер страницы для постраничного вывода
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+    sizeParam:
+      name: size
+      in: query
+      description: Размер страницы для постраничного вывода
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    sortParam:
+      name: sort
+      in: query
+      description: Поле для сортировки в формате fieldName,asc|desc
+      schema:
+        type: string
+        default: "id,asc"
+paths:
+  /organizations:
+    get:
+      tags:
+        - Organizations
+      summary: Получить массив организаций с фильтрацией и сортировкой
+      description: Возвращает массив организаций с поддержкой фильтрации по любым полям, сортировки и постраничного вывода
+      parameters:
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/sizeParam'
+        - $ref: '#/components/parameters/sortParam'
+        - name: filter
+          in: query
+          description: Фильтр в формате fieldName=value
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Успешное получение списка организаций
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationArray'
+        '400':
+          description: Неверные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      tags:
+        - Organizations
+      summary: Добавить новую организацию
+      description: Создает новую организацию в коллекции
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Organization'
+      responses:
+        '201':
+          description: Организация успешно создана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '400':
+          description: Неверные данные организации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /organizations/{id}:
+    get:
+      tags:
+        - Organizations
+      summary: Получить организацию по ID
+      description: Возвращает организацию по указанному идентификатору
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Организация найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '404':
+          description: Организация не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      tags:
+        - Organizations
+      summary: Обновить организацию
+      description: Обновляет данные организации по указанному идентификатору
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Organization'
+      responses:
+        '200':
+          description: Организация успешно обновлена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '400':
+          description: Неверные данные организации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Организация не найдена
+
+    delete:
+      tags:
+        - Organizations
+      summary: Удалить организацию
+      description: Удаляет организацию по указанному идентификатору
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '204':
+          description: Организация успешно удалена
+        '404':
+          description: Организация не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /organizations/fullname/{fullName}:
+    delete:
+      tags:
+        - Organizations
+      summary: Удалить организацию по полному имени
+      description: Удаляет одну (любую) организацию с указанным полным именем
+      parameters:
+        - name: fullName
+          in: path
+          required: true
+          schema:
+            type: string
+            maxLength: 918
+      responses:
+        '204':
+          description: Организация успешно удалена
+        '404':
+          description: Организация с указанным полным именем не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /organizations/count/employees/{count}:
+    get:
+      tags:
+        - Organizations
+      summary: Количество организаций по числу сотрудников
+      description: Возвращает количество организаций с указанным числом сотрудников
+      parameters:
+        - name: count
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Успешное получение количества
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+
+  /organizations/count/turnover/{maxTurnover}:
+    get:
+      tags:
+        - Organizations
+      summary: Количество организаций с оборотом меньше заданного
+      description: Возвращает количество организаций с годовым оборотом меньше указанного значения
+      parameters:
+        - name: maxTurnover
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Успешное получение количества
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+
+  /orgdirectory/filter/turnover/{min-annual-turnover}/{max-annual-turnover}:
+    get:
+      tags:
+        - OrgDirectories
+      summary: Фильтрация организаций по годовому обороту
+      description: Возвращает организации с годовым оборотом в указанном диапазоне
+      parameters:
+        - name: min-annual-turnover
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+        - name: max-annual-turnover
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/sizeParam'
+        - $ref: '#/components/parameters/sortParam'
+      responses:
+        '200':
+          description: Успешная фильтрация
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationArray'
+        '400':
+          description: Неверный диапазон оборотов
+
+  /orgdirectory/filter/type/{type}:
+    get:
+      tags:
+        - OrgDirectories
+      summary: Фильтрация организаций по типу
+      description: Возвращает организации указанного типа
+      parameters:
+        - name: type
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [PUBLIC, TRUST, OPEN_JOINT_STOCK_COMPANY]
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/sizeParam'
+        - $ref: '#/components/parameters/sortParam'
+      responses:
+        '200':
+          description: Успешная фильтрация
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationArray'
