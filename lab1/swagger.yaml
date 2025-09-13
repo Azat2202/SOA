@@ -408,7 +408,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /organizations/delete-by-fullname:
+  /organizations/delete/by-fullname:
     post:
       tags:
         - Organizations
