@@ -237,6 +237,31 @@ components:
         timestamp:
           type: string
           format: date-time
+  parameters:
+    pageParam:
+      name: page
+      in: query
+      description: Номер страницы для постраничного вывода
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+    sizeParam:
+      name: size
+      in: query
+      description: Размер страницы для постраничного вывода
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    sortParam:
+      name: sort
+      in: query
+      description: Поле для сортировки в формате fieldName,asc|desc
+      schema:
+        type: string
+        default: "id,asc"
 paths:
   /organizations:
     post:
@@ -308,13 +333,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Organization'
+        '400':
+          description: Неверный параметр запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Bad Request"
+                message: "Parameter 'id' must be greater than 0"
+                timestamp: "2025-09-13T10:30:00Z"
         '404':
           description: Организация не найдена
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
     put:
       tags:
         - Organizations
@@ -348,6 +382,10 @@ paths:
                 $ref: '#/components/schemas/Error'
         '404':
           description: Организация не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
     delete:
       tags:
@@ -370,19 +408,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /organizations/fullname/{fullName}:
-    delete:
+  /organizations/delete-by-fullname:
+    post:
       tags:
         - Organizations
       summary: Удалить организацию по полному имени
       description: Удаляет одну (любую) организацию с указанным полным именем
-      parameters:
-        - name: fullName
-          in: path
-          required: true
-          schema:
-            type: string
-            maxLength: 918
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+              required: true
+              minLength: 1
+              maxLength: 918
       responses:
         '204':
           description: Организация успешно удалена
@@ -393,15 +432,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /organizations/count/employees/{count}:
+  /organizations/amount/by-employees:
     get:
       tags:
         - Organizations
       summary: Количество организаций по числу сотрудников
       description: Возвращает количество организаций с указанным числом сотрудников
       parameters:
-        - name: count
-          in: path
+        - name: amount
+          in: query
           required: true
           schema:
             type: integer
@@ -416,16 +455,22 @@ paths:
                 properties:
                   count:
                     type: integer
+        '400':
+          description: Неверный параметр запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
-  /organizations/count/turnover/{maxTurnover}:
+  /organizations/amount/by-turnover:
     get:
       tags:
         - Organizations
       summary: Количество организаций с оборотом меньше заданного
       description: Возвращает количество организаций с годовым оборотом меньше указанного значения
       parameters:
-        - name: maxTurnover
-          in: path
+        - name: max-turnover
+          in: query
           required: true
           schema:
             type: integer
@@ -441,6 +486,12 @@ paths:
                 properties:
                   count:
                     type: integer
+        '400':
+          description: Неверный параметр запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /orgdirectory/filter/turnover/{min-annual-turnover}/{max-annual-turnover}:
     post:
