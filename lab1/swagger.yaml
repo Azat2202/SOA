@@ -36,30 +36,35 @@ components:
         pagination:
           $ref: '#/components/schemas/Pagination'
         sort:
-          type: string
-          enum:
-            - ID
-            - NAME
-            - CREATION_DATE
-            - ANNUAL_TURNOVER
-            - FULL_NAME
-            - EMPLOYEES_COUNT
-            - TYPE
-            - ADDRESS_STREET
-            - ADDRESS_TOWN_X
-            - ADDRESS_TOWN_Y
-            - ADDRESS_TOWN_Z
-            - ADDRESS_TOWN_NAME
-            - COORDINATES_X
-            - COORDINATES_Y
-            - LOCATION_NAME
-          default: ID
-        sort-direction:
-          type: string
-          default: ASC
-          enum:
-            - ASC
-            - DESC
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                enum:
+                  - ID
+                  - NAME
+                  - CREATION_DATE
+                  - ANNUAL_TURNOVER
+                  - FULL_NAME
+                  - EMPLOYEES_COUNT
+                  - TYPE
+                  - ADDRESS_STREET
+                  - ADDRESS_TOWN_X
+                  - ADDRESS_TOWN_Y
+                  - ADDRESS_TOWN_Z
+                  - ADDRESS_TOWN_NAME
+                  - COORDINATES_X
+                  - COORDINATES_Y
+                  - LOCATION_NAME
+                default: ID
+              direction:
+                type: string
+                enum:
+                  - ASC
+                  - DESC
+                default: ASC
         filter:
           type: object
           properties:
@@ -267,30 +272,6 @@ paths:
     post:
       tags:
         - Organizations
-      summary: Получить массив организаций с фильтрацией и сортировкой
-      description: Возвращает массив организаций с поддержкой фильтрации по любым полям, сортировки и постраничного вывода
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/OrganizationFilters"
-      responses:
-        '200':
-          description: Успешное получение списка организаций
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/OrganizationArray'
-        '400':
-          description: Неверные параметры запроса
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /organizations/new:
-    post:
-      tags:
-        - Organizations
       summary: Добавить новую организацию
       description: Создает новую организацию в коллекции
       requestBody:
@@ -312,7 +293,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
+  /organizations/filter:
+    post:
+      tags:
+        - Organizations
+      summary: Получить массив организаций с фильтрацией и сортировкой
+      description: Возвращает массив организаций с поддержкой фильтрации по любым полям, сортировки и постраничного вывода
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrganizationFilters"
+      responses:
+        '200':
+          description: Успешное получение списка организаций
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationArray'
+        '400':
+          description: Неверные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /organizations/{id}:
     get:
       tags:
@@ -432,14 +436,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /organizations/amount/by-employees:
+  /organizations/quantity/by-employees:
     get:
       tags:
         - Organizations
       summary: Количество организаций по числу сотрудников
       description: Возвращает количество организаций с указанным числом сотрудников
       parameters:
-        - name: amount
+        - name: quantity
           in: query
           required: true
           schema:
@@ -462,7 +466,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /organizations/amount/by-turnover:
+  /organizations/quantity/by-turnover:
     get:
       tags:
         - Organizations
