@@ -16,6 +16,11 @@ services:
       timeout: 1s
       retries: 10
     restart: unless-stopped
+  nginx:
+    build: nginx
+    container_name: nginx
+    ports:
+      - 8080:8080
 
 volumes:
   db-organizations-data:

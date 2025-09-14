@@ -9,8 +9,9 @@ import ru.itmo.gen.model.OrganizationFilters;
 
 @RestController
 public class OrganizationsController implements OrganizationsApi {
+
     @Override
     public ResponseEntity<OrganizationArray> organizationsFilterPost(OrganizationFilters organizationFilters) {
-        return OrganizationsApi.super.organizationsFilterPost(organizationFilters);
+        return ResponseEntity.ok(new OrganizationArray());
     }
 }
