@@ -17,6 +17,7 @@
     </properties>
     <modules>
         <module>organizations_service</module>
+        <module>openapi-gen</module>
     </modules>
     <build>
         <plugins>
