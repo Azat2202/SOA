@@ -1,0 +1,51 @@
+id,name,coordinates_x,coordinates_y,creation_date,annual_turnover,full_name,employees_count,type,address_street,location_x,location_y,location_z,location_name
+1,Acme Corp,10,20.5,2024-01-15,1000000,Acme Corporation,500,PUBLIC,Main St 1,12.5,55.75,100,Metropolis
+2,Globex LLC,-100,5.2,2023-06-10,250000,Globex Limited,50,TRUST,Second Ave 42,1.2,3.14,200,Springfield
+3,Initech,0,0.0,2022-12-01,50000,,10,OPEN_JOINT_STOCK_COMPANY,Tech Park 9,0.0,0.0,300,
+4,Umbrella Inc,365,100.01,2020-05-20,999999999,The Umbrella Corporation,12000,PUBLIC,Red Queen Blvd 7,100.0,200.0,400,Raccoon City
+5,Wayne Enterprises,42,3.5,2019-09-09,7777777,Wayne Ent.,7000,TRUST,Gotham Rd 100,33.3,66.6,500,Gotham
+6,Stark Industries,120,15.5,2021-03-01,5600000,Stark Ind.,4500,OPEN_JOINT_STOCK_COMPANY,Malibu Point 10880,11.1,22.2,600,Malibu
+7,Oscorp,-200,8.8,2018-07-12,320000,Oscorp Industries,1200,PUBLIC,Queens Tech Park,12.2,44.4,700,New York
+8,Wonka Factory,55,2.25,2017-10-31,1500000,Willy Wonka & Co,300,TRUST,Chocolate Ave 3,7.7,8.8,50,Wonka Town
+9,Tyrell Corporation,88,13.37,2016-02-28,9000000,Tyrell Corp.,8000,OPEN_JOINT_STOCK_COMPANY,Pyramid Plaza 1,99.9,12.12,900,Los Angeles
+10,Soylent Corp,5,1.23,2015-05-05,430000,Soylent Green,230,PUBLIC,Broadway 404,3.14,2.71,42,New York
+11,Gringotts,22,4.2,2020-12-12,1200000,Gringotts Wizarding Bank,900,TRUST,Diagon Alley 1,10.0,20.0,30,London
+12,Black Mesa,7,9.99,2019-01-23,2100000,Black Mesa Research,1600,OPEN_JOINT_STOCK_COMPANY,Desert Rd 12,1.0,2.0,3,New Mexico
+13,Aperture Science,-15,6.28,2021-11-11,990000,Aperture Labs,350,PUBLIC,Test St 3,2.0,4.0,6,
+14,Nakatomi Trading,111,7.77,2018-12-24,10000000,Nakatomi Corp.,2500,TRUST,Nakatomi Plaza,12.0,24.0,36,Los Angeles
+15,Hogsmeade Stores,9,3.33,2022-08-01,123456,Hogsmeade Retail,75,OPEN_JOINT_STOCK_COMPANY,High St 7,0.5,1.5,15,Hogsmeade
+16,Daily Planet,3,2.22,2017-01-01,880000,Daily Planet Inc,600,PUBLIC,Reporter Ave 9,6.6,7.7,88,Metropolis
+17,Daily Bugle,2,1.5,2016-06-06,660000,Daily Bugle LLC,450,TRUST,Jameson St 1,6.5,7.5,99,New York
+18,Monsters Inc,14,2.8,2015-09-09,770000,Monsters Incorporated,300,OPEN_JOINT_STOCK_COMPANY,Scare Rd 2,12.5,9.9,77,Monstropolis
+19,Pied Piper,5,2.71,2023-03-14,314159,Pied Piper Inc,42,PUBLIC,Compression Blvd 3,1.61,2.71,3,Silicon Valley
+20,Hooli,18,1.61,2021-04-01,271828,Hooli Corp.,1000,TRUST,Hooli Campus,4.2,8.4,16,Palo Alto
+21,Vehement Capital,25,9.81,2018-02-02,9876543,Vehement Capital Partners,120,PUBLIC,Wall St 500,3.3,9.81,81,New York
+22,BluSun,12,4.56,2019-09-19,450000,BluSun Energy,210,OPEN_JOINT_STOCK_COMPANY,Sunny Rd 8,5.5,6.6,70,Phoenix
+23,Waystar,20,3.45,2017-07-07,2345000,Waystar Royco,8000,TRUST,Park Ave 200,11.0,22.0,33,New York
+24,Sirius Cybernetics,-45,7.0,2016-04-02,120000,Sirius Cybernetics Corp,90,PUBLIC,Robot Lane 101,0.42,0.84,1,London
+25,Planet Express,30,6.9,2015-01-01,765000,Planet Express Inc,25,OPEN_JOINT_STOCK_COMPANY,Delivery St 300,3.0,6.0,9,New New York
+26,Gecko & Co,15,4.0,2020-10-10,505000,Gecko Company,55,TRUST,Trader Rd 77,7.0,8.0,9,Miami
+27,Massive Dynamic,60,9.0,2019-08-08,2222000,Massive Dynamic LLC,2200,PUBLIC,Innovation Ave 1,5.0,4.0,3,Boston
+28,Cyberdyne Systems,70,8.0,2018-05-05,3500000,Cyberdyne Systems Corp,3500,OPEN_JOINT_STOCK_COMPANY,Skynet Blvd 2,9.0,8.0,7,Los Angeles
+29,LexCorp,90,6.5,2017-03-03,8800000,Lex Luthor Corp,8800,TRUST,Lex Tower 9,8.8,6.6,4,Metropolis
+30,Stagg Enterprises,110,5.5,2016-11-11,610000,Stagg Ent.,610,PUBLIC,Stagg Way 10,2.2,3.3,4,Gotham
+31,Palantir,50,7.5,2020-07-07,1500000,Palantir Tech,2500,OPEN_JOINT_STOCK_COMPANY,Data Dr 1,4.0,4.5,5,Palo Alto
+32,Blackwater,40,3.2,2019-02-20,900000,Blackwater Inc,750,TRUST,Secure Rd 5,1.0,2.0,3,North Carolina
+33,Hyperion,35,2.9,2018-12-12,430000,Hyperion Corp,430,PUBLIC,Pandora St 3,3.2,1.1,2,Elpis
+34,Dunder Mifflin,12,1.2,2017-04-04,120000,Dunder Mifflin Paper,120,OPEN_JOINT_STOCK_COMPANY,Scranton Ave 1725,1.0,1.5,2,Scranton
+35,Sterling Cooper,8,2.6,2016-09-01,650000,Sterling Cooper Adv,200,TRUST,Mad Ave 405,2.0,2.6,8,New York
+36,Vandelay Industries,16,4.2,2015-12-31,420000,Vandelay Latex,42,PUBLIC,Importer Exporter Rd 9,4.2,1.6,3,New York
+37,Prestige Worldwide,7,1.1,2021-01-01,111111,Prestige Worldwide LLC,11,OPEN_JOINT_STOCK_COMPANY,Boats N Hoes Blvd 1,0.7,1.1,1,Los Angeles
+38,Bluth Company,6,2.2,2022-02-02,222222,Bluth Company Inc,22,TRUST,Model Home 5,0.6,2.2,2,Orange County
+39,Acme Widgets,5,3.3,2023-03-03,333333,Acme Widgets LLC,33,PUBLIC,Widget Way 7,0.5,3.3,3,Toon Town
+40,Sandover Village,4,4.4,2024-04-04,444444,Sandover Village Council,44,OPEN_JOINT_STOCK_COMPANY,Harbor Rd 2,0.4,4.4,4,Sandover
+41,Neo Tokyo Labs,3,5.5,2021-05-05,555555,Neo Tokyo Laboratories,55,TRUST,Akira Ave 28,0.3,5.5,5,Neo Tokyo
+42,Shinra Electric,2,6.6,2020-06-06,6666666,Shinra Electric Power,666,PUBLIC,Midgar Plate 1,0.2,6.6,6,Midgar
+43,Golden Saucer,1,7.7,2019-07-07,777777,Golden Saucer Park,77,OPEN_JOINT_STOCK_COMPANY,Amusement Rd 77,0.1,7.7,7,Corel
+44,Mako Refinery,0,8.8,2018-08-08,8888888,Mako Refinery Inc,888,TRUST,Reactor St 3,0.0,8.8,8,Midgar
+45,Shadaloo, -10,9.9,2017-09-09,999999,Shadaloo Org,99,PUBLIC,Shadow Rd 9,9.9,9.9,9,Unknown
+46,Nova Prospekt, -20,1.11,2016-10-10,1111111,Nova Prospekt Prison,111,OPEN_JOINT_STOCK_COMPANY,Coast Rd 6,8.8,1.11,10,City 17
+47,Blackwater Bay, -30,2.22,2015-11-11,2222222,Blackwater Bay Company,222,TRUST,Harbor St 1,7.7,2.22,11,King's Landing
+48,Winterfell Holdings, -40,3.33,2014-12-12,3333333,House Stark Holdings,333,PUBLIC,North Rd 1,6.6,3.33,12,Winterfell
+49,Meereen Trade, -50,4.44,2013-01-01,4444444,Meereen Trading Co,444,OPEN_JOINT_STOCK_COMPANY,Harpy Ave 2,5.5,4.44,13,Meereen
+50,Qarth Merchants, -60,5.55,2012-02-02,5555555,Qarth Merchants Guild,555,TRUST,Thirteen St 13,4.4,5.55,14,Qarth 
