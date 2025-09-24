@@ -21,6 +21,7 @@ import ru.itmo.gen.model.Location;
 import org.modelmapper.ModelMapper;
 import org.openapitools.jackson.nullable.JsonNullable;
 import ru.itmo.soa.services.OrganizationFilterService;
+import ru.itmo.soa.services.OrganizationService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,9 +31,20 @@ import java.util.List;
 public class OrganizationsController implements OrganizationsApi {
 
     private final OrganizationFilterService organizationFilterService;
+    private final OrganizationService organizationService;
+
+    @Override
+    public ResponseEntity<Organization> organizationsPost(Organization organization) {
+        return ResponseEntity.ok(organizationService.createOrganization(organization));
+    }
 
     @Override
     public ResponseEntity<OrganizationArray> organizationsFilterPost(OrganizationFilters organizationFilters) {
         return organizationFilterService.organizationsFilterPost(organizationFilters);
+    }
+
+    @Override
+    public ResponseEntity<Organization> organizationsIdGet(Integer id) {
+        return organizationService.getOrganization(id);
     }
 }

@@ -6,4 +6,5 @@
     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
 	<include file="1758743820-organizations-create-table.xml" relativeToChangelogFile="true"/>
 	<include file="1758748151-organizations-sample-data.xml" relativeToChangelogFile="true"/>
+	<include file="1758756120-update-seq.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>
