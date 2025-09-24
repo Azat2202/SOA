@@ -79,6 +79,7 @@
                                 <dateLibrary>java8</dateLibrary>
                                 <useTags>true</useTags>
                                 <useSpringBoot3>true</useSpringBoot3>
+                                <hideGenerationTimestamp>true</hideGenerationTimestamp>
                             </configOptions>
                         </configuration>
                     </execution>

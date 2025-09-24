@@ -25,7 +25,7 @@ import jakarta.annotation.Generated;
  * OrganizationFilters
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-09-15T00:43:06.965813+03:00[Europe/Moscow]", comments = "Generator version: 7.15.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.15.0")
 public class OrganizationFilters {
 
   private @Nullable Pagination pagination;

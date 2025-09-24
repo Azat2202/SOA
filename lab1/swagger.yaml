@@ -6,8 +6,6 @@ info:
 servers:
   - url: http://localhost:8080
     description: localhost
-  - url: http://localhost:8081
-    description: service
   - url: https://se.ifmo.ru/~s368796/
     description: Helios
 
