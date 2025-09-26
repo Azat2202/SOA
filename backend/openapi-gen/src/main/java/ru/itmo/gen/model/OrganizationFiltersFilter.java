@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Arrays;
 import org.openapitools.jackson.nullable.JsonNullable;
 import org.springframework.lang.Nullable;
+import ru.itmo.gen.model.OrganizationFiltersFilterAnnualTurnover;
 import ru.itmo.gen.model.OrganizationFiltersFilterCoordinates;
 import ru.itmo.gen.model.OrganizationFiltersFilterCreationDate;
 import ru.itmo.gen.model.OrganizationFiltersFilterPostalAddress;
@@ -38,6 +39,8 @@ public class OrganizationFiltersFilter {
   private @Nullable OrganizationFiltersFilterCoordinates coordinates;
 
   private @Nullable OrganizationFiltersFilterCreationDate creationDate;
+
+  private @Nullable OrganizationFiltersFilterAnnualTurnover annualTurnover;
 
   private @Nullable String fullName;
 
@@ -165,6 +168,26 @@ public class OrganizationFiltersFilter {
     this.creationDate = creationDate;
   }
 
+  public OrganizationFiltersFilter annualTurnover(@Nullable OrganizationFiltersFilterAnnualTurnover annualTurnover) {
+    this.annualTurnover = annualTurnover;
+    return this;
+  }
+
+  /**
+   * Get annualTurnover
+   * @return annualTurnover
+   */
+  @Valid 
+  @Schema(name = "annualTurnover", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("annualTurnover")
+  public @Nullable OrganizationFiltersFilterAnnualTurnover getAnnualTurnover() {
+    return annualTurnover;
+  }
+
+  public void setAnnualTurnover(@Nullable OrganizationFiltersFilterAnnualTurnover annualTurnover) {
+    this.annualTurnover = annualTurnover;
+  }
+
   public OrganizationFiltersFilter fullName(@Nullable String fullName) {
     this.fullName = fullName;
     return this;
@@ -259,6 +282,7 @@ public class OrganizationFiltersFilter {
         equalsNullable(this.name, organizationFiltersFilter.name) &&
         Objects.equals(this.coordinates, organizationFiltersFilter.coordinates) &&
         Objects.equals(this.creationDate, organizationFiltersFilter.creationDate) &&
+        Objects.equals(this.annualTurnover, organizationFiltersFilter.annualTurnover) &&
         Objects.equals(this.fullName, organizationFiltersFilter.fullName) &&
         Objects.equals(this.employeesCount, organizationFiltersFilter.employeesCount) &&
         Objects.equals(this.type, organizationFiltersFilter.type) &&
@@ -271,7 +295,7 @@ public class OrganizationFiltersFilter {
 
   @Override
   public int hashCode() {
-    return Objects.hash(organizationId, hashCodeNullable(name), coordinates, creationDate, fullName, employeesCount, type, postalAddress);
+    return Objects.hash(organizationId, hashCodeNullable(name), coordinates, creationDate, annualTurnover, fullName, employeesCount, type, postalAddress);
   }
 
   private static <T> int hashCodeNullable(JsonNullable<T> a) {
@@ -289,6 +313,7 @@ public class OrganizationFiltersFilter {
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    coordinates: ").append(toIndentedString(coordinates)).append("\n");
     sb.append("    creationDate: ").append(toIndentedString(creationDate)).append("\n");
+    sb.append("    annualTurnover: ").append(toIndentedString(annualTurnover)).append("\n");
     sb.append("    fullName: ").append(toIndentedString(fullName)).append("\n");
     sb.append("    employeesCount: ").append(toIndentedString(employeesCount)).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");

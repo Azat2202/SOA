@@ -97,6 +97,15 @@ components:
                 max:
                   type: string
                   format: date
+            annualTurnover:
+              type: object
+              properties:
+                min:
+                  type: integer
+                  format: int32
+                max:
+                  type: integer
+                  format: int32
             fullName:
               type: string
               format: int64

@@ -88,6 +88,14 @@ public class OrganizationsRepositoryImpl implements OrganizationsRepositoryCusto
                 predicates.add(cb.lessThanOrEqualTo(root.get("creationDate"), f.getCreationDate().getMax()));
             }
         }
+        if (f.getAnnualTurnover() != null) {
+            if (f.getAnnualTurnover().getMin() != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("annualTurnover"), f.getAnnualTurnover().getMin()));
+            }
+            if (f.getAnnualTurnover().getMax() != null) {
+                predicates.add(cb.lessThanOrEqualTo(root.get("annualTurnover"), f.getAnnualTurnover().getMax()));
+            }
+        }
         if (f.getFullName() != null) {
             predicates.add(cb.like(cb.lower(root.get("fullName")), "%" + f.getFullName().toLowerCase() + "%"));
         }

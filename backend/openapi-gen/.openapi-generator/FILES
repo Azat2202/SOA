@@ -10,6 +10,7 @@ src/main/java/ru/itmo/gen/model/Organization.java
 src/main/java/ru/itmo/gen/model/OrganizationArray.java
 src/main/java/ru/itmo/gen/model/OrganizationFilters.java
 src/main/java/ru/itmo/gen/model/OrganizationFiltersFilter.java
+src/main/java/ru/itmo/gen/model/OrganizationFiltersFilterAnnualTurnover.java
 src/main/java/ru/itmo/gen/model/OrganizationFiltersFilterCoordinates.java
 src/main/java/ru/itmo/gen/model/OrganizationFiltersFilterCreationDate.java
 src/main/java/ru/itmo/gen/model/OrganizationFiltersFilterPostalAddress.java
