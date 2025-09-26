@@ -28,4 +28,44 @@ public class OrganizationService {
                 .map(organizationEntity -> ResponseEntity.ok(modelMapper.map(organizationEntity, Organization.class)))
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    public ResponseEntity<Organization> updateOrganization(Integer id, Organization organization){
+        return organizationsRepository.findById(id.longValue())
+                .map(existingEntity -> {
+                    modelMapper.map(organization, existingEntity);
+                    existingEntity.setId(id.longValue());
+                    OrganizationEntity updatedEntity = organizationsRepository.save(existingEntity);
+                    Organization updatedOrganization = modelMapper.map(updatedEntity, Organization.class);
+                    return ResponseEntity.ok(updatedOrganization);
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    public ResponseEntity<Void> deleteOrganizationById(Integer id){
+        if (organizationsRepository.existsById(id.longValue())) {
+            organizationsRepository.deleteById(id.longValue());
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    public ResponseEntity<Void> deleteOrganizationByFullname(String fullname){
+        var organizationEntity = organizationsRepository.findByFullName(fullname);
+        if (organizationEntity != null) {
+            organizationsRepository.delete(organizationEntity);
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    public Integer countOrganizationsByEmpoyeesCount(Integer quantity){
+        return organizationsRepository.countByEmployeesCount(quantity);
+    }
+
+    public Long countOrganizationsByAnnualTurnoverLess(Long annualTurnover){
+        return organizationsRepository.countByAnnualTurnoverBefore(annualTurnover + 1); // включительно
+    }
+
+
 }
