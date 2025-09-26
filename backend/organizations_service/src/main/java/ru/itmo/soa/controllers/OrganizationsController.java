@@ -1,30 +1,15 @@
 package ru.itmo.soa.controllers;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RestController;
 import ru.itmo.gen.api.OrganizationsApi;
 import ru.itmo.gen.model.OrganizationArray;
 import ru.itmo.gen.model.OrganizationFilters;
-import ru.itmo.gen.model.OrganizationFiltersSortInner;
-import ru.itmo.soa.models.OrganizationEntity;
-import ru.itmo.soa.repositories.OrganizationsRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import ru.itmo.gen.model.Organization;
-import ru.itmo.gen.model.Coordinates;
-import ru.itmo.gen.model.Address;
-import ru.itmo.gen.model.Location;
-import org.modelmapper.ModelMapper;
-import org.openapitools.jackson.nullable.JsonNullable;
+import ru.itmo.gen.model.OrganizationsQuantityByEmployeesGet200Response;
 import ru.itmo.soa.services.OrganizationFilterService;
 import ru.itmo.soa.services.OrganizationService;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,6 +26,37 @@ public class OrganizationsController implements OrganizationsApi {
     @Override
     public ResponseEntity<OrganizationArray> organizationsFilterPost(OrganizationFilters organizationFilters) {
         return organizationFilterService.organizationsFilterPost(organizationFilters);
+    }
+
+    @Override
+    public ResponseEntity<Organization> organizationsIdPut(Integer id, Organization organization) {
+        return organizationService.updateOrganization(id, organization);
+    }
+
+    @Override
+    public ResponseEntity<Void> organizationsIdDelete(Integer id) {
+        return organizationService.deleteOrganizationById(id);
+    }
+
+    @Override
+    public ResponseEntity<Void> organizationsDeleteByFullnamePost(String fullname) {
+        return organizationService.deleteOrganizationByFullname(fullname);
+    }
+
+    @Override
+    public ResponseEntity<OrganizationsQuantityByEmployeesGet200Response> organizationsQuantityByEmployeesGet(Integer quantity) {
+        var count = organizationService.countOrganizationsByEmpoyeesCount(quantity);
+        var response = new OrganizationsQuantityByEmployeesGet200Response();
+        response.setCount(count);
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<OrganizationsQuantityByEmployeesGet200Response> organizationsQuantityByTurnoverGet(Long maxTurnover) {
+        var count = organizationService.countOrganizationsByAnnualTurnoverLess(maxTurnover);
+        var response = new OrganizationsQuantityByEmployeesGet200Response();
+        response.setCount(count.intValue());
+        return ResponseEntity.ok(response);
     }
 
     @Override
