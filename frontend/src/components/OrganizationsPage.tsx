@@ -1,0 +1,298 @@
+import React, { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
+import {
+  usePostOrganizationsFilterMutation,
+  usePostOrganizationsMutation,
+  usePutOrganizationsByIdMutation,
+  useDeleteOrganizationsByIdMutation,
+  usePostOrganizationsDeleteByFullnameMutation,
+  useGetOrganizationsQuantityByEmployeesQuery,
+  useGetOrganizationsQuantityByTurnoverQuery,
+  usePostOrgdirectoryFilterTurnoverByMinAnnualTurnoverAndMaxAnnualTurnoverMutation,
+  usePostOrgdirectoryFilterTypeByTypeMutation,
+  OrganizationFilters,
+  Organization,
+  OrganizationRead,
+  Pagination,
+} from '../store/types.generated';
+import OrganizationForm from './OrganizationForm';
+import CompactOrganizationTable from './CompactOrganizationTable';
+
+const OrganizationsPage: React.FC = () => {
+  const [organizations, setOrganizations] = useState<OrganizationRead[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageSize, setPageSize] = useState(20);
+  const [filters, setFilters] = useState<OrganizationFilters['filter']>({});
+  const [sorting, setSorting] = useState<OrganizationFilters['sort']>([]);
+  const [showForm, setShowForm] = useState(false);
+  const [editingOrganization, setEditingOrganization] = useState<OrganizationRead | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  // API hooks
+  const [filterOrganizations] = usePostOrganizationsFilterMutation();
+  const [createOrganization] = usePostOrganizationsMutation();
+  const [updateOrganization] = usePutOrganizationsByIdMutation();
+  const [deleteOrganization] = useDeleteOrganizationsByIdMutation();
+  const [deleteByFullname] = usePostOrganizationsDeleteByFullnameMutation();
+  const [filterByTurnover] = usePostOrgdirectoryFilterTurnoverByMinAnnualTurnoverAndMaxAnnualTurnoverMutation();
+  const [filterByType] = usePostOrgdirectoryFilterTypeByTypeMutation();
+
+  // Statistics queries
+  const { data: employeesStats, refetch: refetchEmployeesStats } = useGetOrganizationsQuantityByEmployeesQuery(
+    { quantity: 100 },
+    { skip: true }
+  );
+  const { data: turnoverStats, refetch: refetchTurnoverStats } = useGetOrganizationsQuantityByTurnoverQuery(
+    { 'max-turnover': 1000000 },
+    { skip: true }
+  );
+
+  // Load organizations on component mount and when filters/sorting change
+  useEffect(() => {
+    loadOrganizations();
+  }, [currentPage, pageSize, filters, sorting]);
+
+  const loadOrganizations = async () => {
+    try {
+      setLoading(true);
+      const pagination: Pagination = {
+        page: currentPage,
+        size: pageSize,
+      };
+
+      const organizationFilters: OrganizationFilters = {
+        pagination,
+        filter: filters,
+        sort: sorting,
+      };
+
+      const result = await filterOrganizations({ organizationFilters }).unwrap();
+      
+      if (result.organizations) {
+        setOrganizations(result.organizations);
+        setTotalCount(result.totalCount || 0);
+      }
+    } catch (error: any) {
+      console.error('Error loading organizations:', error);
+      toast.error(`Ошибка загрузки организаций: ${error.data?.message || error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCreateOrganization = async (organizationData: Organization) => {
+    try {
+      await createOrganization({ organization: organizationData }).unwrap();
+      toast.success('Организация успешно создана');
+      setShowForm(false);
+      loadOrganizations();
+    } catch (error: any) {
+      console.error('Error creating organization:', error);
+      toast.error(`Ошибка создания организации: ${error.data?.message || error.message}`);
+    }
+  };
+
+  const handleUpdateOrganization = async (id: number, organizationData: Organization) => {
+    try {
+      await updateOrganization({ id, organization: organizationData }).unwrap();
+      toast.success('Организация успешно обновлена');
+      setEditingOrganization(null);
+      loadOrganizations();
+    } catch (error: any) {
+      console.error('Error updating organization:', error);
+      toast.error(`Ошибка обновления организации: ${error.data?.message || error.message}`);
+    }
+  };
+
+  const handleDeleteOrganization = async (id: number) => {
+    if (window.confirm('Вы уверены, что хотите удалить эту организацию?')) {
+      try {
+        await deleteOrganization({ id }).unwrap();
+        toast.success('Организация успешно удалена');
+        loadOrganizations();
+      } catch (error: any) {
+        console.error('Error deleting organization:', error);
+        toast.error(`Ошибка удаления организации: ${error.data?.message || error.message}`);
+      }
+    }
+  };
+
+  const handleDeleteByFullname = async (fullName: string) => {
+    if (window.confirm(`Вы уверены, что хотите удалить организацию с полным именем "${fullName}"?`)) {
+      try {
+        await deleteByFullname({ body: fullName }).unwrap();
+        toast.success('Организация успешно удалена');
+        loadOrganizations();
+      } catch (error: any) {
+        console.error('Error deleting organization by fullname:', error);
+        toast.error(`Ошибка удаления организации: ${error.data?.message || error.message}`);
+      }
+    }
+  };
+
+  const handleFilterByTurnover = async (minTurnover: number, maxTurnover: number) => {
+    try {
+      setLoading(true);
+      const pagination: Pagination = {
+        page: 0,
+        size: pageSize,
+      };
+
+      const result = await filterByTurnover({
+        'min-annual-turnover': minTurnover,
+        'max-annual-turnover': maxTurnover,
+        pagination,
+      }).unwrap();
+
+      if (result.organizations) {
+        setOrganizations(result.organizations);
+        setTotalCount(result.totalCount || 0);
+        setCurrentPage(0);
+      }
+    } catch (error: any) {
+      console.error('Error filtering by turnover:', error);
+      toast.error(`Ошибка фильтрации по обороту: ${error.data?.message || error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFilterByType = async (type: 'PUBLIC' | 'TRUST' | 'OPEN_JOINT_STOCK_COMPANY') => {
+    try {
+      setLoading(true);
+      const pagination: Pagination = {
+        page: 0,
+        size: pageSize,
+      };
+
+      const result = await filterByType({
+        type,
+        pagination,
+      }).unwrap();
+
+      if (result.organizations) {
+        setOrganizations(result.organizations);
+        setTotalCount(result.totalCount || 0);
+        setCurrentPage(0);
+      }
+    } catch (error: any) {
+      console.error('Error filtering by type:', error);
+      toast.error(`Ошибка фильтрации по типу: ${error.data?.message || error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handlePageSizeChange = (size: number) => {
+    setPageSize(size);
+    setCurrentPage(0);
+  };
+
+  const handleFiltersChange = (newFilters: OrganizationFilters['filter']) => {
+    setFilters(newFilters);
+    setCurrentPage(0);
+  };
+
+  const handleSortingChange = (newSorting: OrganizationFilters['sort']) => {
+    setSorting(newSorting);
+    setCurrentPage(0);
+  };
+
+  const handleGetEmployeesStats = () => {
+    refetchEmployeesStats();
+  };
+
+  const handleGetTurnoverStats = () => {
+    refetchTurnoverStats();
+  };
+
+  const handleEditOrganization = (organization: OrganizationRead) => {
+    setEditingOrganization(organization);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingOrganization(null);
+    setShowForm(false);
+  };
+
+  const totalPages = Math.ceil(totalCount / pageSize);
+
+  return (
+    <div className="organizations-page">
+      <div className="row">
+        <div className="col-12">
+          <div className="card">
+            <div className="card-header">
+              <h2>Управление организациями</h2>
+            </div>
+            <div className="card-body">
+              <div className="row">
+                <div className="col-12 mb-3">
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => setShowForm(true)}
+                  >
+                    ➕ Добавить организацию
+                  </button>
+                </div>
+              </div>
+
+              {showForm && (
+                <div className="row">
+                  <div className="col-12">
+                    <OrganizationForm
+                      onSubmit={handleCreateOrganization}
+                      onCancel={handleCancelEdit}
+                      title="Создание новой организации"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {editingOrganization && (
+                <div className="row">
+                  <div className="col-12">
+                    <OrganizationForm
+                      organization={editingOrganization}
+                      onSubmit={(data) => handleUpdateOrganization(editingOrganization.id!, data)}
+                      onCancel={handleCancelEdit}
+                      title="Редактирование организации"
+                    />
+                  </div>
+                </div>
+              )}
+
+              <CompactOrganizationTable
+                organizations={organizations}
+                loading={loading}
+                totalCount={totalCount}
+                currentPage={currentPage}
+                pageSize={pageSize}
+                onEdit={handleEditOrganization}
+                onDelete={handleDeleteOrganization}
+                onDeleteByFullname={handleDeleteByFullname}
+                onFiltersChange={handleFiltersChange}
+                onSortingChange={handleSortingChange}
+                onPageChange={handlePageChange}
+                onPageSizeChange={handlePageSizeChange}
+                onFilterByTurnover={handleFilterByTurnover}
+                onFilterByType={handleFilterByType}
+                onGetEmployeesStats={handleGetEmployeesStats}
+                onGetTurnoverStats={handleGetTurnoverStats}
+                employeesStats={employeesStats}
+                turnoverStats={turnoverStats}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default OrganizationsPage;
