@@ -18,6 +18,7 @@
     <modules>
         <module>organizations_service</module>
         <module>openapi-gen</module>
+        <module>orgdirectories_service</module>
     </modules>
     <build>
         <plugins>

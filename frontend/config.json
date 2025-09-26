@@ -1,0 +1,8 @@
+{
+  "schemaFile": "../backend/swagger.yaml",
+  "apiFile": "./src/store/baseApi.ts",
+  "apiImport": "api",
+  "outputFile": "./src/store/types.generated.ts",
+  "exportName": "organizationsApi",
+  "hooks": true
+}
