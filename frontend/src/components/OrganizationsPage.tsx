@@ -27,7 +27,6 @@ const OrganizationsPage: React.FC = () => {
   const [sorting, setSorting] = useState<OrganizationFilters['sort']>([]);
   const [showForm, setShowForm] = useState(false);
   const [editingOrganization, setEditingOrganization] = useState<OrganizationRead | null>(null);
-  const [loading, setLoading] = useState(false);
 
   // API hooks
   const [filterOrganizations] = usePostOrganizationsFilterMutation();
@@ -55,7 +54,6 @@ const OrganizationsPage: React.FC = () => {
 
   const loadOrganizations = async () => {
     try {
-      setLoading(true);
       const pagination: Pagination = {
         page: currentPage,
         size: pageSize,
@@ -76,8 +74,6 @@ const OrganizationsPage: React.FC = () => {
     } catch (error: any) {
       console.error('Error loading organizations:', error);
       toast.error(`Ошибка загрузки организаций: ${error.data?.message || error.message}`);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -133,7 +129,6 @@ const OrganizationsPage: React.FC = () => {
 
   const handleFilterByTurnover = async (minTurnover: number, maxTurnover: number) => {
     try {
-      setLoading(true);
       const pagination: Pagination = {
         page: 0,
         size: pageSize,
@@ -153,14 +148,11 @@ const OrganizationsPage: React.FC = () => {
     } catch (error: any) {
       console.error('Error filtering by turnover:', error);
       toast.error(`Ошибка фильтрации по обороту: ${error.data?.message || error.message}`);
-    } finally {
-      setLoading(false);
     }
   };
 
   const handleFilterByType = async (type: 'PUBLIC' | 'TRUST' | 'OPEN_JOINT_STOCK_COMPANY') => {
     try {
-      setLoading(true);
       const pagination: Pagination = {
         page: 0,
         size: pageSize,
@@ -178,9 +170,7 @@ const OrganizationsPage: React.FC = () => {
       }
     } catch (error: any) {
       console.error('Error filtering by type:', error);
-      toast.error(`Ошибка фильтрации по типу: ${error.data?.message || error.message}`);
-    } finally {
-      setLoading(false);
+      toast.error(`Filter error: ${error.data?.message || error.message}`);
     }
   };
 
@@ -266,7 +256,6 @@ const OrganizationsPage: React.FC = () => {
 
               <CompactOrganizationTable
                 organizations={organizations}
-                loading={loading}
                 totalCount={totalCount}
                 currentPage={currentPage}
                 pageSize={pageSize}

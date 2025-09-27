@@ -3,7 +3,7 @@ import { OrganizationRead, OrganizationFilters } from '../store/types.generated'
 
 interface CompactOrganizationTableProps {
   organizations: OrganizationRead[];
-  loading: boolean;
+  // loading: boolean;
   totalCount: number;
   currentPage: number;
   pageSize: number;
@@ -24,7 +24,7 @@ interface CompactOrganizationTableProps {
 
 const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
   organizations,
-  loading,
+  // loading,
   totalCount,
   currentPage,
   pageSize,
@@ -173,28 +173,12 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
 
   const totalPages = Math.ceil(totalCount / pageSize);
 
-  if (loading) {
-    return (
-      <div className="loading">
-        <div className="spinner"></div>
-        Загрузка организаций...
-      </div>
-    );
-  }
-
   return (
     <div className="card">
       <div className="card-header">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h3>Organizations ({totalCount})</h3>
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-            {/*<button*/}
-            {/*  className="btn btn-outline"*/}
-            {/*  onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}*/}
-            {/*  style={{ fontSize: '0.875rem' }}*/}
-            {/*>*/}
-            {/*  {showAdvancedFilters ? 'Скрыть' : 'Показать'} фильтры*/}
-            {/*</button>*/}
             <button
               className="btn btn-secondary"
               onClick={clearFilters}
@@ -496,12 +480,14 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                        type="number"
                        className="form-control"
                        placeholder="Min turnover"
+                       onChange={(e) => handleFilterChange('annualTurnover.min', e.target.value ? parseInt(e.target.value) : undefined)}
                        style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                    />
                    <input
                        type="number"
                        className="form-control"
                        placeholder="Max turnover"
+                       onChange={(e) => handleFilterChange('annualTurnover.max', e.target.value ? parseInt(e.target.value) : undefined)}
                        style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                    />
                    </div>
@@ -520,7 +506,6 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                   <input
                     type="number"
                     className="form-control"
-                    value={filters?.employeesCount || ''}
                     onChange={(e) => handleFilterChange('employeesCount', e.target.value ? parseInt(e.target.value) : undefined)}
                     placeholder="Number"
                     style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
