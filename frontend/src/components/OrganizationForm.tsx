@@ -41,28 +41,28 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
     const newErrors: Record<string, string> = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = 'Название организации обязательно';
+      newErrors.name = 'Name is required';
     }
 
     if (formData.coordinates.x < -365) {
-      newErrors.coordinatesX = 'Координата X должна быть больше -365';
+      newErrors.coordinatesX = 'Coordinate X must be greater than -365';
     }
 
     if (formData.annualTurnover < 1) {
-      newErrors.annualTurnover = 'Годовой оборот должен быть больше 0';
+      newErrors.annualTurnover = 'Annual turnover must be greater than 0';
     }
 
     if (formData.employeesCount && formData.employeesCount < 1) {
-      newErrors.employeesCount = 'Количество сотрудников должно быть больше 0';
+      newErrors.employeesCount = 'Employee number must be greater than 0';
     }
 
     if (formData.fullName && formData.fullName.length > 918) {
-      newErrors.fullName = 'Полное имя не может быть длиннее 918 символов';
+      newErrors.fullName = 'Fullname must be shorter than 919';
     }
 
     if (formData.postalAddress) {
       if (!formData.postalAddress.street.trim()) {
-        newErrors.postalAddressStreet = 'Улица обязательна';
+        newErrors.postalAddressStreet = 'Street is required';
       }
     }
 
@@ -133,26 +133,26 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
           <div className="row">
             <div className="col-6">
               <div className="form-group">
-                <label className="form-label">Название организации *</label>
+                <label className="form-label">Name *</label>
                 <input
                   type="text"
                   className={`form-control ${errors.name ? 'error' : ''}`}
                   value={formData.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
-                  placeholder="Введите название организации"
+                  placeholder="Name"
                 />
                 {errors.name && <div className="error-message">{errors.name}</div>}
               </div>
             </div>
             <div className="col-6">
               <div className="form-group">
-                <label className="form-label">Полное название</label>
+                <label className="form-label">Fullname</label>
                 <input
                   type="text"
                   className={`form-control ${errors.fullName ? 'error' : ''}`}
                   value={formData.fullName || ''}
                   onChange={(e) => handleInputChange('fullName', e.target.value)}
-                  placeholder="Введите полное название (до 918 символов)"
+                  placeholder="Fullname (max length 918)"
                 />
                 {errors.fullName && <div className="error-message">{errors.fullName}</div>}
               </div>
@@ -162,41 +162,41 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
           <div className="row">
             <div className="col-4">
               <div className="form-group">
-                <label className="form-label">Координата X *</label>
+                <label className="form-label">Coordinate X *</label>
                 <input
                   type="number"
                   className={`form-control ${errors.coordinatesX ? 'error' : ''}`}
                   value={formData.coordinates.x}
                   onChange={(e) => handleInputChange('coordinates.x', parseInt(e.target.value) || 0)}
-                  placeholder="X координата"
+                  placeholder="X"
                 />
                 {errors.coordinatesX && <div className="error-message">{errors.coordinatesX}</div>}
               </div>
             </div>
             <div className="col-4">
               <div className="form-group">
-                <label className="form-label">Координата Y *</label>
+                <label className="form-label">Coordinate Y *</label>
                 <input
                   type="number"
                   step="0.01"
                   className="form-control"
                   value={formData.coordinates.y}
                   onChange={(e) => handleInputChange('coordinates.y', parseFloat(e.target.value) || 0)}
-                  placeholder="Y координата"
+                  placeholder="Y"
                 />
               </div>
             </div>
             <div className="col-4">
               <div className="form-group">
-                <label className="form-label">Тип организации *</label>
+                <label className="form-label">Type *</label>
                 <select
                   className="form-control form-select"
                   value={formData.type}
                   onChange={(e) => handleInputChange('type', e.target.value as 'PUBLIC' | 'TRUST' | 'OPEN_JOINT_STOCK_COMPANY')}
                 >
-                  <option value="PUBLIC">Публичная</option>
-                  <option value="TRUST">Траст</option>
-                  <option value="OPEN_JOINT_STOCK_COMPANY">Открытое акционерное общество</option>
+                  <option value="PUBLIC">Public</option>
+                  <option value="TRUST">Trust</option>
+                  <option value="OPEN_JOINT_STOCK_COMPANY">Open joint stock company</option>
                 </select>
               </div>
             </div>
@@ -205,26 +205,26 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
           <div className="row">
             <div className="col-6">
               <div className="form-group">
-                <label className="form-label">Годовой оборот *</label>
+                <label className="form-label">Annual turnover *</label>
                 <input
                   type="number"
                   className={`form-control ${errors.annualTurnover ? 'error' : ''}`}
                   value={formData.annualTurnover}
                   onChange={(e) => handleInputChange('annualTurnover', parseInt(e.target.value) || 1)}
-                  placeholder="Годовой оборот"
+                  placeholder="Annual turnover"
                 />
                 {errors.annualTurnover && <div className="error-message">{errors.annualTurnover}</div>}
               </div>
             </div>
             <div className="col-6">
               <div className="form-group">
-                <label className="form-label">Количество сотрудников</label>
+                <label className="form-label">Employee number</label>
                 <input
                   type="number"
                   className={`form-control ${errors.employeesCount ? 'error' : ''}`}
                   value={formData.employeesCount || ''}
                   onChange={(e) => handleInputChange('employeesCount', e.target.value ? parseInt(e.target.value) : null)}
-                  placeholder="Количество сотрудников"
+                  placeholder="Number"
                 />
                 {errors.employeesCount && <div className="error-message">{errors.employeesCount}</div>}
               </div>
@@ -239,7 +239,7 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
                 onChange={togglePostalAddress}
                 style={{ marginRight: '0.5rem' }}
               />
-              Добавить почтовый адрес
+              Add post address
             </label>
           </div>
 
@@ -250,64 +250,64 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
               </div>
               <div className="col-6">
                 <div className="form-group">
-                  <label className="form-label">Улица *</label>
+                  <label className="form-label">Street *</label>
                   <input
                     type="text"
                     className={`form-control ${errors.postalAddressStreet ? 'error' : ''}`}
                     value={formData.postalAddress.street}
                     onChange={(e) => handleInputChange('postalAddress.street', e.target.value)}
-                    placeholder="Название улицы"
+                    placeholder="Street name"
                   />
                   {errors.postalAddressStreet && <div className="error-message">{errors.postalAddressStreet}</div>}
                 </div>
               </div>
               <div className="col-6">
                 <div className="form-group">
-                  <label className="form-label">Название города</label>
+                  <label className="form-label">Town</label>
                   <input
                     type="text"
                     className="form-control"
                     value={formData.postalAddress.town.name || ''}
                     onChange={(e) => handleInputChange('postalAddress.town.name', e.target.value)}
-                    placeholder="Название города"
+                    placeholder="Town name"
                   />
                 </div>
               </div>
               <div className="col-4">
                 <div className="form-group">
-                  <label className="form-label">Координата города X</label>
+                  <label className="form-label">Town location X</label>
                   <input
                     type="number"
                     step="0.01"
                     className="form-control"
                     value={formData.postalAddress.town.x}
                     onChange={(e) => handleInputChange('postalAddress.town.x', parseFloat(e.target.value) || 0)}
-                    placeholder="X координата города"
+                    placeholder="X"
                   />
                 </div>
               </div>
               <div className="col-4">
                 <div className="form-group">
-                  <label className="form-label">Координата города Y</label>
+                  <label className="form-label">Town location Y</label>
                   <input
                     type="number"
                     step="0.01"
                     className="form-control"
                     value={formData.postalAddress.town.y}
                     onChange={(e) => handleInputChange('postalAddress.town.y', parseFloat(e.target.value) || 0)}
-                    placeholder="Y координата города"
+                    placeholder="Y"
                   />
                 </div>
               </div>
               <div className="col-4">
                 <div className="form-group">
-                  <label className="form-label">Координата города Z</label>
+                  <label className="form-label">Town location Z</label>
                   <input
                     type="number"
                     className="form-control"
                     value={formData.postalAddress.town.z}
                     onChange={(e) => handleInputChange('postalAddress.town.z', parseInt(e.target.value) || 0)}
-                    placeholder="Z координата города"
+                    placeholder="Z"
                   />
                 </div>
               </div>
@@ -318,10 +318,10 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
             <div className="col-12">
               <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
                 <button type="button" className="btn btn-secondary" onClick={onCancel}>
-                  Отмена
+                  Cancel
                 </button>
                 <button type="submit" className="btn btn-primary">
-                  {organization ? 'Обновить' : 'Создать'}
+                  {organization ? 'Save' : 'Create'}
                 </button>
               </div>
             </div>

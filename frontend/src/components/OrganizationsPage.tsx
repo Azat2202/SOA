@@ -227,9 +227,6 @@ const OrganizationsPage: React.FC = () => {
       <div className="row">
         <div className="col-12">
           <div className="card">
-            <div className="card-header">
-              <h2>Управление организациями</h2>
-            </div>
             <div className="card-body">
               <div className="row">
                 <div className="col-12 mb-3">
@@ -237,7 +234,7 @@ const OrganizationsPage: React.FC = () => {
                     className="btn btn-primary"
                     onClick={() => setShowForm(true)}
                   >
-                    ➕ Добавить организацию
+                    ➕ Create Organization
                   </button>
                 </div>
               </div>
@@ -248,7 +245,7 @@ const OrganizationsPage: React.FC = () => {
                     <OrganizationForm
                       onSubmit={handleCreateOrganization}
                       onCancel={handleCancelEdit}
-                      title="Создание новой организации"
+                      title="New Organization"
                     />
                   </div>
                 </div>
@@ -261,7 +258,7 @@ const OrganizationsPage: React.FC = () => {
                       organization={editingOrganization}
                       onSubmit={(data) => handleUpdateOrganization(editingOrganization.id!, data)}
                       onCancel={handleCancelEdit}
-                      title="Редактирование организации"
+                      title="Edit Organization"
                     />
                   </div>
                 </div>

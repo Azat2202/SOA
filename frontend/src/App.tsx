@@ -11,8 +11,7 @@ function App() {
     <Provider store={store}>
       <div className="App">
         <header className="app-header">
-          <h1>Система управления организациями</h1>
-          <p>Полнофункциональный интерфейс для работы с коллекцией организаций</p>
+          <p>SOA Lab2</p>
         </header>
         
         <main className="app-main">

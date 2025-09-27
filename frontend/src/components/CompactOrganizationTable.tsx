@@ -154,21 +154,21 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
     <div className="card">
       <div className="card-header">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h3>Организации ({totalCount})</h3>
+          <h3>Organizations ({totalCount})</h3>
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-            <button
-              className="btn btn-outline"
-              onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-              style={{ fontSize: '0.875rem' }}
-            >
-              {showAdvancedFilters ? 'Скрыть' : 'Показать'} фильтры
-            </button>
+            {/*<button*/}
+            {/*  className="btn btn-outline"*/}
+            {/*  onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}*/}
+            {/*  style={{ fontSize: '0.875rem' }}*/}
+            {/*>*/}
+            {/*  {showAdvancedFilters ? 'Скрыть' : 'Показать'} фильтры*/}
+            {/*</button>*/}
             <button
               className="btn btn-secondary"
               onClick={clearFilters}
               style={{ fontSize: '0.875rem' }}
             >
-              Очистить все
+              Clear all
             </button>
           </div>
         </div>
@@ -263,51 +263,51 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
           </div>
         </div>
 
-        {/* Расширенные фильтры */}
-        {showAdvancedFilters && (
-          <div style={{ marginBottom: '1rem', padding: '1rem', background: '#e9ecef', borderRadius: '8px' }}>
-            <h4 style={{ margin: '0 0 1rem 0', color: '#2c3e50' }}>Расширенные фильтры</h4>
-            <div className="row">
-              <div className="col-3">
-                <label className="form-label">Дата создания (от)</label>
-                <input
-                  type="date"
-                  className="form-control"
-                  value={filters?.creationDate?.min || ''}
-                  onChange={(e) => handleFilterChange('creationDate.min', e.target.value || undefined)}
-                />
-              </div>
-              <div className="col-3">
-                <label className="form-label">Дата создания (до)</label>
-                <input
-                  type="date"
-                  className="form-control"
-                  value={filters?.creationDate?.max || ''}
-                  onChange={(e) => handleFilterChange('creationDate.max', e.target.value || undefined)}
-                />
-              </div>
-              <div className="col-3">
-                <label className="form-label">Координата X (мин)</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  value={filters?.coordinates?.x || ''}
-                  onChange={(e) => handleFilterChange('coordinates.x', e.target.value ? parseInt(e.target.value) : undefined)}
-                />
-              </div>
-              <div className="col-3">
-                <label className="form-label">Координата Y (мин)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  className="form-control"
-                  value={filters?.coordinates?.y || ''}
-                  onChange={(e) => handleFilterChange('coordinates.y', e.target.value ? parseFloat(e.target.value) : undefined)}
-                />
-              </div>
-            </div>
-          </div>
-        )}
+        {/*/!* Расширенные фильтры *!/*/}
+        {/*{showAdvancedFilters && (*/}
+        {/*  <div style={{ marginBottom: '1rem', padding: '1rem', background: '#e9ecef', borderRadius: '8px' }}>*/}
+        {/*    <h4 style={{ margin: '0 0 1rem 0', color: '#2c3e50' }}>Расширенные фильтры</h4>*/}
+        {/*    <div className="row">*/}
+        {/*      <div className="col-3">*/}
+        {/*        <label className="form-label">Дата создания (от)</label>*/}
+        {/*        <input*/}
+        {/*          type="date"*/}
+        {/*          className="form-control"*/}
+        {/*          value={filters?.creationDate?.min || ''}*/}
+        {/*          onChange={(e) => handleFilterChange('creationDate.min', e.target.value || undefined)}*/}
+        {/*        />*/}
+        {/*      </div>*/}
+        {/*      <div className="col-3">*/}
+        {/*        <label className="form-label">Дата создания (до)</label>*/}
+        {/*        <input*/}
+        {/*          type="date"*/}
+        {/*          className="form-control"*/}
+        {/*          value={filters?.creationDate?.max || ''}*/}
+        {/*          onChange={(e) => handleFilterChange('creationDate.max', e.target.value || undefined)}*/}
+        {/*        />*/}
+        {/*      </div>*/}
+        {/*      <div className="col-3">*/}
+        {/*        <label className="form-label">Координата X (мин)</label>*/}
+        {/*        <input*/}
+        {/*          type="number"*/}
+        {/*          className="form-control"*/}
+        {/*          value={filters?.coordinates?.x || ''}*/}
+        {/*          onChange={(e) => handleFilterChange('coordinates.x', e.target.value ? parseInt(e.target.value) : undefined)}*/}
+        {/*        />*/}
+        {/*      </div>*/}
+        {/*      <div className="col-3">*/}
+        {/*        <label className="form-label">Координата Y (мин)</label>*/}
+        {/*        <input*/}
+        {/*          type="number"*/}
+        {/*          step="0.01"*/}
+        {/*          className="form-control"*/}
+        {/*          value={filters?.coordinates?.y || ''}*/}
+        {/*          onChange={(e) => handleFilterChange('coordinates.y', e.target.value ? parseFloat(e.target.value) : undefined)}*/}
+        {/*        />*/}
+        {/*      </div>*/}
+        {/*    </div>*/}
+        {/*  </div>*/}
+        {/*)}*/}
 
         {/* Таблица */}
         <div className="table-container">
@@ -731,16 +731,17 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                       >
                         🗑️
                       </button>
-                      {org.fullName && (
-                        <button
-                          className="btn btn-secondary"
-                          onClick={() => onDeleteByFullname(org.fullName!)}
-                          style={{ padding: '0.5rem', fontSize: '0.875rem' }}
-                          title={`Удалить по полному имени: ${org.fullName}`}
-                        >
-                          🗑️
-                        </button>
-                      )}
+                      {/*todo move to functions*/}
+                      {/*{org.fullName && (*/}
+                      {/*  <button*/}
+                      {/*    className="btn btn-secondary"*/}
+                      {/*    onClick={() => onDeleteByFullname(org.fullName!)}*/}
+                      {/*    style={{ padding: '0.5rem', fontSize: '0.875rem' }}*/}
+                      {/*    title={`Удалить по полному имени: ${org.fullName}`}*/}
+                      {/*  >*/}
+                      {/*    🗑️*/}
+                      {/*  </button>*/}
+                      {/*)}*/}
                     </div>
                   </td>
                 </tr>
@@ -754,13 +755,13 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
             <div>
               <strong>
-                Показано {formatNumber(currentPage * pageSize + 1)}-{formatNumber(Math.min((currentPage + 1) * pageSize, totalCount))} из {formatNumber(totalCount)} записей
+                {formatNumber(currentPage * pageSize + 1)}-{formatNumber(Math.min((currentPage + 1) * pageSize, totalCount))} out of {formatNumber(totalCount)} orgs
               </strong>
             </div>
             
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
               <div>
-                <label style={{ marginRight: '0.5rem' }}>Записей на странице:</label>
+                <label style={{ marginRight: '0.5rem' }}>Orgs by page:</label>
                 <select
                   className="form-control form-select"
                   value={pageSize}
@@ -778,37 +779,41 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                 <button
                   onClick={() => onPageChange(0)}
                   disabled={currentPage === 0}
-                  title="Первая страница"
+                  title="First page"
                 >
-                  ⏮️
+                  &lt;&lt;
+                  {/*⏮️*/}
                 </button>
                 
                 <button
                   onClick={() => onPageChange(currentPage - 1)}
                   disabled={currentPage === 0}
-                  title="Предыдущая страница"
+                  title="Previous page"
                 >
-                  ◀️
+                  {/*◀️*/}
+                  &lt;
                 </button>
                 
                 <span style={{ padding: '0.5rem 1rem', color: '#7f8c8d' }}>
-                  Страница {currentPage + 1} из {totalPages}
+                  Page {currentPage + 1} out of {totalPages}
                 </span>
                 
                 <button
                   onClick={() => onPageChange(currentPage + 1)}
                   disabled={currentPage === totalPages - 1}
-                  title="Следующая страница"
+                  title="Next page"
                 >
-                  ▶️
+                  {/*▶️*/}
+                  &gt;
                 </button>
                 
                 <button
                   onClick={() => onPageChange(totalPages - 1)}
                   disabled={currentPage === totalPages - 1}
-                  title="Последняя страница"
+                  title="Last page"
                 >
-                  ⏭️
+                  {/*⏭️*/}
+                  &gt;&gt;
                 </button>
               </div>
             </div>
