@@ -1,17 +1,18 @@
 package ru.itmo.soa.service;
 
 
-import org.springframework.http.ResponseEntity;
-import ru.itmo.gen.model.*;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
 import ru.itmo.soa.external.OrganizationsClient;
+import ru.itmo.soa.model.*;
 
-import javax.inject.Inject;
 
+@RequestScoped
 public class OrgDirectoryService {
     @Inject
     OrganizationsClient organizationsClient;
 
-    public ResponseEntity<OrganizationArray> getOrganizationsInRange(Integer min, Integer max, Pagination pagination) {
+    public OrganizationArray getOrganizationsInRange(Integer min, Integer max, Pagination pagination) {
         OrganizationFilters filters = new OrganizationFilters();
         OrganizationFiltersFilter filter = new OrganizationFiltersFilter();
         OrganizationFiltersFilterAnnualTurnover turnoverFilter = new OrganizationFiltersFilterAnnualTurnover();
@@ -22,21 +23,16 @@ public class OrgDirectoryService {
         filters = filters.filter(filter);
         filters = filters.pagination(pagination);
 
-        OrganizationArray organizations = organizationsClient.getOrganizations(filters);
-
-        return ResponseEntity.ok(organizations);
+        return organizationsClient.getOrganizations(filters);
     }
 
-    public ResponseEntity<OrganizationArray> getOrganizationsByType(OrganizationFiltersFilter.TypeEnum type, Pagination pagination) {
+    public OrganizationArray getOrganizationsByType(OrganizationFiltersFilter.TypeEnum type, Pagination pagination) {
         OrganizationFilters filters = new OrganizationFilters();
         OrganizationFiltersFilter filter = new OrganizationFiltersFilter();
 
         filter = filter.type(type);
         filters = filters.filter(filter);
         filters = filters.pagination(pagination);
-
-        OrganizationArray organizations = organizationsClient.getOrganizations(filters);
-
-        return ResponseEntity.ok(organizations);
+        return organizationsClient.getOrganizations(filters);
     }
 }
