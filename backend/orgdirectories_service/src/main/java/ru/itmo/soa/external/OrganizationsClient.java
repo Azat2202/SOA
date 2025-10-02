@@ -11,12 +11,13 @@ import jakarta.ws.rs.core.Response;
 import ru.itmo.soa.model.OrganizationArray;
 import ru.itmo.soa.model.OrganizationFilters;
 
+import static ru.itmo.soa.HelloApplication.EXTERNAL_URL;
+
 @ApplicationScoped
 public class OrganizationsClient {
     public OrganizationArray getOrganizations(OrganizationFilters filters) {
 //        return new OrganizationArray();
-        String serviceUrl = "http://localhost:8081/organizations";
-        String methodUrl = serviceUrl + "/filter";
+        String methodUrl = EXTERNAL_URL + "/filter";
 
         try {
             Client client = ClientBuilder.newClient();

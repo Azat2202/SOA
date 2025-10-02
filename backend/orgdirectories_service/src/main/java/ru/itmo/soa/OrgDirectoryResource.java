@@ -8,6 +8,8 @@ import ru.itmo.soa.model.OrganizationFiltersFilter;
 import ru.itmo.soa.model.Pagination;
 import ru.itmo.soa.service.OrgDirectoryService;
 
+import java.util.logging.Logger;
+
 @Path("/orgdirectory")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
