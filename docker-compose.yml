@@ -30,6 +30,7 @@ services:
       - ./nginx/logs:/var/log/nginx   # <-- map logs to host
     networks:
       - backend
+      - frontend
   orgdirectories:
     build:
       context: ./backend
@@ -48,6 +49,15 @@ services:
       - "8081:8081"
     networks:
       - backend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: frontend.Dockerfile
+    container_name: frontend
+    ports:
+      - "81:80"
+    networks:
+      - frontend
 
 volumes:
   db-organizations-data:
@@ -55,3 +65,5 @@ volumes:
 networks:
   backend:
     name: backend
+  frontend:
+    name: frontend
