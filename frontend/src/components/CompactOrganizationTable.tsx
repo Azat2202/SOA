@@ -47,7 +47,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
   const formatDate = (dateString?: string) => {
-    if (!dateString) return 'Не указана';
+    if (!dateString) return 'Дата не указана';
     return new Date(dateString).toLocaleDateString('ru-RU');
   };
 

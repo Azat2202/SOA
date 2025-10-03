@@ -35,6 +35,7 @@ services:
     build:
       context: ./backend
       dockerfile: orgdirectories.Dockerfile
+    image: docker.io/azat222/soa:orgdirectories
     container_name: orgdirectories
     ports:
       - "8082:8082"
@@ -44,6 +45,7 @@ services:
     build:
       context: ./backend
       dockerfile: organizations.Dockerfile
+    image: docker.io/azat222/soa:organizations
     container_name: organizations
     ports:
       - "8081:8081"
@@ -54,6 +56,7 @@ services:
       context: ./frontend
       dockerfile: frontend.Dockerfile
     container_name: frontend
+    image: docker.io/azat222/soa:frontend
     ports:
       - "81:80"
     networks:
