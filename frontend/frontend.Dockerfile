@@ -3,6 +3,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci --omit=dev
 COPY . .
+ENV REACT_APP_API_BASE_URL="https://62.84.113.222/"
 RUN npm run build
 
 
