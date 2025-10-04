@@ -260,6 +260,10 @@ export type OrganizationFilters = {
       min?: string;
       max?: string;
     };
+    annualTurnover?: {
+      min?: number;
+      max?: number;
+    };
     fullName?: string;
     employeesCount?: number;
     type?: "PUBLIC" | "TRUST" | "OPEN_JOINT_STOCK_COMPANY";

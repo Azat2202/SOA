@@ -3,7 +3,7 @@ import { OrganizationRead, OrganizationFilters } from '../store/types.generated'
 
 interface CompactOrganizationTableProps {
   organizations: OrganizationRead[];
-  loading: boolean;
+  // loading: boolean;
   totalCount: number;
   currentPage: number;
   pageSize: number;
@@ -24,7 +24,7 @@ interface CompactOrganizationTableProps {
 
 const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
   organizations,
-  loading,
+  // loading,
   totalCount,
   currentPage,
   pageSize,
@@ -44,7 +44,10 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
 }) => {
   const [filters, setFilters] = useState<OrganizationFilters['filter']>({});
   const [sorting, setSorting] = useState<OrganizationFilters['sort']>([]);
-  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [showAdvancedFunctions, setShowAdvancedFunctions] = useState(false);
+  const [deleteFullname, setDeleteFullname] = useState('');
+  const [turnoverRange, setTurnoverRange] = useState({ min: '', max: '' });
+  const [filterType, setFilterType] = useState('');
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'Дата не указана';
@@ -105,7 +108,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
     const currentSorting = sorting || [];
     const existingSort = currentSorting.find(s => s.field === field);
     let newSorting: OrganizationFilters['sort'] = [];
-    
+
     if (existingSort) {
       // Переключаем направление сортировки
       if (existingSort.direction === 'ASC') {
@@ -120,7 +123,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
       // Добавляем новую сортировку
       newSorting = [...currentSorting, { field: field as any, direction: 'ASC' }];
     }
-    
+
     setSorting(newSorting);
     onSortingChange(newSorting);
   };
@@ -139,16 +142,36 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
     onSortingChange([]);
   };
 
-  const totalPages = Math.ceil(totalCount / pageSize);
+  const handleAdvancedFunction = (action: string) => {
+    switch (action) {
+      case 'deleteByFullname':
+        if (deleteFullname.trim()) {
+          onDeleteByFullname(deleteFullname.trim());
+          setDeleteFullname('');
+        }
+        break;
+      case 'filterByTurnover':
+        const min = parseFloat(turnoverRange.min);
+        const max = parseFloat(turnoverRange.max);
+        if (!isNaN(min) && !isNaN(max)) {
+          onFilterByTurnover(min, max);
+        }
+        break;
+      case 'filterByType':
+        if (filterType) {
+          onFilterByType(filterType as any);
+        }
+        break;
+      case 'getEmployeesStats':
+        onGetEmployeesStats();
+        break;
+      case 'getTurnoverStats':
+        onGetTurnoverStats();
+        break;
+    }
+  };
 
-  if (loading) {
-    return (
-      <div className="loading">
-        <div className="spinner"></div>
-        Загрузка организаций...
-      </div>
-    );
-  }
+  const totalPages = Math.ceil(totalCount / pageSize);
 
   return (
     <div className="card">
@@ -156,13 +179,6 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h3>Organizations ({totalCount})</h3>
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-            {/*<button*/}
-            {/*  className="btn btn-outline"*/}
-            {/*  onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}*/}
-            {/*  style={{ fontSize: '0.875rem' }}*/}
-            {/*>*/}
-            {/*  {showAdvancedFilters ? 'Скрыть' : 'Показать'} фильтры*/}
-            {/*</button>*/}
             <button
               className="btn btn-secondary"
               onClick={clearFilters}
@@ -175,93 +191,16 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
       </div>
       
       <div className="card-body">
-        {/* Дополнительные функции */}
-        <div style={{ marginBottom: '1rem', padding: '1rem', background: '#f8f9fa', borderRadius: '8px' }}>
-          <h4 style={{ margin: '0 0 1rem 0', color: '#2c3e50' }}>Дополнительные функции</h4>
-          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-              <label>Оборот от:</label>
-              <input
-                type="number"
-                id="minTurnover"
-                className="form-control"
-                placeholder="Мин"
-                style={{ width: '100px' }}
-                defaultValue="0"
-              />
-              <label>до:</label>
-              <input
-                type="number"
-                id="maxTurnover"
-                className="form-control"
-                placeholder="Макс"
-                style={{ width: '100px' }}
-                defaultValue="1000000"
-              />
-              <button
-                className="btn btn-info"
-                onClick={() => {
-                  const min = parseInt((document.getElementById('minTurnover') as HTMLInputElement)?.value) || 0;
-                  const max = parseInt((document.getElementById('maxTurnover') as HTMLInputElement)?.value) || 1000000;
-                  onFilterByTurnover(min, max);
-                }}
-                style={{ fontSize: '0.875rem' }}
-              >
-                Фильтр по обороту
-              </button>
-            </div>
-            
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <button
-                className="btn btn-outline"
-                onClick={() => onFilterByType('PUBLIC')}
-                style={{ fontSize: '0.875rem' }}
-              >
-                Публичные
-              </button>
-              <button
-                className="btn btn-outline"
-                onClick={() => onFilterByType('TRUST')}
-                style={{ fontSize: '0.875rem' }}
-              >
-                Трасты
-              </button>
-              <button
-                className="btn btn-outline"
-                onClick={() => onFilterByType('OPEN_JOINT_STOCK_COMPANY')}
-                style={{ fontSize: '0.875rem' }}
-              >
-                ОАО
-              </button>
-            </div>
-            
-            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-              <button
-                className="btn btn-success"
-                onClick={onGetEmployeesStats}
-                style={{ fontSize: '0.875rem' }}
-              >
-                Статистика сотрудников
-              </button>
-              <span style={{ fontSize: '0.875rem', fontWeight: 'bold', color: '#28a745' }}>
-                {employeesStats?.count !== undefined ? formatNumber(employeesStats.count) : '—'}
-              </span>
-            </div>
-            
-            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-              <button
-                className="btn btn-success"
-                onClick={onGetTurnoverStats}
-                style={{ fontSize: '0.875rem' }}
-              >
-                Статистика оборота
-              </button>
-              <span style={{ fontSize: '0.875rem', fontWeight: 'bold', color: '#17a2b8' }}>
-                {turnoverStats?.count !== undefined ? formatNumber(turnoverStats.count) : '—'}
-              </span>
-            </div>
-          </div>
-        </div>
+         {/* Advanced Functions Button */}
+         <div style={{ marginBottom: '1rem', textAlign: 'right' }}>
+           <button
+             className="btn btn-outline-primary"
+             onClick={() => setShowAdvancedFunctions(!showAdvancedFunctions)}
+             style={{ fontSize: '0.875rem' }}
+           >
+             {showAdvancedFunctions ? 'Hide' : 'Show'} Advanced Functions
+           </button>
+         </div>
 
         {/*/!* Расширенные фильтры *!/*/}
         {/*{showAdvancedFilters && (*/}
@@ -308,6 +247,142 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
         {/*    </div>*/}
         {/*  </div>*/}
         {/*)}*/}
+
+        {showAdvancedFunctions && (
+         <div style={{ 
+           marginTop: '1rem', 
+           padding: '1.5rem', 
+           background: '#f8f9fa', 
+           borderRadius: '8px',
+           border: '1px solid #dee2e6'
+         }}>
+           <h4 style={{ margin: '0 0 1.5rem 0', color: '#2c3e50' }}>Advanced Functions</h4>
+           
+           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+             {/* Delete by Full Name */}
+             <div>
+               <h5 style={{ margin: '0 0 0.5rem 0', color: '#495057' }}>Delete by Full Name</h5>
+               <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                 <input
+                   type="text"
+                   className="form-control"
+                   placeholder="Enter full name"
+                   value={deleteFullname}
+                   onChange={(e) => setDeleteFullname(e.target.value)}
+                   style={{ flex: 1 }}
+                 />
+                 <button
+                   className="btn btn-danger"
+                   onClick={() => handleAdvancedFunction('deleteByFullname')}
+                   disabled={!deleteFullname.trim()}
+                 >
+                   Delete
+                 </button>
+               </div>
+             </div>
+
+             {/* Filter by Type */}
+             <div>
+               <h5 style={{ margin: '0 0 0.5rem 0', color: '#495057' }}>Filter by Type</h5>
+               <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                 <button
+                   className="btn btn-outline"
+                   onClick={() => onFilterByType('PUBLIC')}
+                 >
+                   Public
+                 </button>
+                 <button
+                   className="btn btn-outline"
+                   onClick={() => onFilterByType('TRUST')}
+                 >
+                   Trust
+                 </button>
+                 <button
+                   className="btn btn-outline"
+                   onClick={() => onFilterByType('OPEN_JOINT_STOCK_COMPANY')}
+                 >
+                   OJS
+                 </button>
+               </div>
+             </div>
+
+             {/* Filter by Turnover Range */}
+             <div>
+               <h5 style={{ margin: '0 0 0.5rem 0', color: '#495057' }}>Filter by Turnover Range</h5>
+               <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                 <input
+                   type="number"
+                   className="form-control"
+                   placeholder="Min turnover"
+                   value={turnoverRange.min}
+                   onChange={(e) => setTurnoverRange({...turnoverRange, min: e.target.value})}
+                   style={{ width: '150px' }}
+                 />
+                 <span>to</span>
+                 <input
+                   type="number"
+                   className="form-control"
+                   placeholder="Max turnover"
+                   value={turnoverRange.max}
+                   onChange={(e) => setTurnoverRange({...turnoverRange, max: e.target.value})}
+                   style={{ width: '150px' }}
+                 />
+                 <button
+                   className="btn btn-primary"
+                   onClick={() => handleAdvancedFunction('filterByTurnover')}
+                   disabled={!turnoverRange.min || !turnoverRange.max}
+                 >
+                   Apply Filter
+                 </button>
+               </div>
+             </div>
+
+             {/* Statistics */}
+             <div>
+               <h5 style={{ margin: '0 0 0.5rem 0', color: '#495057' }}>Statistics</h5>
+               <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                 <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                   <button
+                     className="btn btn-success"
+                     onClick={() => handleAdvancedFunction('getEmployeesStats')}
+                   >
+                     Get Employees Stats
+                   </button>
+                   <span style={{ 
+                     fontSize: '0.875rem', 
+                     fontWeight: 'bold', 
+                     color: '#28a745',
+                     padding: '0.25rem 0.5rem',
+                     backgroundColor: '#e8f5e8',
+                     borderRadius: '4px'
+                   }}>
+                     {employeesStats?.count !== undefined ? formatNumber(employeesStats.count) : '—'} organizations
+                   </span>
+                 </div>
+                 
+                 <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                   <button
+                     className="btn btn-info"
+                     onClick={() => handleAdvancedFunction('getTurnoverStats')}
+                   >
+                     Get Turnover Stats
+                   </button>
+                   <span style={{ 
+                     fontSize: '0.875rem', 
+                     fontWeight: 'bold', 
+                     color: '#17a2b8',
+                     padding: '0.25rem 0.5rem',
+                     backgroundColor: '#e0f2f1',
+                     borderRadius: '4px'
+                   }}>
+                     {turnoverStats?.count !== undefined ? formatNumber(turnoverStats.count) : '—'} organizations
+                   </span>
+                 </div>
+               </div>
+             </div>
+           </div>
+         </div>
+       )}
 
         {/* Таблица */}
         <div className="table-container">
@@ -400,24 +475,22 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                       {getSortIcon('ANNUAL_TURNOVER')}
                     </button>
                   </div>
-                  <div>
-                  <input
-                      type="number"
-                      className="form-control"
-                      value={filters?.employeesCount || ''}
-                      onChange={(e) => handleFilterChange('employeesCount', e.target.value ? parseInt(e.target.value) : undefined)}
-                      placeholder="Min"
-                      style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
-                  />
-                  <input
-                      type="number"
-                      className="form-control"
-                      value={filters?.employeesCount || ''}
-                      onChange={(e) => handleFilterChange('employeesCount', e.target.value ? parseInt(e.target.value) : undefined)}
-                      placeholder="Max"
-                      style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
-                  />
-                  </div>
+                   <div>
+                   <input
+                       type="number"
+                       className="form-control"
+                       placeholder="Min turnover"
+                       onChange={(e) => handleFilterChange('annualTurnover.min', e.target.value ? parseInt(e.target.value) : undefined)}
+                       style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
+                   />
+                   <input
+                       type="number"
+                       className="form-control"
+                       placeholder="Max turnover"
+                       onChange={(e) => handleFilterChange('annualTurnover.max', e.target.value ? parseInt(e.target.value) : undefined)}
+                       style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
+                   />
+                   </div>
                 </th>
                 <th>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -433,7 +506,6 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                   <input
                     type="number"
                     className="form-control"
-                    value={filters?.employeesCount || ''}
                     onChange={(e) => handleFilterChange('employeesCount', e.target.value ? parseInt(e.target.value) : undefined)}
                     placeholder="Number"
                     style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
@@ -515,14 +587,14 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                     {getSortIcon('ADDRESS_STREET')}
                   </button>
                 </div>
-                  <input
-                      type="text"
-                      className="form-control"
-                      value={filters?.postalAddress?.street || ''}
-                      onChange={(e) => handleFilterChange('postalAddress.street', e.target.value)}
-                      placeholder="Street"
-                      style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
-                  />
+                   <input
+                     type="text"
+                     className="form-control"
+                     value={filters?.postalAddress?.street || ''}
+                     onChange={(e) => handleFilterChange('postalAddress.street', e.target.value || undefined)}
+                     placeholder="Street"
+                     style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
+                   />
                 </th>
                 <th>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -535,14 +607,14 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                       {getSortIcon('ADDRESS_TOWN_NAME')}
                     </button>
                   </div>
-                  <input
-                      type="text"
-                      className="form-control"
-                      value={filters?.postalAddress?.town?.name || ''}
-                      onChange={(e) => handleFilterChange('postalAddress.town.name', e.target.value)}
-                      placeholder="Town"
-                      style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
-                  />
+                   <input
+                     type="text"
+                     className="form-control"
+                     value={filters?.postalAddress?.town?.name || ''}
+                     onChange={(e) => handleFilterChange('postalAddress.town.name', e.target.value || undefined)}
+                     placeholder="Town"
+                     style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
+                   />
                 </th>
                 <th>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -555,13 +627,14 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                       {getSortIcon('ADDRESS_TOWN_X')}
                     </button>
                   </div>
-                  <input
-                      type="number"
-                      className="form-control"
-                      value={filters?.postalAddress?.town?.x || ''}
-                      placeholder="X"
-                      onChange={(e) => handleFilterChange('postalAddress.town.x', e.target.value ? parseInt(e.target.value) : undefined)}
-                  />
+                   <input
+                     type="number"
+                     className="form-control"
+                     value={filters?.postalAddress?.town?.x || ''}
+                     placeholder="X"
+                     onChange={(e) => handleFilterChange('postalAddress.town.x', e.target.value ? parseInt(e.target.value) : undefined)}
+                     style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
+                   />
                 </th>
                 <th>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -574,13 +647,14 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                       {getSortIcon('ADDRESS_TOWN_Y')}
                     </button>
                   </div>
-                  <input
-                      type="number"
-                      className="form-control"
-                      value={filters?.postalAddress?.town?.y || ''}
-                      placeholder="Y"
-                      onChange={(e) => handleFilterChange('postalAddress.town.y', e.target.value ? parseInt(e.target.value) : undefined)}
-                  />
+                   <input
+                     type="number"
+                     className="form-control"
+                     value={filters?.postalAddress?.town?.y || ''}
+                     placeholder="Y"
+                     onChange={(e) => handleFilterChange('postalAddress.town.y', e.target.value ? parseInt(e.target.value) : undefined)}
+                     style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
+                   />
                 </th>
                 <th>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -593,13 +667,14 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                       {getSortIcon('ADDRESS_TOWN_Z')}
                     </button>
                   </div>
-                  <input
-                      type="number"
-                      className="form-control"
-                      value={filters?.postalAddress?.town?.z || ''}
-                      placeholder="Z"
-                      onChange={(e) => handleFilterChange('postalAddress.town.z', e.target.value ? parseInt(e.target.value) : undefined)}
-                  />
+                   <input
+                     type="number"
+                     className="form-control"
+                     value={filters?.postalAddress?.town?.z || ''}
+                     placeholder="Z"
+                     onChange={(e) => handleFilterChange('postalAddress.town.z', e.target.value ? parseInt(e.target.value) : undefined)}
+                     style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
+                   />
                 </th>
                 <th>Actions</th>
               </tr>
@@ -818,10 +893,11 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+         </div>
+       </div>
 
-export default CompactOrganizationTable;
+     </div>
+   );
+ };
+ 
+ export default CompactOrganizationTable;
