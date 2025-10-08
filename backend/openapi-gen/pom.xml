@@ -77,7 +77,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/../../lab1/swagger.yaml</inputSpec>
+                            <inputSpec>${project.basedir}/../swagger.yaml</inputSpec>
                             <generatorName>spring</generatorName>
                             <apiPackage>ru.itmo.gen.api</apiPackage>
                             <modelPackage>ru.itmo.gen.model</modelPackage>

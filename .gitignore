@@ -1,3 +1,5 @@
 *.iml
 .idea/
 ./frontend/node_modules
+./nginx/logs/access.log
+./nginx/logs/error.log

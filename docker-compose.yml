@@ -16,6 +16,8 @@ services:
       timeout: 1s
       retries: 10
     restart: unless-stopped
+    networks:
+      - backend
   nginx:
     image: nginx:alpine
     container_name: nginx
@@ -25,5 +27,46 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/ssl/selfsigned.crt:/etc/nginx/ssl/selfsigned.crt:ro
       - ./nginx/ssl/selfsigned.key:/etc/nginx/ssl/selfsigned.key:ro
+      - ./nginx/logs:/var/log/nginx   # <-- map logs to host
+    networks:
+      - backend
+      - frontend
+  orgdirectories:
+    build:
+      context: ./backend
+      dockerfile: orgdirectories.Dockerfile
+    image: docker.io/azat222/soa:orgdirectories
+    container_name: orgdirectories
+    ports:
+      - "8082:8082"
+    networks:
+      - backend
+  organizations:
+    build:
+      context: ./backend
+      dockerfile: organizations.Dockerfile
+    image: docker.io/azat222/soa:organizations
+    container_name: organizations
+    ports:
+      - "8081:8081"
+    networks:
+      - backend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: frontend.Dockerfile
+    container_name: frontend
+    image: docker.io/azat222/soa:frontend
+    ports:
+      - "81:80"
+    networks:
+      - frontend
+
 volumes:
   db-organizations-data:
+
+networks:
+  backend:
+    name: backend
+  frontend:
+    name: frontend
