@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
+import { useDispatch } from 'react-redux';
+import type { AppDispatch } from '../store/store';
 import {
   usePostOrganizationsFilterMutation,
   usePostOrganizationsMutation,
   usePutOrganizationsByIdMutation,
   useDeleteOrganizationsByIdMutation,
   usePostOrganizationsDeleteByFullnameMutation,
-  useGetOrganizationsQuantityByEmployeesQuery,
-  useGetOrganizationsQuantityByTurnoverQuery,
   usePostOrgdirectoryFilterTurnoverByMinAnnualTurnoverAndMaxAnnualTurnoverMutation,
   usePostOrgdirectoryFilterTypeByTypeMutation,
+  organizationsApi,
   OrganizationFilters,
   Organization,
   OrganizationRead,
@@ -19,6 +20,7 @@ import OrganizationForm from './OrganizationForm';
 import CompactOrganizationTable from './CompactOrganizationTable';
 
 const OrganizationsPage: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const [organizations, setOrganizations] = useState<OrganizationRead[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
@@ -36,16 +38,6 @@ const OrganizationsPage: React.FC = () => {
   const [deleteByFullname] = usePostOrganizationsDeleteByFullnameMutation();
   const [filterByTurnover] = usePostOrgdirectoryFilterTurnoverByMinAnnualTurnoverAndMaxAnnualTurnoverMutation();
   const [filterByType] = usePostOrgdirectoryFilterTypeByTypeMutation();
-
-  // Statistics queries
-  const { data: employeesStats, refetch: refetchEmployeesStats } = useGetOrganizationsQuantityByEmployeesQuery(
-    { quantity: 100 },
-    { skip: true }
-  );
-  const { data: turnoverStats, refetch: refetchTurnoverStats } = useGetOrganizationsQuantityByTurnoverQuery(
-    { 'max-turnover': 1000000 },
-    { skip: true }
-  );
 
   // Load organizations on component mount and when filters/sorting change
   useEffect(() => {
@@ -151,15 +143,21 @@ const OrganizationsPage: React.FC = () => {
     }
   };
 
-  const handleFilterByType = async (type: 'PUBLIC' | 'TRUST' | 'OPEN_JOINT_STOCK_COMPANY') => {
+  const handleFilterByType = async (type: 'PUBLIC' | 'TRUST' | 'OPEN_JOINT_STOCK_COMPANY' | '') => {
     try {
+      if (!type) {
+        // Clear type filter - reload with current filters
+        loadOrganizations();
+        return;
+      }
+
       const pagination: Pagination = {
         page: 0,
         size: pageSize,
       };
 
       const result = await filterByType({
-        type,
+        type: type as 'PUBLIC' | 'TRUST' | 'OPEN_JOINT_STOCK_COMPANY',
         pagination,
       }).unwrap();
 
@@ -193,12 +191,44 @@ const OrganizationsPage: React.FC = () => {
     setCurrentPage(0);
   };
 
-  const handleGetEmployeesStats = () => {
-    refetchEmployeesStats();
+  const handleGetEmployeesStats = async (quantity: number) => {
+    try {
+      const result = await dispatch(organizationsApi.endpoints.getOrganizationsQuantityByEmployees.initiate({ quantity }));
+      console.log('Employees stats:', result);
+      if (result.data) {
+        toast.success(`Found ${result.data.count} organizations with ${quantity}+ employees`);
+      }
+    } catch (error: any) {
+      console.error('Error getting employees stats:', error);
+      toast.error(`Error getting employees stats: ${error.data?.message || error.message}`);
+    }
   };
 
-  const handleGetTurnoverStats = () => {
-    refetchTurnoverStats();
+  const handleGetTurnoverStats = async (maxTurnover: number) => {
+    try {
+      const result = await dispatch(organizationsApi.endpoints.getOrganizationsQuantityByTurnover.initiate({ 'max-turnover': maxTurnover }));
+      console.log('Turnover stats:', result);
+      if (result.data) {
+        toast.success(`Found ${result.data.count} organizations with turnover <= ${maxTurnover}`);
+      }
+    } catch (error: any) {
+      console.error('Error getting turnover stats:', error);
+      toast.error(`Error getting turnover stats: ${error.data?.message || error.message}`);
+    }
+  };
+
+  const handleGetOrganizationById = async (id: number) => {
+    try {
+      const result = await dispatch(organizationsApi.endpoints.getOrganizationsById.initiate({ id }));
+      console.log('Organization by ID:', result);
+      if (result.data) {
+        toast.success(`Organization found: ${result.data.name}`);
+        return result.data;
+      }
+    } catch (error: any) {
+      console.error('Error getting organization by ID:', error);
+      toast.error(`Error getting organization: ${error.data?.message || error.message}`);
+    }
   };
 
   const handleEditOrganization = (organization: OrganizationRead) => {
@@ -270,8 +300,7 @@ const OrganizationsPage: React.FC = () => {
                 onFilterByType={handleFilterByType}
                 onGetEmployeesStats={handleGetEmployeesStats}
                 onGetTurnoverStats={handleGetTurnoverStats}
-                employeesStats={employeesStats}
-                turnoverStats={turnoverStats}
+                onGetOrganizationById={handleGetOrganizationById}
               />
             </div>
           </div>
