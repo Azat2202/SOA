@@ -435,9 +435,11 @@ paths:
         content:
           application/json:
             schema:
-              type: string
-              minLength: 1
-              maxLength: 918
+              properties:
+                fullname:
+                  type: string
+                  minLength: 1
+                  maxLength: 918
       responses:
         '204':
           description: Организация успешно удалена

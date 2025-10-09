@@ -3,11 +3,8 @@ package ru.itmo.soa.controllers;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import ru.itmo.gen.api.OrganizationsApi;
-import ru.itmo.gen.model.OrganizationArray;
-import ru.itmo.gen.model.OrganizationFilters;
+import ru.itmo.gen.model.*;
 import lombok.RequiredArgsConstructor;
-import ru.itmo.gen.model.Organization;
-import ru.itmo.gen.model.OrganizationsQuantityByEmployeesGet200Response;
 import ru.itmo.soa.services.OrganizationFilterService;
 import ru.itmo.soa.services.OrganizationService;
 
@@ -39,7 +36,7 @@ public class OrganizationsController implements OrganizationsApi {
     }
 
     @Override
-    public ResponseEntity<Void> organizationsDeleteByFullnamePost(String fullname) {
+    public ResponseEntity<Void> organizationsDeleteByFullnamePost(OrganizationsDeleteByFullnamePostRequest fullname) {
         return organizationService.deleteOrganizationByFullname(fullname);
     }
 

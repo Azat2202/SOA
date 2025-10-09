@@ -195,7 +195,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
               onClick={clearFilters}
               style={{ fontSize: '0.875rem' }}
             >
-              Clear all
+              Clear filters
             </button>
           </div>
         </div>

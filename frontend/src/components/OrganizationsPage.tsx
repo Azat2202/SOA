@@ -109,7 +109,7 @@ const OrganizationsPage: React.FC = () => {
   const handleDeleteByFullname = async (fullName: string) => {
     if (window.confirm(`Вы уверены, что хотите удалить организацию с полным именем "${fullName}"?`)) {
       try {
-        await deleteByFullname({ body: fullName }).unwrap();
+        await deleteByFullname({ fullname: fullName }).unwrap();
         toast.success('Организация успешно удалена');
         loadOrganizations();
       } catch (error: any) {
