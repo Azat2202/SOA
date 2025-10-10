@@ -44,11 +44,23 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
       newErrors.name = 'Name is required';
     }
 
+    if (isNaN(formData.coordinates.x)) {
+      newErrors.coordinatesX = 'X coordinate is required';
+    }
+
+    if (isNaN(formData.coordinates.y)) {
+      newErrors.coordinatesY = 'Y coordinate is required';
+    }
+
+    if (isNaN(formData.annualTurnover)) {
+      newErrors.annualTurnover = 'Annual turnover is required';
+    }
+
     if (formData.coordinates.x < -365) {
       newErrors.coordinatesX = 'Coordinate X must be greater than -365';
     }
 
-    if (formData.annualTurnover < 1) {
+    if (!isNaN(formData.annualTurnover) && formData.annualTurnover < 1) {
       newErrors.annualTurnover = 'Annual turnover must be greater than 0';
     }
 
@@ -82,17 +94,16 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
       const newData = { ...prev };
       
       if (field.includes('.')) {
-        const [parent, child] = field.split('.');
+        const [parent, child, little] = field.split('.');
         if (parent === 'coordinates') {
           newData.coordinates = { ...newData.coordinates, [child]: value };
         } else if (parent === 'postalAddress') {
           if (child === 'street') {
             newData.postalAddress = { ...newData.postalAddress!, street: value };
-          } else if (child.startsWith('town.')) {
-            const townField = child.split('.')[1];
+          } else if (child ==='town') {
             newData.postalAddress = {
               ...newData.postalAddress!,
-              town: { ...newData.postalAddress!.town, [townField]: value }
+              town: { ...newData.postalAddress!.town, [little]: value }
             };
           }
         }
@@ -167,7 +178,7 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
                   type="number"
                   className={`form-control ${errors.coordinatesX ? 'error' : ''}`}
                   value={formData.coordinates.x}
-                  onChange={(e) => handleInputChange('coordinates.x', parseInt(e.target.value) || 0)}
+                  onChange={(e) => handleInputChange('coordinates.x', parseInt(e.target.value))}
                   placeholder="X"
                 />
                 {errors.coordinatesX && <div className="error-message">{errors.coordinatesX}</div>}
@@ -179,11 +190,12 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
                 <input
                   type="number"
                   step="0.01"
-                  className="form-control"
+                  className={`form-control ${errors.coordinatesY ? 'error' : ''}`}
                   value={formData.coordinates.y}
-                  onChange={(e) => handleInputChange('coordinates.y', parseFloat(e.target.value) || 0)}
+                  onChange={(e) => handleInputChange('coordinates.y', parseFloat(e.target.value))}
                   placeholder="Y"
                 />
+                {errors.coordinatesY && <div className="error-message">{errors.coordinatesY}</div>}
               </div>
             </div>
             <div className="col-4">
@@ -210,7 +222,7 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
                   type="number"
                   className={`form-control ${errors.annualTurnover ? 'error' : ''}`}
                   value={formData.annualTurnover}
-                  onChange={(e) => handleInputChange('annualTurnover', parseInt(e.target.value) || 1)}
+                  onChange={(e) => handleInputChange('annualTurnover', parseInt(e.target.value))}
                   placeholder="Annual turnover"
                 />
                 {errors.annualTurnover && <div className="error-message">{errors.annualTurnover}</div>}
@@ -281,7 +293,7 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
                     step="0.01"
                     className="form-control"
                     value={formData.postalAddress.town.x}
-                    onChange={(e) => handleInputChange('postalAddress.town.x', parseFloat(e.target.value) || 0)}
+                    onChange={(e) => handleInputChange('postalAddress.town.x', parseFloat(e.target.value))}
                     placeholder="X"
                   />
                 </div>
@@ -294,7 +306,7 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
                     step="0.01"
                     className="form-control"
                     value={formData.postalAddress.town.y}
-                    onChange={(e) => handleInputChange('postalAddress.town.y', parseFloat(e.target.value) || 0)}
+                    onChange={(e) => handleInputChange('postalAddress.town.y', parseFloat(e.target.value))}
                     placeholder="Y"
                   />
                 </div>
@@ -306,7 +318,7 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
                     type="number"
                     className="form-control"
                     value={formData.postalAddress.town.z}
-                    onChange={(e) => handleInputChange('postalAddress.town.z', parseInt(e.target.value) || 0)}
+                    onChange={(e) => handleInputChange('postalAddress.town.z', parseInt(e.target.value))}
                     placeholder="Z"
                   />
                 </div>
