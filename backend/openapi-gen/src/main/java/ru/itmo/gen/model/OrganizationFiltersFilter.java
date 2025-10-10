@@ -6,14 +6,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
-import java.util.Arrays;
-import org.openapitools.jackson.nullable.JsonNullable;
 import org.springframework.lang.Nullable;
 import ru.itmo.gen.model.OrganizationFiltersFilterAnnualTurnover;
 import ru.itmo.gen.model.OrganizationFiltersFilterCoordinates;
 import ru.itmo.gen.model.OrganizationFiltersFilterCreationDate;
 import ru.itmo.gen.model.OrganizationFiltersFilterPostalAddress;
-import java.util.NoSuchElementException;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
@@ -34,7 +31,7 @@ public class OrganizationFiltersFilter {
 
   private @Nullable Long organizationId;
 
-  private JsonNullable<@Size(min = 1) String> name = JsonNullable.<String>undefined();
+  private @Nullable String name;
 
   private @Nullable OrganizationFiltersFilterCoordinates coordinates;
 
@@ -108,8 +105,8 @@ public class OrganizationFiltersFilter {
     this.organizationId = organizationId;
   }
 
-  public OrganizationFiltersFilter name(String name) {
-    this.name = JsonNullable.of(name);
+  public OrganizationFiltersFilter name(@Nullable String name) {
+    this.name = name;
     return this;
   }
 
@@ -117,14 +114,14 @@ public class OrganizationFiltersFilter {
    * Get name
    * @return name
    */
-  @Size(min = 1) 
+  
   @Schema(name = "name", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("name")
-  public JsonNullable<@Size(min = 1) String> getName() {
+  public @Nullable String getName() {
     return name;
   }
 
-  public void setName(JsonNullable<String> name) {
+  public void setName(@Nullable String name) {
     this.name = name;
   }
 
@@ -279,7 +276,7 @@ public class OrganizationFiltersFilter {
     }
     OrganizationFiltersFilter organizationFiltersFilter = (OrganizationFiltersFilter) o;
     return Objects.equals(this.organizationId, organizationFiltersFilter.organizationId) &&
-        equalsNullable(this.name, organizationFiltersFilter.name) &&
+        Objects.equals(this.name, organizationFiltersFilter.name) &&
         Objects.equals(this.coordinates, organizationFiltersFilter.coordinates) &&
         Objects.equals(this.creationDate, organizationFiltersFilter.creationDate) &&
         Objects.equals(this.annualTurnover, organizationFiltersFilter.annualTurnover) &&
@@ -289,20 +286,9 @@ public class OrganizationFiltersFilter {
         Objects.equals(this.postalAddress, organizationFiltersFilter.postalAddress);
   }
 
-  private static <T> boolean equalsNullable(JsonNullable<T> a, JsonNullable<T> b) {
-    return a == b || (a != null && b != null && a.isPresent() && b.isPresent() && Objects.deepEquals(a.get(), b.get()));
-  }
-
   @Override
   public int hashCode() {
-    return Objects.hash(organizationId, hashCodeNullable(name), coordinates, creationDate, annualTurnover, fullName, employeesCount, type, postalAddress);
-  }
-
-  private static <T> int hashCodeNullable(JsonNullable<T> a) {
-    if (a == null) {
-      return 1;
-    }
-    return a.isPresent() ? Arrays.deepHashCode(new Object[]{a.get()}) : 31;
+    return Objects.hash(organizationId, name, coordinates, creationDate, annualTurnover, fullName, employeesCount, type, postalAddress);
   }
 
   @Override

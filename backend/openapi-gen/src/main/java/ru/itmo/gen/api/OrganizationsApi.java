@@ -9,6 +9,7 @@ import ru.itmo.gen.model.Error;
 import ru.itmo.gen.model.Organization;
 import ru.itmo.gen.model.OrganizationArray;
 import ru.itmo.gen.model.OrganizationFilters;
+import ru.itmo.gen.model.OrganizationsDeleteByFullnamePostRequest;
 import ru.itmo.gen.model.OrganizationsQuantityByEmployeesGet200Response;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
@@ -52,7 +53,7 @@ public interface OrganizationsApi {
      * POST /organizations/delete/by-fullname : Удалить организацию по полному имени
      * Удаляет одну (любую) организацию с указанным полным именем
      *
-     * @param body  (optional)
+     * @param organizationsDeleteByFullnamePostRequest  (optional)
      * @return Организация успешно удалена (status code 204)
      *         or Организация с указанным полным именем не найдена (status code 404)
      */
@@ -76,7 +77,7 @@ public interface OrganizationsApi {
     )
     
     default ResponseEntity<Void> organizationsDeleteByFullnamePost(
-        @Parameter(name = "body", description = "") @Valid@Size(min = 1, max = 918)  @RequestBody(required = false) @Nullable String body
+        @Parameter(name = "OrganizationsDeleteByFullnamePostRequest", description = "") @Valid @RequestBody(required = false) @Nullable OrganizationsDeleteByFullnamePostRequest organizationsDeleteByFullnamePostRequest
     ) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {

@@ -5,6 +5,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.itmo.gen.model.Organization;
+import ru.itmo.gen.model.OrganizationsDeleteByFullnamePostRequest;
 import ru.itmo.soa.models.OrganizationEntity;
 import ru.itmo.soa.repositories.OrganizationsRepository;
 
@@ -51,8 +52,8 @@ public class OrganizationService {
         }
     }
 
-    public ResponseEntity<Void> deleteOrganizationByFullname(String fullname){
-        var organizationEntity = organizationsRepository.findByFullName(fullname);
+    public ResponseEntity<Void> deleteOrganizationByFullname(OrganizationsDeleteByFullnamePostRequest fullname){
+        var organizationEntity = organizationsRepository.findByFullName(fullname.getFullname());
         if (organizationEntity != null) {
             organizationsRepository.delete(organizationEntity);
             return ResponseEntity.noContent().build();

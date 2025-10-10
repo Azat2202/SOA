@@ -44,8 +44,8 @@
 }
 
 .card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  /*transform: translateY(-2px);*/
+  /*box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);*/
 }
 
 .card-header {
@@ -130,7 +130,7 @@
 }
 
 .btn-primary:hover:not(:disabled) {
-  transform: translateY(-1px);
+  /*transform: translateY(-1px);*/
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
@@ -244,6 +244,8 @@
   display: flex;
   flex-wrap: wrap;
   margin: -0.75rem;
+  min-height: 50px;
+  padding: 0.80rem;
 }
 
 .col {

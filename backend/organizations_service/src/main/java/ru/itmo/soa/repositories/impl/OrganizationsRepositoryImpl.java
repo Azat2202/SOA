@@ -69,8 +69,8 @@ public class OrganizationsRepositoryImpl implements OrganizationsRepositoryCusto
         if (f.getOrganizationId() != null) {
             predicates.add(cb.equal(root.get("id"), f.getOrganizationId()));
         }
-        if (f.getName() != null && f.getName().isPresent()) {
-            predicates.add(cb.like(cb.lower(root.get("name")), "%" + f.getName().get().toLowerCase() + "%"));
+        if (f.getName() != null) {
+            predicates.add(cb.like(cb.lower(root.get("name")), "%" + f.getName().toLowerCase() + "%"));
         }
         if (f.getCoordinates() != null) {
             if (f.getCoordinates().getX() != null) {

@@ -130,7 +130,9 @@ export type DeleteOrganizationsByIdApiArg = {
 };
 export type PostOrganizationsDeleteByFullnameApiResponse = unknown;
 export type PostOrganizationsDeleteByFullnameApiArg = {
-  body: string;
+  body: {
+    fullname?: string;
+  };
 };
 export type GetOrganizationsQuantityByEmployeesApiResponse =
   /** status 200 Успешное получение количества */ {
@@ -251,7 +253,7 @@ export type OrganizationFilters = {
   }[];
   filter?: {
     organizationId?: number;
-    name?: string | null;
+    name?: string;
     coordinates?: {
       x?: number;
       y?: number;
