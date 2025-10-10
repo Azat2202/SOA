@@ -29,6 +29,9 @@ const OrganizationsPage: React.FC = () => {
   const [sorting, setSorting] = useState<OrganizationFilters['sort']>([]);
   const [showForm, setShowForm] = useState(false);
   const [editingOrganization, setEditingOrganization] = useState<OrganizationRead | null>(null);
+  const [empStats, setEmpStats] = useState(0);
+  const [turnoverStats, setTurnoverStats] = useState(0);
+  const [orgSearch, setOrgSearch] = useState<OrganizationRead | null>(null);
 
   // API hooks
   const [filterOrganizations] = usePostOrganizationsFilterMutation();
@@ -194,9 +197,8 @@ const OrganizationsPage: React.FC = () => {
   const handleGetEmployeesStats = async (quantity: number) => {
     try {
       const result = await dispatch(organizationsApi.endpoints.getOrganizationsQuantityByEmployees.initiate({ quantity }));
-      console.log('Employees stats:', result);
       if (result.data) {
-        toast.success(`Found ${result.data.count} organizations with ${quantity}+ employees`);
+        setEmpStats(result.data.count || 0)
       }
     } catch (error: any) {
       console.error('Error getting employees stats:', error);
@@ -207,9 +209,8 @@ const OrganizationsPage: React.FC = () => {
   const handleGetTurnoverStats = async (maxTurnover: number) => {
     try {
       const result = await dispatch(organizationsApi.endpoints.getOrganizationsQuantityByTurnover.initiate({ 'max-turnover': maxTurnover }));
-      console.log('Turnover stats:', result);
       if (result.data) {
-        toast.success(`Found ${result.data.count} organizations with turnover <= ${maxTurnover}`);
+        setTurnoverStats(result.data.count || 0)
       }
     } catch (error: any) {
       console.error('Error getting turnover stats:', error);
@@ -220,10 +221,8 @@ const OrganizationsPage: React.FC = () => {
   const handleGetOrganizationById = async (id: number) => {
     try {
       const result = await dispatch(organizationsApi.endpoints.getOrganizationsById.initiate({ id }));
-      console.log('Organization by ID:', result);
       if (result.data) {
-        toast.success(`Organization found: ${result.data.name}`);
-        return result.data;
+        setOrgSearch(result.data)
       }
     } catch (error: any) {
       console.error('Error getting organization by ID:', error);
@@ -289,6 +288,9 @@ const OrganizationsPage: React.FC = () => {
                 totalCount={totalCount}
                 currentPage={currentPage}
                 pageSize={pageSize}
+                empStats={empStats}
+                turnoverStats={turnoverStats}
+                orgSearch={orgSearch}
                 onEdit={handleEditOrganization}
                 onDelete={handleDeleteOrganization}
                 onDeleteByFullname={handleDeleteByFullname}
