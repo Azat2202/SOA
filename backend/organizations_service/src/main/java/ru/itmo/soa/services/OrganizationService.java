@@ -35,6 +35,7 @@ public class OrganizationService {
                 .map(existingEntity -> {
                     modelMapper.map(organization, existingEntity);
                     existingEntity.setId(id.longValue());
+                    existingEntity.setCreationDate(organization.getCreationDate());
                     OrganizationEntity updatedEntity = organizationsRepository.save(existingEntity);
                     Organization updatedOrganization = modelMapper.map(updatedEntity, Organization.class);
                     return ResponseEntity.ok(updatedOrganization);
