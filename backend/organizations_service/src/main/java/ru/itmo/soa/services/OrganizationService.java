@@ -33,9 +33,25 @@ public class OrganizationService {
     public ResponseEntity<Organization> updateOrganization(Integer id, Organization organization){
         return organizationsRepository.findById(id.longValue())
                 .map(existingEntity -> {
-                    modelMapper.map(organization, existingEntity);
-                    existingEntity.setId(id.longValue());
-                    existingEntity.setCreationDate(organization.getCreationDate());
+                    existingEntity.setName(organization.getName());
+                    organization.getFullName()
+                            .ifPresent(existingEntity::setFullName);
+                    existingEntity.getCoordinates().setX(organization.getCoordinates().getX());
+                    existingEntity.getCoordinates().setY(organization.getCoordinates().getY());
+                    existingEntity.setType(OrganizationEntity.TypeEnum.valueOf(organization.getType().getValue()));
+                    existingEntity.setAnnualTurnover(organization.getAnnualTurnover());
+                    organization.getEmployeesCount()
+                            .ifPresent(existingEntity::setEmployeesCount);
+                    if (organization.getPostalAddress() != null) {
+                        existingEntity.getPostalAddress().setStreet(organization.getPostalAddress().getStreet());
+                    }
+                    if (organization.getPostalAddress() != null && organization.getPostalAddress().getTown() != null) {
+                        organization.getPostalAddress().getTown().getName()
+                                .ifPresent(existingEntity.getPostalAddress().getTown()::setName);
+                        existingEntity.getPostalAddress().getTown().setX(organization.getPostalAddress().getTown().getX());
+                        existingEntity.getPostalAddress().getTown().setY(organization.getPostalAddress().getTown().getY());
+                        existingEntity.getPostalAddress().getTown().setZ(organization.getPostalAddress().getTown().getZ());
+                    }
                     OrganizationEntity updatedEntity = organizationsRepository.save(existingEntity);
                     Organization updatedOrganization = modelMapper.map(updatedEntity, Organization.class);
                     return ResponseEntity.ok(updatedOrganization);
