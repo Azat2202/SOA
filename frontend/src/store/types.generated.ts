@@ -253,7 +253,7 @@ export type OrganizationFilters = {
   }[];
   filter?: {
     organizationId?: number;
-    name?: string | null;
+    name?: string;
     coordinates?: {
       x?: number;
       y?: number;

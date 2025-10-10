@@ -221,9 +221,9 @@ const OrganizationsPage: React.FC = () => {
   const handleGetOrganizationById = async (id: number) => {
     try {
       const result = await dispatch(organizationsApi.endpoints.getOrganizationsById.initiate({ id }));
-      if (result.data) {
-        setOrgSearch(result.data)
-      }
+      // if (result.data) {
+        setOrgSearch(result.data || null);
+      // }
     } catch (error: any) {
       console.error('Error getting organization by ID:', error);
       toast.error(`Error getting organization: ${error.data?.message || error.message}`);

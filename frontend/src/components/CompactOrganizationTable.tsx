@@ -53,6 +53,9 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
   const [employeesQuantity, setEmployeesQuantity] = useState('');
   const [maxTurnover, setMaxTurnover] = useState('');
   const [organizationId, setOrganizationId] = useState('');
+  const [showEmpStats, setShowEmpStats] = useState(false);
+  const [showTurnoverStats, setShowTurnoverStats] = useState(false);
+  const [showSearchStats, setShowSearchStats] = useState(false);
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'Дата не указана';
@@ -85,21 +88,21 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
     const newFilters = { ...filters };
     
     if (field.includes('.')) {
-      const [parent, child] = field.split('.');
+      const [parent, child, little] = field.split('.');
       if (parent === 'coordinates') {
         newFilters.coordinates = { ...newFilters.coordinates, [child]: value };
       } else if (parent === 'creationDate') {
         newFilters.creationDate = { ...newFilters.creationDate, [child]: value };
       } else if (parent === 'postalAddress') {
         if (child === 'street') {
-          newFilters.postalAddress = { ...newFilters.postalAddress, street: value };
-        } else if (child.startsWith('town.')) {
-          const townField = child.split('.')[1];
-          newFilters.postalAddress = {
-            ...newFilters.postalAddress,
-            town: { ...newFilters.postalAddress?.town, [townField]: value }
-          };
+          newFilters.postalAddress = {...newFilters.postalAddress, street: value};
+        } else if (child ==='town') {
+          newFilters.postalAddress = {...newFilters.postalAddress, town: {
+              ...newFilters.postalAddress?.town, [little]: value
+            }};
         }
+      } else if (parent === 'annualTurnover') {
+        newFilters.annualTurnover = {...newFilters.annualTurnover, [child]: value}
       }
     } else {
       (newFilters as any)[field] = value;
@@ -166,7 +169,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
     const quantity = parseInt(employeesQuantity);
     if (!isNaN(quantity)) {
       onGetEmployeesStats(quantity);
-      setEmployeesQuantity('');
+      setShowEmpStats(true);
     }
   };
 
@@ -174,17 +177,15 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
     const turnover = parseInt(maxTurnover);
     if (!isNaN(turnover)) {
       onGetTurnoverStats(turnover);
-      setMaxTurnover('');
-      return ''
+      setShowTurnoverStats(true);
     }
-    return ''
   };
 
   const handleGetOrganizationById = ()  => {
     const id = parseInt(organizationId);
     if (!isNaN(id)) {
       onGetOrganizationById(id);
-      setOrganizationId('');
+      setShowSearchStats(true);
     }
   };
 
@@ -341,7 +342,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                  >
                    Apply Filter
                  </button>
-                 {turnoverRange && (
+                 {turnoverRange.min && turnoverRange.max && (
                      <button
                          className="btn btn-secondary"
                          onClick={() => {
@@ -374,8 +375,20 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                  >
                    Get Count
                  </button>
-                 {empStats}
-                 {/*{empStats !== 0 && (empStats)}*/}
+                 {showEmpStats && (
+                     <div>
+                       <button
+                           className="btn btn-secondary"
+                           onClick={() => {
+                             setEmployeesQuantity('');
+                             setShowEmpStats(false);
+                           }}
+                       >
+                         Clear
+                       </button>
+                       {empStats}
+                     </div>
+                 )}
                </div>
              </div>
 
@@ -398,7 +411,20 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                  >
                    Get Count
                  </button>
-                 {turnoverStats}
+                 {showTurnoverStats && (
+                     <div>
+                       <button
+                           className="btn btn-secondary"
+                           onClick={() => {
+                             setMaxTurnover('');
+                             setShowTurnoverStats(false);
+                           }}
+                       >
+                         Clear
+                       </button>
+                       {turnoverStats}
+                     </div>
+                 )}
                </div>
              </div>
 
@@ -421,198 +447,211 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                  >
                    Get by ID
                  </button>
-                 </div>
-               <div>
-                 {orgSearch && (
-                 <table className="table">
-                   <thead>
-                   <tr>
-                     <th style={{ width: '60px' }}>
-                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                         ID
-                       </div>
-                     </th>
-                     <th style={{ width: '120px' }}>
-                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                         Name
-                       </div>
-                     </th>
-                     <th style={{ width: '150px' }}>
-                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                         Fullname
-                       </div>
-                     </th>
-                     <th style={{ width: '100px' }}>
-                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                         Type
-                       </div>
-                     </th>
-                     <th style={{ width: '140px' }}>
-                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                         Annual turnover
-                       </div>
-                     </th>
-                     <th style={{ width: '100px' }}>
-                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                         Employees number
-                       </div>
-                     </th>
-                     <th style={{ width: '120px' }}>
-                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                         Creation date
-                       </div>
-                     </th>
-                     <th style={{ width: '80px' }}>
-                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                         Coord X
-                       </div>
-                     </th>
-                     <th style={{ width: '80px' }}>
-                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                         Coord Y
-                       </div>
-                     </th>
-                     <th style={{ width: '120px' }}>
-                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                         Street
-                       </div>
-                     </th>
-                     <th style={{ width: '100px' }}>
-                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                         Town
-                       </div>
-                     </th>
-                     <th style={{ width: '60px' }}>
-                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                         X
-                       </div>
-                     </th>
-                     <th style={{ width: '60px' }}>
-                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                         Y
-                       </div>
-                     </th>
-                     <th style={{ width: '60px' }}>
-                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                         Z
-                       </div>
-                     </th>
-                   </tr>
-                   </thead>
-                   <tbody>
-                       <tr key={orgSearch.id}>
-                         <td>
-                           <strong>{orgSearch.id}</strong>
-                         </td>
-                         <td>
-                           <div>
-                             <strong>{orgSearch.name}</strong>
-                           </div>
-                         </td>
-                         <td>
-                           <div style={{ maxWidth: '200px', wordWrap: 'break-word' }}>
-                             {orgSearch.fullName || (
-                                 <span style={{ color: '#7f8c8d', fontStyle: 'italic' }}>
-                          Не указано
-                        </span>
-                             )}
-                           </div>
-                         </td>
-                         <td>
-                    <span className={`badge ${getTypeBadgeClass(orgSearch.type)}`}>
-                      {formatType(orgSearch.type)}
-                    </span>
-                         </td>
-                         <td>
-                           <div>
-                             <strong>{formatNumber(orgSearch.annualTurnover)}</strong>
-                           </div>
-                         </td>
-                         <td>
-                           {orgSearch.employeesCount ? (
-                               <span>{formatNumber(orgSearch.employeesCount)}</span>
-                           ) : (
-                               <span style={{ color: '#7f8c8d', fontStyle: 'italic' }}>
-                        -
-                      </span>
-                           )}
-                         </td>
-                         <td>
-                           <div>
-                             {formatDate(orgSearch.creationDate)}
-                           </div>
-                         </td>
-                         <td>
-                           <div style={{ fontSize: '0.9rem' }}>
-                             <div>{orgSearch.coordinates.x}</div>
-                           </div>
-                         </td>
-                         <td>
-                           <div style={{ fontSize: '0.9rem' }}>
-                             <div>{orgSearch.coordinates.y}</div>
-                           </div>
-                         </td>
-                         <td>
-                           {orgSearch.postalAddress ? (
-                               <div style={{ fontSize: '0.9rem', maxWidth: '200px' }}>
-                                 <div>{orgSearch.postalAddress.street}</div>
-                               </div>
-                           ) : (
-                               <span style={{ color: '#7f8c8d', fontStyle: 'italic' }}>
-                        -
-                      </span>
-                           )}
-                         </td>
-                         <td>
-                           {orgSearch.postalAddress ? (
-                               <div style={{ fontSize: '0.9rem', maxWidth: '200px' }}>
-                                 {orgSearch.postalAddress.town.name && (
-                                     <div>{orgSearch.postalAddress.town.name}</div>
-                                 )}
-                               </div>
-                           ) : (
-                               <span style={{ color: '#7f8c8d', fontStyle: 'italic' }}>
-                        -
-                      </span>
-                           )}
-                         </td>
-                         <td>
-                           {orgSearch.postalAddress ? (
-                               <div style={{ fontSize: '0.9rem', maxWidth: '200px' }}>
-                                 <div>{orgSearch.postalAddress.town.x}</div>
-                               </div>
-                           ) : (
-                               <span style={{ color: '#7f8c8d', fontStyle: 'italic' }}>
-                        -
-                      </span>
-                           )}
-                         </td>
-                         <td>
-                           {orgSearch.postalAddress ? (
-                               <div style={{ fontSize: '0.9rem', maxWidth: '200px' }}>
-                                 <div>{orgSearch.postalAddress.town.y}</div>
-                               </div>
-                           ) : (
-                               <span style={{ color: '#7f8c8d', fontStyle: 'italic' }}>
-                        -
-                      </span>
-                           )}
-                         </td>
-                         <td>
-                           {orgSearch.postalAddress ? (
-                               <div style={{ fontSize: '0.9rem', maxWidth: '200px' }}>
-                                 <div>{orgSearch.postalAddress.town.z}</div>
-                               </div>
-                           ) : (
-                               <span style={{ color: '#7f8c8d', fontStyle: 'italic' }}>
-                        -
-                      </span>
-                           )}
-                         </td>
-                       </tr>
-                   </tbody>
-                 </table>
+                 {showSearchStats && (
+                     <div>
+                       <button
+                           className="btn btn-secondary"
+                           onClick={() => {
+                             setOrganizationId('');
+                             setShowSearchStats(false);
+                           }}
+                       >
+                         Clear
+                       </button>
+                     </div>
                  )}
+               </div>
+             <div>
+               {orgSearch !== null && showSearchStats && (
+               <table className="table">
+                 <thead>
+                 <tr>
+                   <th style={{ width: '60px' }}>
+                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                       ID
+                     </div>
+                   </th>
+                   <th style={{ width: '120px' }}>
+                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                       Name
+                     </div>
+                   </th>
+                   <th style={{ width: '150px' }}>
+                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                       Fullname
+                     </div>
+                   </th>
+                   <th style={{ width: '100px' }}>
+                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                       Type
+                     </div>
+                   </th>
+                   <th style={{ width: '140px' }}>
+                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                       Annual turnover
+                     </div>
+                   </th>
+                   <th style={{ width: '100px' }}>
+                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                       Employees number
+                     </div>
+                   </th>
+                   <th style={{ width: '120px' }}>
+                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                       Creation date
+                     </div>
+                   </th>
+                   <th style={{ width: '80px' }}>
+                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                       Coord X
+                     </div>
+                   </th>
+                   <th style={{ width: '80px' }}>
+                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                       Coord Y
+                     </div>
+                   </th>
+                   <th style={{ width: '120px' }}>
+                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                       Street
+                     </div>
+                   </th>
+                   <th style={{ width: '100px' }}>
+                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                       Town
+                     </div>
+                   </th>
+                   <th style={{ width: '60px' }}>
+                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                       X
+                     </div>
+                   </th>
+                   <th style={{ width: '60px' }}>
+                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                       Y
+                     </div>
+                   </th>
+                   <th style={{ width: '60px' }}>
+                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                       Z
+                     </div>
+                   </th>
+                 </tr>
+                 </thead>
+                 <tbody>
+                     <tr key={orgSearch.id}>
+                       <td>
+                         <strong>{orgSearch.id}</strong>
+                       </td>
+                       <td>
+                         <div>
+                           <strong>{orgSearch.name}</strong>
+                         </div>
+                       </td>
+                       <td>
+                         <div style={{ maxWidth: '200px', wordWrap: 'break-word' }}>
+                           {orgSearch.fullName || (
+                               <span style={{ color: '#7f8c8d', fontStyle: 'italic' }}>
+                        Не указано
+                      </span>
+                           )}
+                         </div>
+                       </td>
+                       <td>
+                  <span className={`badge ${getTypeBadgeClass(orgSearch.type)}`}>
+                    {formatType(orgSearch.type)}
+                  </span>
+                       </td>
+                       <td>
+                         <div>
+                           <strong>{formatNumber(orgSearch.annualTurnover)}</strong>
+                         </div>
+                       </td>
+                       <td>
+                         {orgSearch.employeesCount ? (
+                             <span>{formatNumber(orgSearch.employeesCount)}</span>
+                         ) : (
+                             <span style={{ color: '#7f8c8d', fontStyle: 'italic' }}>
+                      -
+                    </span>
+                         )}
+                       </td>
+                       <td>
+                         <div>
+                           {formatDate(orgSearch.creationDate)}
+                         </div>
+                       </td>
+                       <td>
+                         <div style={{ fontSize: '0.9rem' }}>
+                           <div>{orgSearch.coordinates.x}</div>
+                         </div>
+                       </td>
+                       <td>
+                         <div style={{ fontSize: '0.9rem' }}>
+                           <div>{orgSearch.coordinates.y}</div>
+                         </div>
+                       </td>
+                       <td>
+                         {orgSearch.postalAddress ? (
+                             <div style={{ fontSize: '0.9rem', maxWidth: '200px' }}>
+                               <div>{orgSearch.postalAddress.street}</div>
+                             </div>
+                         ) : (
+                             <span style={{ color: '#7f8c8d', fontStyle: 'italic' }}>
+                      -
+                    </span>
+                         )}
+                       </td>
+                       <td>
+                         {orgSearch.postalAddress ? (
+                             <div style={{ fontSize: '0.9rem', maxWidth: '200px' }}>
+                               {orgSearch.postalAddress.town.name && (
+                                   <div>{orgSearch.postalAddress.town.name}</div>
+                               )}
+                             </div>
+                         ) : (
+                             <span style={{ color: '#7f8c8d', fontStyle: 'italic' }}>
+                      -
+                    </span>
+                         )}
+                       </td>
+                       <td>
+                         {orgSearch.postalAddress ? (
+                             <div style={{ fontSize: '0.9rem', maxWidth: '200px' }}>
+                               <div>{orgSearch.postalAddress.town.x}</div>
+                             </div>
+                         ) : (
+                             <span style={{ color: '#7f8c8d', fontStyle: 'italic' }}>
+                      -
+                    </span>
+                         )}
+                       </td>
+                       <td>
+                         {orgSearch.postalAddress ? (
+                             <div style={{ fontSize: '0.9rem', maxWidth: '200px' }}>
+                               <div>{orgSearch.postalAddress.town.y}</div>
+                             </div>
+                         ) : (
+                             <span style={{ color: '#7f8c8d', fontStyle: 'italic' }}>
+                      -
+                    </span>
+                         )}
+                       </td>
+                       <td>
+                         {orgSearch.postalAddress ? (
+                             <div style={{ fontSize: '0.9rem', maxWidth: '200px' }}>
+                               <div>{orgSearch.postalAddress.town.z}</div>
+                             </div>
+                         ) : (
+                             <span style={{ color: '#7f8c8d', fontStyle: 'italic' }}>
+                      -
+                    </span>
+                         )}
+                       </td>
+                     </tr>
+                 </tbody>
+               </table>
+               )}
                </div>
              </div>
            </div>
@@ -651,7 +690,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                     type="text"
                     className="form-control"
                     value={filters?.name || ''}
-                    onChange={(e) => handleFilterChange('name', e.target.value || null)}
+                    onChange={(e) => handleFilterChange('name', e.target.value)}
                     placeholder="Name"
                     style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                   />
@@ -762,14 +801,12 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                     <input
                         type="date"
                         className="form-control"
-                        value={filters?.creationDate?.min || ''}
                         onChange={(e) => handleFilterChange('creationDate.min', e.target.value || undefined)}
                         style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                     />
                     <input
                         type="date"
                         className="form-control"
-                        value={filters?.creationDate?.max || ''}
                         onChange={(e) => handleFilterChange('creationDate.max', e.target.value || undefined)}
                         style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                     />
@@ -789,7 +826,6 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                   <input
                       type="number"
                       className="form-control"
-                      value={filters?.coordinates?.x || ''}
                       placeholder="X"
                       onChange={(e) => handleFilterChange('coordinates.x', e.target.value ? parseInt(e.target.value) : undefined)}
                       style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
@@ -809,7 +845,6 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                   <input
                       type="number"
                       className="form-control"
-                      value={filters?.coordinates?.y || ''}
                       placeholder="Y"
                       onChange={(e) => handleFilterChange('coordinates.y', e.target.value ? parseInt(e.target.value) : undefined)}
                       style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
@@ -829,7 +864,6 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                    <input
                      type="text"
                      className="form-control"
-                     value={filters?.postalAddress?.street || ''}
                      onChange={(e) => handleFilterChange('postalAddress.street', e.target.value || undefined)}
                      placeholder="Street"
                      style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
@@ -849,13 +883,12 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                    <input
                      type="text"
                      className="form-control"
-                     value={filters?.postalAddress?.town?.name || ''}
                      onChange={(e) => handleFilterChange('postalAddress.town.name', e.target.value || undefined)}
                      placeholder="Town"
                      style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                    />
                 </th>
-                <th style={{ width: '60px' }}>
+                <th style={{ width: '80px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     X
                     <button
@@ -869,7 +902,6 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                    <input
                      type="number"
                      className="form-control"
-                     value={filters?.postalAddress?.town?.x || ''}
                      placeholder="X"
                      onChange={(e) => handleFilterChange('postalAddress.town.x', e.target.value ? parseInt(e.target.value) : undefined)}
                      style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
@@ -889,7 +921,6 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                    <input
                      type="number"
                      className="form-control"
-                     value={filters?.postalAddress?.town?.y || ''}
                      placeholder="Y"
                      onChange={(e) => handleFilterChange('postalAddress.town.y', e.target.value ? parseInt(e.target.value) : undefined)}
                      style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
@@ -909,7 +940,6 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                    <input
                      type="number"
                      className="form-control"
-                     value={filters?.postalAddress?.town?.z || ''}
                      placeholder="Z"
                      onChange={(e) => handleFilterChange('postalAddress.town.z', e.target.value ? parseInt(e.target.value) : undefined)}
                      style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
@@ -1119,7 +1149,6 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
           </div>
          </div>
        </div>
-
      </div>
    );
  };

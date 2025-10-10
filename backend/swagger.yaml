@@ -79,7 +79,6 @@ components:
             name:
               type: string
               minLength: 1
-              nullable: true
             coordinates:
               type: object
               properties:
