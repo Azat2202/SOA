@@ -114,7 +114,7 @@ public class OrganizationFiltersFilter {
    * Get name
    * @return name
    */
-  @Size(min = 1) 
+  
   @Schema(name = "name", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("name")
   public @Nullable String getName() {

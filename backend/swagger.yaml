@@ -78,7 +78,6 @@ components:
               minimum: 1
             name:
               type: string
-              minLength: 1
             coordinates:
               type: object
               properties:
