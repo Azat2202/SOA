@@ -44,11 +44,23 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
       newErrors.name = 'Name is required';
     }
 
+    if (isNaN(formData.coordinates.x)) {
+      newErrors.coordinatesX = 'X coordinate is required';
+    }
+
+    if (isNaN(formData.coordinates.y)) {
+      newErrors.coordinatesY = 'Y coordinate is required';
+    }
+
+    if (isNaN(formData.annualTurnover)) {
+      newErrors.annualTurnover = 'Annual turnover is required';
+    }
+
     if (formData.coordinates.x < -365) {
       newErrors.coordinatesX = 'Coordinate X must be greater than -365';
     }
 
-    if (formData.annualTurnover < 1) {
+    if (!isNaN(formData.annualTurnover) && formData.annualTurnover < 1) {
       newErrors.annualTurnover = 'Annual turnover must be greater than 0';
     }
 
@@ -82,17 +94,16 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
       const newData = { ...prev };
       
       if (field.includes('.')) {
-        const [parent, child] = field.split('.');
+        const [parent, child, little] = field.split('.');
         if (parent === 'coordinates') {
           newData.coordinates = { ...newData.coordinates, [child]: value };
         } else if (parent === 'postalAddress') {
           if (child === 'street') {
             newData.postalAddress = { ...newData.postalAddress!, street: value };
-          } else if (child.startsWith('town.')) {
-            const townField = child.split('.')[1];
+          } else if (child ==='town') {
             newData.postalAddress = {
               ...newData.postalAddress!,
-              town: { ...newData.postalAddress!.town, [townField]: value }
+              town: { ...newData.postalAddress!.town, [little]: value }
             };
           }
         }
@@ -132,7 +143,7 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
         <form onSubmit={handleSubmit}>
           <div className="row">
             <div className="col-6">
-              <div className="form-group">
+              <div className="form-group" style={{maxWidth: '550px'}}>
                 <label className="form-label">Name *</label>
                 <input
                   type="text"
@@ -145,7 +156,7 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
               </div>
             </div>
             <div className="col-6">
-              <div className="form-group">
+              <div className="form-group" style={{maxWidth: '550px'}}>
                 <label className="form-label">Fullname</label>
                 <input
                   type="text"
@@ -161,33 +172,34 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
 
           <div className="row">
             <div className="col-4">
-              <div className="form-group">
+              <div className="form-group" style={{maxWidth: '250px'}}>
                 <label className="form-label">Coordinate X *</label>
                 <input
                   type="number"
                   className={`form-control ${errors.coordinatesX ? 'error' : ''}`}
                   value={formData.coordinates.x}
-                  onChange={(e) => handleInputChange('coordinates.x', parseInt(e.target.value) || 0)}
+                  onChange={(e) => handleInputChange('coordinates.x', parseInt(e.target.value))}
                   placeholder="X"
                 />
                 {errors.coordinatesX && <div className="error-message">{errors.coordinatesX}</div>}
               </div>
             </div>
             <div className="col-4">
-              <div className="form-group">
+              <div className="form-group" style={{maxWidth: '250px'}}>
                 <label className="form-label">Coordinate Y *</label>
                 <input
                   type="number"
                   step="0.01"
-                  className="form-control"
+                  className={`form-control ${errors.coordinatesY ? 'error' : ''}`}
                   value={formData.coordinates.y}
-                  onChange={(e) => handleInputChange('coordinates.y', parseFloat(e.target.value) || 0)}
+                  onChange={(e) => handleInputChange('coordinates.y', parseFloat(e.target.value))}
                   placeholder="Y"
                 />
+                {errors.coordinatesY && <div className="error-message">{errors.coordinatesY}</div>}
               </div>
             </div>
             <div className="col-4">
-              <div className="form-group">
+              <div className="form-group" style={{maxWidth: '350px'}}>
                 <label className="form-label">Type *</label>
                 <select
                   className="form-control form-select"
@@ -204,20 +216,20 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
 
           <div className="row">
             <div className="col-6">
-              <div className="form-group">
+              <div className="form-group" style={{maxWidth: '250px'}}>
                 <label className="form-label">Annual turnover *</label>
                 <input
                   type="number"
                   className={`form-control ${errors.annualTurnover ? 'error' : ''}`}
                   value={formData.annualTurnover}
-                  onChange={(e) => handleInputChange('annualTurnover', parseInt(e.target.value) || 1)}
+                  onChange={(e) => handleInputChange('annualTurnover', parseInt(e.target.value))}
                   placeholder="Annual turnover"
                 />
                 {errors.annualTurnover && <div className="error-message">{errors.annualTurnover}</div>}
               </div>
             </div>
             <div className="col-6">
-              <div className="form-group">
+              <div className="form-group" style={{maxWidth: '250px'}}>
                 <label className="form-label">Employee number</label>
                 <input
                   type="number"
@@ -249,7 +261,7 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
                 <h4>Почтовый адрес</h4>
               </div>
               <div className="col-6">
-                <div className="form-group">
+                <div className="form-group" style={{maxWidth: '550px'}}>
                   <label className="form-label">Street *</label>
                   <input
                     type="text"
@@ -262,7 +274,7 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
                 </div>
               </div>
               <div className="col-6">
-                <div className="form-group">
+                <div className="form-group" style={{maxWidth: '550px'}}>
                   <label className="form-label">Town</label>
                   <input
                     type="text"
@@ -274,39 +286,39 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
                 </div>
               </div>
               <div className="col-4">
-                <div className="form-group">
+                <div className="form-group" style={{maxWidth: '250px'}}>
                   <label className="form-label">Town location X</label>
                   <input
                     type="number"
                     step="0.01"
                     className="form-control"
                     value={formData.postalAddress.town.x}
-                    onChange={(e) => handleInputChange('postalAddress.town.x', parseFloat(e.target.value) || 0)}
+                    onChange={(e) => handleInputChange('postalAddress.town.x', parseFloat(e.target.value))}
                     placeholder="X"
                   />
                 </div>
               </div>
               <div className="col-4">
-                <div className="form-group">
+                <div className="form-group" style={{maxWidth: '250px'}}>
                   <label className="form-label">Town location Y</label>
                   <input
                     type="number"
                     step="0.01"
                     className="form-control"
                     value={formData.postalAddress.town.y}
-                    onChange={(e) => handleInputChange('postalAddress.town.y', parseFloat(e.target.value) || 0)}
+                    onChange={(e) => handleInputChange('postalAddress.town.y', parseFloat(e.target.value))}
                     placeholder="Y"
                   />
                 </div>
               </div>
               <div className="col-4">
-                <div className="form-group">
+                <div className="form-group" style={{maxWidth: '250px'}}>
                   <label className="form-label">Town location Z</label>
                   <input
                     type="number"
                     className="form-control"
                     value={formData.postalAddress.town.z}
-                    onChange={(e) => handleInputChange('postalAddress.town.z', parseInt(e.target.value) || 0)}
+                    onChange={(e) => handleInputChange('postalAddress.town.z', parseInt(e.target.value))}
                     placeholder="Z"
                   />
                 </div>
@@ -320,7 +332,7 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
                 <button type="button" className="btn btn-secondary" onClick={onCancel}>
                   Cancel
                 </button>
-                <button type="submit" className="btn btn-primary">
+                <button type="submit" className="btn btn-success">
                   {organization ? 'Save' : 'Create'}
                 </button>
               </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../store/store';
@@ -32,6 +32,8 @@ const OrganizationsPage: React.FC = () => {
   const [empStats, setEmpStats] = useState(0);
   const [turnoverStats, setTurnoverStats] = useState(0);
   const [orgSearch, setOrgSearch] = useState<OrganizationRead | null>(null);
+
+  const editFormRef = useRef<HTMLDivElement>(null);
 
   // API hooks
   const [filterOrganizations] = usePostOrganizationsFilterMutation();
@@ -68,56 +70,80 @@ const OrganizationsPage: React.FC = () => {
       }
     } catch (error: any) {
       console.error('Error loading organizations:', error);
-      toast.error(`Ошибка загрузки организаций: ${error.data?.message || error.message}`);
+      toast.error(`Failed to load page: check if server is running`);
     }
   };
 
   const handleCreateOrganization = async (organizationData: Organization) => {
     try {
       await createOrganization({ organization: organizationData }).unwrap();
-      toast.success('Организация успешно создана');
+      toast.success('Organization created!');
       setShowForm(false);
       loadOrganizations();
     } catch (error: any) {
       console.error('Error creating organization:', error);
-      toast.error(`Ошибка создания организации: ${error.data?.message || error.message}`);
+      toast.error(`Error creating organization: ${error.data?.message || error.message}`);
     }
   };
 
   const handleUpdateOrganization = async (id: number, organizationData: Organization) => {
     try {
       await updateOrganization({ id, organization: organizationData }).unwrap();
-      toast.success('Организация успешно обновлена');
+      toast.success(`Organization updated!`);
       setEditingOrganization(null);
       loadOrganizations();
     } catch (error: any) {
       console.error('Error updating organization:', error);
-      toast.error(`Ошибка обновления организации: ${error.data?.message || error.message}`);
+      if (error.status === 404) {
+        toast.error(`Organization with ID ${id} not found`);
+      }
+      else if (!error.data) {
+        toast.error('Oooops something wrong');
+      }
+      else {
+        toast.error(`Error updating organization: ${error.data?.message || error.message}`);
+      }
     }
   };
 
   const handleDeleteOrganization = async (id: number) => {
-    if (window.confirm('Вы уверены, что хотите удалить эту организацию?')) {
+    if (window.confirm(`Confirm delete organization with ID = ${id}?`)) {
       try {
         await deleteOrganization({ id }).unwrap();
-        toast.success('Организация успешно удалена');
+        toast.success(`Organization with ID = ${id} deleted!`);
         loadOrganizations();
       } catch (error: any) {
         console.error('Error deleting organization:', error);
-        toast.error(`Ошибка удаления организации: ${error.data?.message || error.message}`);
+        if (error.status === 404) {
+          toast.error(`Organization with ID = ${id} not found`);
+        }
+        else if (!error.data) {
+          toast.error('Oooops something wrong');
+        }
+        else {
+          toast.error(`Error deleting organization: ${error.data?.message || error.message}`);
+        }
       }
     }
   };
 
   const handleDeleteByFullname = async (fullName: string) => {
-    if (window.confirm(`Вы уверены, что хотите удалить организацию с полным именем "${fullName}"?`)) {
+    if (window.confirm(`Confirm delete organization "${fullName}"?`)) {
       try {
         await deleteByFullname({ body: {fullname: fullName} }).unwrap();
-        toast.success('Организация успешно удалена');
+        toast.success(`Organization "${fullName}" deleted!`);
         loadOrganizations();
       } catch (error: any) {
         console.error('Error deleting organization by fullname:', error);
-        toast.error(`Ошибка удаления организации: ${error.data?.message || error.message}`);
+        if (error.status === 404) {
+          toast.error(`Organization "${fullName}" not found`);
+        }
+        else if (!error.data) {
+          toast.error('Oooops something wrong');
+        }
+        else {
+          toast.error(`Ошибка удаления организации: ${error.data?.message || error.message}`);
+        }
       }
     }
   };
@@ -232,6 +258,10 @@ const OrganizationsPage: React.FC = () => {
 
   const handleEditOrganization = (organization: OrganizationRead) => {
     setEditingOrganization(organization);
+    editFormRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
   };
 
   const handleCancelEdit = () => {
@@ -246,12 +276,19 @@ const OrganizationsPage: React.FC = () => {
       <div className="row">
         <div className="col-12">
           <div className="card">
-            <div className="card-body">
+            <div className="card-body" ref={editFormRef}>
               <div className="row">
                 <div className="col-12 mb-3">
                   <button
                     className="btn btn-primary"
-                    onClick={() => setShowForm(true)}
+                    onClick={() => {
+                      setShowForm(true)
+                      editFormRef.current?.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                      });
+                    }
+                  }
                   >
                     ➕ Create Organization
                   </button>

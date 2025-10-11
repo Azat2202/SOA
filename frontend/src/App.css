@@ -1,7 +1,7 @@
 /* App.css */
 .App {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #e6e2fb; /*linear-gradient(135deg, #667eea 0%, #764ba2 100%);*/
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -38,18 +38,14 @@
   background: white;
   border-radius: 12px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2rem;
+  /*margin-bottom: 2rem;*/
+  margin-top: 2rem;
   overflow: hidden;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.card:hover {
-  /*transform: translateY(-2px);*/
-  /*box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);*/
-}
-
 .card-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #9785e8; /*linear-gradient(135deg, #667eea 0%, #764ba2 100%);*/
   color: white;
   padding: 1.5rem;
   font-size: 1.2rem;
@@ -97,10 +93,11 @@
 
 .form-select {
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  appearance: none;
   background-position: right 0.5rem center;
   background-repeat: no-repeat;
   background-size: 1.5em 1.5em;
-  padding-right: 2.5rem;
+  padding-right: 1rem;
 }
 
 /* Button styles */
@@ -125,7 +122,7 @@
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #9785e8;/*linear-gradient(135deg, #667eea 0%, #764ba2 100%);*/
   color: white;
 }
 
@@ -135,25 +132,25 @@
 }
 
 .btn-secondary {
-  background: #6c757d;
+  background: #989fa5;
   color: white;
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: #5a6268;
+  background: #778087;
 }
 
 .btn-success {
-  background: #28a745;
+  background: #9785e8;
   color: white;
 }
 
 .btn-success:hover:not(:disabled) {
-  background: #218838;
+  background: #7a6bbc;
 }
 
 .btn-danger {
-  background: #dc3545;
+  background: #e45361;
   color: white;
 }
 
@@ -161,14 +158,25 @@
   background: #c82333;
 }
 
+.btn-danger-outline {
+  background: transparent;
+  border: 2px solid #e45361;
+  color: #e45361;
+}
+
+.btn-danger-outline:hover:not(:disabled) {
+  background: #e45361;
+  color: white;
+}
+
 .btn-outline {
   background: transparent;
-  border: 2px solid #667eea;
-  color: #667eea;
+  border: 2px solid #9785e8;
+  color: #9785e8;
 }
 
 .btn-outline:hover:not(:disabled) {
-  background: #667eea;
+  background: #9785e8;
   color: white;
 }
 
@@ -177,6 +185,8 @@
   overflow-x: auto;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #dee2e6;
+  margin-top: 0.5rem;
 }
 
 .table {
@@ -186,7 +196,7 @@
 }
 
 .table th {
-  background: #f8f9fa;
+  background: #e6e2fb;
   padding: 1rem;
   text-align: left;
   font-weight: 600;
@@ -246,6 +256,7 @@
   margin: -0.75rem;
   min-height: 50px;
   padding: 0.80rem;
+  padding-top: 0;
 }
 
 .col {
@@ -279,26 +290,25 @@
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
-  margin-top: 2rem;
 }
 
 .pagination button {
   padding: 0.5rem 1rem;
   border: 1px solid #e1e8ed;
   background: white;
-  color: #667eea;
+  color: #9785e8;
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .pagination button:hover:not(:disabled) {
-  background: #667eea;
+  background: #9785e8;
   color: white;
 }
 
 .pagination button.active {
-  background: #667eea;
+  background: #9785e8;
   color: white;
 }
 
@@ -307,24 +317,16 @@
   cursor: not-allowed;
 }
 
-/* Loading styles */
-.loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 3rem;
-  color: #7f8c8d;
+.stats {
+  display: inline-block;
+  padding: 10px 20px;
+  border: 2px solid #dbd6fa;
+  margin-right: 0.5rem;
+  margin-left: 2rem;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
 }
 
-.spinner {
-  width: 2rem;
-  height: 2rem;
-  border: 3px solid #e1e8ed;
-  border-top: 3px solid #667eea;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-right: 1rem;
-}
 
 @keyframes spin {
   0% { transform: rotate(0deg); }
