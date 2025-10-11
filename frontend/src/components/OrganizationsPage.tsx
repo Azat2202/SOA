@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../store/store';
@@ -32,6 +32,8 @@ const OrganizationsPage: React.FC = () => {
   const [empStats, setEmpStats] = useState(0);
   const [turnoverStats, setTurnoverStats] = useState(0);
   const [orgSearch, setOrgSearch] = useState<OrganizationRead | null>(null);
+
+  const editFormRef = useRef<HTMLDivElement>(null);
 
   // API hooks
   const [filterOrganizations] = usePostOrganizationsFilterMutation();
@@ -68,7 +70,7 @@ const OrganizationsPage: React.FC = () => {
       }
     } catch (error: any) {
       console.error('Error loading organizations:', error);
-      toast.error(`Failed to load page: ${error.data?.message || error.message}`);
+      toast.error(`Failed to load page: check if server is running`);
     }
   };
 
@@ -256,6 +258,10 @@ const OrganizationsPage: React.FC = () => {
 
   const handleEditOrganization = (organization: OrganizationRead) => {
     setEditingOrganization(organization);
+    editFormRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
   };
 
   const handleCancelEdit = () => {
@@ -270,12 +276,19 @@ const OrganizationsPage: React.FC = () => {
       <div className="row">
         <div className="col-12">
           <div className="card">
-            <div className="card-body">
+            <div className="card-body" ref={editFormRef}>
               <div className="row">
                 <div className="col-12 mb-3">
                   <button
                     className="btn btn-primary"
-                    onClick={() => setShowForm(true)}
+                    onClick={() => {
+                      setShowForm(true)
+                      editFormRef.current?.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                      });
+                    }
+                  }
                   >
                     ➕ Create Organization
                   </button>

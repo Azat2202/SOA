@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useRef, useState} from 'react';
 import {OrganizationRead, OrganizationFilters} from '../store/types.generated';
 
 interface CompactOrganizationTableProps {
@@ -1085,7 +1085,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
             </tbody>
           </table>
         </div>
-        </div>
+
 
         {/* Пагинация */}
         <div style={{ marginTop: '1rem' }}>
@@ -1153,6 +1153,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
           </div>
          </div>
        </div>
+    </div>
    );
  };
  
