@@ -223,18 +223,19 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
 
         {showAdvancedFunctions && (
          <div style={{ 
-           marginTop: '1rem', 
+           marginTop: '1rem',
+           marginBottom: '2rem',
            padding: '1.5rem', 
            background: '#f8f9fa', 
            borderRadius: '8px',
            border: '1px solid #dee2e6'
          }}>
-           <h4 style={{ margin: '0 0 1.5rem 0', color: '#2c3e50' }}>Advanced Functions</h4>
+           <h3 style={{ margin: '0 0 1.5rem 0', color: '#2c3e50' }}>Advanced Functions</h3>
            
            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
              {/* Delete by Full Name */}
              <div>
-               <h5 style={{ margin: '0 0 0.5rem 0', color: '#495057' }}>Delete by Full Name</h5>
+               <h4 style={{ margin: '0 0 0.5rem 0', color: '#495057' }}>Delete by Full Name</h4>
                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                  <input
                    type="text"
@@ -256,7 +257,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
 
              {/* Filter by Type */}
              <div>
-               <h5 style={{ margin: '0 0 0.5rem 0', color: '#495057' }}>Filter by Type</h5>
+               <h4 style={{ margin: '0 0 0.5rem 0', color: '#495057' }}>Filter by Type</h4>
                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
                  <button
                    className={`btn ${filterType === 'PUBLIC' ? 'btn-primary' : 'btn-outline'}`}
@@ -316,7 +317,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
 
              {/* Filter by Turnover Range */}
              <div>
-               <h5 style={{ margin: '0 0 0.5rem 0', color: '#495057' }}>Filter by Turnover Range</h5>
+               <h4 style={{ margin: '0 0 0.5rem 0', color: '#495057' }}>Filter by Turnover Range</h4>
                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                  <input
                    type="number"
@@ -336,7 +337,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                    style={{ width: '150px' }}
                  />
                  <button
-                   className="btn btn-primary"
+                   className="btn btn-success"
                    onClick={() => handleFilterByTurnover()}
                    disabled={!turnoverRange.min || !turnoverRange.max}
                  >
@@ -358,7 +359,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
 
              {/* Organization Count by Employees */}
              <div>
-               <h5 style={{ margin: '0 0 0.5rem 0', color: '#495057' }}>Organization Count by Employees</h5>
+               <h4 style={{ margin: '0 0 0.5rem 0', color: '#495057' }}>Organization Count by Employees</h4>
                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
                  <input
                    type="number"
@@ -377,6 +378,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                  </button>
                  {showEmpStats && (
                      <div>
+                       <span className="stats">{empStats}</span>
                        <button
                            className="btn btn-secondary"
                            onClick={() => {
@@ -386,7 +388,6 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                        >
                          Clear
                        </button>
-                       {empStats}
                      </div>
                  )}
                </div>
@@ -394,7 +395,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
 
              {/* Organization Count by Turnover */}
              <div>
-               <h5 style={{ margin: '0 0 0.5rem 0', color: '#495057' }}>Organization Count by Turnover</h5>
+               <h4 style={{ margin: '0 0 0.5rem 0', color: '#495057' }}>Organization Count by Max Turnover</h4>
                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
                  <input
                    type="number"
@@ -405,7 +406,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                    style={{ width: '200px' }}
                  />
                  <button
-                   className="btn btn-info"
+                   className="btn btn-success"
                    onClick={() => handleGetTurnoverStats()}
                    disabled={!maxTurnover.trim()}
                  >
@@ -413,6 +414,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                  </button>
                  {showTurnoverStats && (
                      <div>
+                       <span className="stats">{turnoverStats}</span>
                        <button
                            className="btn btn-secondary"
                            onClick={() => {
@@ -422,7 +424,6 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                        >
                          Clear
                        </button>
-                       {turnoverStats}
                      </div>
                  )}
                </div>
@@ -430,7 +431,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
 
              {/* Get Organization by ID */}
              <div>
-               <h5 style={{ margin: '0 0 0.5rem 0', color: '#495057' }}>Get Organization by ID</h5>
+               <h4 style={{ margin: '0 0 0.5rem 0', color: '#495057' }}>Get Organization by ID</h4>
                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                  <input
                    type="number"
@@ -441,7 +442,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                    style={{ width: '200px' }}
                  />
                  <button
-                   className="btn btn-warning"
+                   className="btn btn-success"
                    onClick={() => handleGetOrganizationById()}
                    disabled={!organizationId.trim()}
                  >
@@ -463,6 +464,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                </div>
              <div>
                {orgSearch !== null && showSearchStats && (
+             <div className="table-container">
                <table className="table">
                  <thead>
                  <tr>
@@ -651,6 +653,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                      </tr>
                  </tbody>
                </table>
+             </div>
                )}
                </div>
              </div>
@@ -661,7 +664,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
         {/* Таблица */}
         <div className="table-container">
           <table className="table">
-            <thead>
+            <thead className="thead">
               <tr>
                 <th style={{ width: '60px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -846,7 +849,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                       type="number"
                       className="form-control"
                       placeholder="Y"
-                      onChange={(e) => handleFilterChange('coordinates.y', e.target.value ? parseInt(e.target.value) : undefined)}
+                      onChange={(e) => handleFilterChange('coordinates.y', e.target.value ? parseFloat(e.target.value) : undefined)}
                       style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                   />
                 </th>
@@ -903,7 +906,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                      type="number"
                      className="form-control"
                      placeholder="X"
-                     onChange={(e) => handleFilterChange('postalAddress.town.x', e.target.value ? parseInt(e.target.value) : undefined)}
+                     onChange={(e) => handleFilterChange('postalAddress.town.x', e.target.value ? parseFloat(e.target.value) : undefined)}
                      style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                    />
                 </th>
@@ -922,7 +925,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                      type="number"
                      className="form-control"
                      placeholder="Y"
-                     onChange={(e) => handleFilterChange('postalAddress.town.y', e.target.value ? parseInt(e.target.value) : undefined)}
+                     onChange={(e) => handleFilterChange('postalAddress.town.y', e.target.value ? parseFloat(e.target.value) : undefined)}
                      style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                    />
                 </th>
@@ -945,7 +948,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                      style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                    />
                 </th>
-                <th style={{ width: '100px' }}>Actions</th>
+                <th style={{ width: '100px' }}></th>
               </tr>
             </thead>
             <tbody>
@@ -1064,16 +1067,16 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                       <button
                         className="btn btn-outline"
                         onClick={() => onEdit(org)}
-                        style={{ padding: '0.5rem', fontSize: '0.875rem' }}
+                        style={{ padding: '0.5rem', fontSize: '0.875rem', width: '4rem'}}
                       >
-                        ✏️
+                        Edit
                       </button>
                       <button
-                        className="btn btn-danger"
+                        className="btn btn-danger-outline"
                         onClick={() => onDelete(org.id!)}
-                        style={{ padding: '0.5rem', fontSize: '0.875rem' }}
+                        style={{ padding: '0.5rem', fontSize: '0.875rem', width: '4rem' }}
                       >
-                        🗑️
+                        Delete
                       </button>
                     </div>
                   </td>
@@ -1081,6 +1084,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
               ))}
             </tbody>
           </table>
+        </div>
         </div>
 
         {/* Пагинация */}
@@ -1099,7 +1103,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                   className="form-control form-select"
                   value={pageSize}
                   onChange={(e) => onPageSizeChange(parseInt(e.target.value))}
-                  style={{ width: 'auto', display: 'inline-block' }}
+                  style={{ width: '5rem', display: 'inline-block' }}
                 >
                   <option value={10}>10</option>
                   <option value={20}>20</option>
@@ -1125,7 +1129,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                   &lt;
                 </button>
                 
-                <span style={{ padding: '0.5rem 1rem', color: '#7f8c8d' }}>
+                <span style={{ padding: '0.5rem 1rem', color: '#474c4c' }}>
                   Page {currentPage + 1} out of {totalPages}
                 </span>
                 
@@ -1149,7 +1153,6 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
           </div>
          </div>
        </div>
-     </div>
    );
  };
  

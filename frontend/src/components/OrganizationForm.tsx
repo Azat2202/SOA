@@ -143,7 +143,7 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
         <form onSubmit={handleSubmit}>
           <div className="row">
             <div className="col-6">
-              <div className="form-group">
+              <div className="form-group" style={{maxWidth: '550px'}}>
                 <label className="form-label">Name *</label>
                 <input
                   type="text"
@@ -156,7 +156,7 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
               </div>
             </div>
             <div className="col-6">
-              <div className="form-group">
+              <div className="form-group" style={{maxWidth: '550px'}}>
                 <label className="form-label">Fullname</label>
                 <input
                   type="text"
@@ -172,7 +172,7 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
 
           <div className="row">
             <div className="col-4">
-              <div className="form-group">
+              <div className="form-group" style={{maxWidth: '250px'}}>
                 <label className="form-label">Coordinate X *</label>
                 <input
                   type="number"
@@ -185,7 +185,7 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
               </div>
             </div>
             <div className="col-4">
-              <div className="form-group">
+              <div className="form-group" style={{maxWidth: '250px'}}>
                 <label className="form-label">Coordinate Y *</label>
                 <input
                   type="number"
@@ -199,7 +199,7 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
               </div>
             </div>
             <div className="col-4">
-              <div className="form-group">
+              <div className="form-group" style={{maxWidth: '350px'}}>
                 <label className="form-label">Type *</label>
                 <select
                   className="form-control form-select"
@@ -216,7 +216,7 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
 
           <div className="row">
             <div className="col-6">
-              <div className="form-group">
+              <div className="form-group" style={{maxWidth: '250px'}}>
                 <label className="form-label">Annual turnover *</label>
                 <input
                   type="number"
@@ -229,7 +229,7 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
               </div>
             </div>
             <div className="col-6">
-              <div className="form-group">
+              <div className="form-group" style={{maxWidth: '250px'}}>
                 <label className="form-label">Employee number</label>
                 <input
                   type="number"
@@ -261,7 +261,7 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
                 <h4>Почтовый адрес</h4>
               </div>
               <div className="col-6">
-                <div className="form-group">
+                <div className="form-group" style={{maxWidth: '550px'}}>
                   <label className="form-label">Street *</label>
                   <input
                     type="text"
@@ -274,7 +274,7 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
                 </div>
               </div>
               <div className="col-6">
-                <div className="form-group">
+                <div className="form-group" style={{maxWidth: '550px'}}>
                   <label className="form-label">Town</label>
                   <input
                     type="text"
@@ -286,7 +286,7 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
                 </div>
               </div>
               <div className="col-4">
-                <div className="form-group">
+                <div className="form-group" style={{maxWidth: '250px'}}>
                   <label className="form-label">Town location X</label>
                   <input
                     type="number"
@@ -299,7 +299,7 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
                 </div>
               </div>
               <div className="col-4">
-                <div className="form-group">
+                <div className="form-group" style={{maxWidth: '250px'}}>
                   <label className="form-label">Town location Y</label>
                   <input
                     type="number"
@@ -312,7 +312,7 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
                 </div>
               </div>
               <div className="col-4">
-                <div className="form-group">
+                <div className="form-group" style={{maxWidth: '250px'}}>
                   <label className="form-label">Town location Z</label>
                   <input
                     type="number"
@@ -332,7 +332,7 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
                 <button type="button" className="btn btn-secondary" onClick={onCancel}>
                   Cancel
                 </button>
-                <button type="submit" className="btn btn-primary">
+                <button type="submit" className="btn btn-success">
                   {organization ? 'Save' : 'Create'}
                 </button>
               </div>
