@@ -68,56 +68,80 @@ const OrganizationsPage: React.FC = () => {
       }
     } catch (error: any) {
       console.error('Error loading organizations:', error);
-      toast.error(`Ошибка загрузки организаций: ${error.data?.message || error.message}`);
+      toast.error(`Failed to load page: ${error.data?.message || error.message}`);
     }
   };
 
   const handleCreateOrganization = async (organizationData: Organization) => {
     try {
       await createOrganization({ organization: organizationData }).unwrap();
-      toast.success('Организация успешно создана');
+      toast.success('Organization created!');
       setShowForm(false);
       loadOrganizations();
     } catch (error: any) {
       console.error('Error creating organization:', error);
-      toast.error(`Ошибка создания организации: ${error.data?.message || error.message}`);
+      toast.error(`Error creating organization: ${error.data?.message || error.message}`);
     }
   };
 
   const handleUpdateOrganization = async (id: number, organizationData: Organization) => {
     try {
       await updateOrganization({ id, organization: organizationData }).unwrap();
-      toast.success('Организация успешно обновлена');
+      toast.success(`Organization updated!`);
       setEditingOrganization(null);
       loadOrganizations();
     } catch (error: any) {
       console.error('Error updating organization:', error);
-      toast.error(`Ошибка обновления организации: ${error.data?.message || error.message}`);
+      if (error.status === 404) {
+        toast.error(`Organization with ID ${id} not found`);
+      }
+      else if (!error.data) {
+        toast.error('Oooops something wrong');
+      }
+      else {
+        toast.error(`Error updating organization: ${error.data?.message || error.message}`);
+      }
     }
   };
 
   const handleDeleteOrganization = async (id: number) => {
-    if (window.confirm('Вы уверены, что хотите удалить эту организацию?')) {
+    if (window.confirm(`Confirm delete organization with ID = ${id}?`)) {
       try {
         await deleteOrganization({ id }).unwrap();
-        toast.success('Организация успешно удалена');
+        toast.success(`Organization with ID = ${id} deleted!`);
         loadOrganizations();
       } catch (error: any) {
         console.error('Error deleting organization:', error);
-        toast.error(`Ошибка удаления организации: ${error.data?.message || error.message}`);
+        if (error.status === 404) {
+          toast.error(`Organization with ID = ${id} not found`);
+        }
+        else if (!error.data) {
+          toast.error('Oooops something wrong');
+        }
+        else {
+          toast.error(`Error deleting organization: ${error.data?.message || error.message}`);
+        }
       }
     }
   };
 
   const handleDeleteByFullname = async (fullName: string) => {
-    if (window.confirm(`Вы уверены, что хотите удалить организацию с полным именем "${fullName}"?`)) {
+    if (window.confirm(`Confirm delete organization "${fullName}"?`)) {
       try {
         await deleteByFullname({ body: {fullname: fullName} }).unwrap();
-        toast.success('Организация успешно удалена');
+        toast.success(`Organization "${fullName}" deleted!`);
         loadOrganizations();
       } catch (error: any) {
         console.error('Error deleting organization by fullname:', error);
-        toast.error(`Ошибка удаления организации: ${error.data?.message || error.message}`);
+        if (error.status === 404) {
+          toast.error(`Organization "${fullName}" not found`);
+        }
+        else if (!error.data) {
+          toast.error('Oooops something wrong');
+        }
+        else {
+          toast.error(`Ошибка удаления организации: ${error.data?.message || error.message}`);
+        }
       }
     }
   };
