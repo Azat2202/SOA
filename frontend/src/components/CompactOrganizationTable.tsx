@@ -1,6 +1,5 @@
-import React, {useRef, useState} from 'react';
+import React, {useState} from 'react';
 import {OrganizationRead, OrganizationFilters} from '../store/types.generated';
-import { NumericFormat } from 'react-number-format';
 
 interface CompactOrganizationTableProps {
   organizations: OrganizationRead[];
@@ -57,6 +56,14 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
   const [showEmpStats, setShowEmpStats] = useState(false);
   const [showTurnoverStats, setShowTurnoverStats] = useState(false);
   const [showSearchStats, setShowSearchStats] = useState(false);
+  
+  // Local state for decimal inputs to preserve intermediate values like "8."
+  const [coordXInput, setCoordXInput] = useState('');
+  const [coordYInput, setCoordYInput] = useState('');
+  const [townXInput, setTownXInput] = useState('');
+  const [townYInput, setTownYInput] = useState('');
+  const [townZInput, setTownZInput] = useState('');
+
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'Дата не указана';
@@ -147,13 +154,23 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
   const clearFilters = () => {
     setFilters({});
     setSorting([]);
+    setCoordXInput('');
+    setCoordYInput('');
+    setTownXInput('');
+    setTownYInput('');
+    setTownZInput('');
     onFiltersChange({});
     onSortingChange([]);
   };
 
   const clearMainTableFilters = () => {
     setFilters({});
-    setSorting([])
+    setSorting([]);
+    setCoordXInput('');
+    setCoordYInput('');
+    setTownXInput('');
+    setTownYInput('');
+    setTownZInput('');
     onFiltersChange({});
   };
 
@@ -250,6 +267,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                    className="form-control"
                    placeholder="Enter full name"
                    value={deleteFullname}
+                   maxLength={254}
                    onChange={(e) => setDeleteFullname(e.target.value)}
                    style={{ flex: 1 }}
                  />
@@ -331,20 +349,36 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                <h4 style={{ margin: '0 0 0.5rem 0', color: '#495057' }}>Filter by Turnover Range</h4>
                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                  <input
-                   type="number"
+                   type="text"
+                   inputMode="numeric"
                    className="form-control"
                    placeholder="Min turnover"
                    value={turnoverRange.min}
-                   onChange={(e) => setTurnoverRange({...turnoverRange, min: e.target.value})}
+                   maxLength={254}
+                   onChange={(e) => {
+                     const value = e.target.value.replace(/[^\d.-]/g, '');
+                     const num = parseFloat(value);
+                     if (value === '' || value === '-' || (!isNaN(num) && num >= 0)) {
+                       setTurnoverRange({...turnoverRange, min: value});
+                     }
+                   }}
                    style={{ width: '150px' }}
                  />
                  <span>to</span>
                  <input
-                   type="number"
+                   type="text"
+                   inputMode="numeric"
                    className="form-control"
                    placeholder="Max turnover"
                    value={turnoverRange.max}
-                   onChange={(e) => setTurnoverRange({...turnoverRange, max: e.target.value})}
+                   maxLength={254}
+                   onChange={(e) => {
+                     const value = e.target.value.replace(/[^\d.-]/g, '');
+                     const num = parseFloat(value);
+                     if (value === '' || value === '-' || (!isNaN(num) && num >= 0)) {
+                       setTurnoverRange({...turnoverRange, max: value});
+                     }
+                   }}
                    style={{ width: '150px' }}
                  />
                  <button
@@ -373,11 +407,19 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                <h4 style={{ margin: '0 0 0.5rem 0', color: '#495057' }}>Organization Count by Employees</h4>
                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
                  <input
-                   type="number"
+                   type="text"
+                   inputMode="numeric"
                    className="form-control"
                    placeholder="Enter employees quantity"
                    value={employeesQuantity}
-                   onChange={(e) => setEmployeesQuantity(e.target.value)}
+                   maxLength={254}
+                   onChange={(e) => {
+                     const value = e.target.value.replace(/\D/g, '');
+                     const num = parseInt(value);
+                     if (value === '' || (!isNaN(num) && num >= 0 && num <= 2147483647)) {
+                       setEmployeesQuantity(value);
+                     }
+                   }}
                    style={{ width: '200px' }}
                  />
                  <button
@@ -409,11 +451,19 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                <h4 style={{ margin: '0 0 0.5rem 0', color: '#495057' }}>Organization Count by Max Turnover</h4>
                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
                  <input
-                   type="number"
+                   type="text"
+                   inputMode="numeric"
                    className="form-control"
                    placeholder="Enter max turnover"
                    value={maxTurnover}
-                   onChange={(e) => setMaxTurnover(e.target.value)}
+                   maxLength={254}
+                   onChange={(e) => {
+                     const value = e.target.value.replace(/\D/g, '');
+                     const num = parseInt(value);
+                     if (value === '' || (!isNaN(num) && num >= 0 && num <= 2147483647)) {
+                       setMaxTurnover(value);
+                     }
+                   }}
                    style={{ width: '200px' }}
                  />
                  <button
@@ -445,11 +495,19 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                <h4 style={{ margin: '0 0 0.5rem 0', color: '#495057' }}>Get Organization by ID</h4>
                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                  <input
-                   type="number"
+                   type="text"
+                   inputMode="numeric"
                    className="form-control"
                    placeholder="Enter organization ID"
                    value={organizationId}
-                   onChange={(e) => setOrganizationId(e.target.value)}
+                   maxLength={254}
+                   onChange={(e) => {
+                     const value = e.target.value.replace(/\D/g, '');
+                     const num = parseInt(value);
+                     if (value === '' || (!isNaN(num) && num >= 0 && num <= 2147483647)) {
+                       setOrganizationId(value);
+                     }
+                   }}
                    style={{ width: '200px' }}
                  />
                  <button
@@ -704,6 +762,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                     type="text"
                     className="form-control"
                     value={filters?.name || ''}
+                    maxLength={254}
                     onChange={(e) => handleFilterChange('name', e.target.value)}
                     placeholder="Name"
                     style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
@@ -724,6 +783,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                     type="text"
                     className="form-control"
                     value={filters?.fullName || ''}
+                    maxLength={254}
                     onChange={(e) => handleFilterChange('fullName', e.target.value)}
                     placeholder="Fullname"
                     style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
@@ -766,27 +826,33 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                    <div>
                    <input
                        type="text"
-                       pattern="[0-9]*"
                        inputMode="numeric"
                        className="form-control"
                        value={filters?.annualTurnover?.min || ''}
                        placeholder="Min turnover"
+                       maxLength={254}
                        onChange={(e) => {
-                         const value = e.target.value.replace(/\D/g, '').slice(0, 6);
-                         handleFilterChange('annualTurnover.min', value ? parseInt(value) : undefined);
+                         const value = e.target.value.replace(/\D/g, '');
+                         const num = parseInt(value);
+                         if (value === '' || (!isNaN(num) && num >= 0 && num <= 2147483647)) {
+                           handleFilterChange('annualTurnover.min', value ? parseInt(value) : undefined);
+                         }
                        }}
                        style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                    />
                    <input
                        type="text"
-                       pattern="[0-9]*"
                        inputMode="numeric"
                        className="form-control"
                        value={filters?.annualTurnover?.max || ''}
                        placeholder="Max turnover"
+                       maxLength={254}
                        onChange={(e) => {
-                         const value = e.target.value.replace(/\D/g, '').slice(0, 6);
-                         handleFilterChange('annualTurnover.max', value ? parseInt(value) : undefined);
+                         const value = e.target.value.replace(/\D/g, '');
+                         const num = parseInt(value);
+                         if (value === '' || (!isNaN(num) && num >= 0 && num <= 2147483647)) {
+                           handleFilterChange('annualTurnover.max', value ? parseInt(value) : undefined);
+                         }
                        }}
                        style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                    />
@@ -805,13 +871,16 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                   </div>
                   <input
                       type="text"
-                      pattern="[0-9]*"
                       inputMode="numeric"
                       className="form-control"
                       value={filters?.employeesCount || ''}
+                      maxLength={254}
                       onChange={(e) => {
-                        const value = e.target.value.replace(/\D/g, '').slice(0, 6);
-                        handleFilterChange('employeesCount', value ? parseInt(value) : undefined);
+                        const value = e.target.value.replace(/\D/g, '');
+                        const num = parseInt(value);
+                        if (value === '' || (!isNaN(num) && num >= 0 && num <= 2147483647)) {
+                          handleFilterChange('employeesCount', value ? parseInt(value) : undefined);
+                        }
                       }}
                       placeholder="Number"
                       style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
@@ -861,14 +930,18 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                   </div>
                   <input
                       type="text"
-                      pattern="[0-9]*"
                       inputMode="numeric"
                       className="form-control"
                       placeholder="X"
-                      value={filters?.coordinates?.x || ''}
+                      value={coordXInput}
+                      maxLength={254}
                       onChange={(e) => {
-                        const value = e.target.value.replace(/\D/g, '').slice(0, 6);
-                        handleFilterChange('coordinates.x', value ? parseInt(value) : undefined);
+                        const value = e.target.value.replace(/[^\d-]/g, '');
+                        const num = parseInt(value);
+                        if (value === '' || value === '-' || (!isNaN(num) && num >= -2147483648 && num <= 2147483647)) {
+                          setCoordXInput(value);
+                          handleFilterChange('coordinates.x', (value && value !== '-') ? parseInt(value) : undefined);
+                        }
                       }}
                       style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                   />
@@ -886,14 +959,18 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                   </div>
                   <input
                       type="text"
-                      pattern="[0-9]*"
-                      inputMode="numeric"
+                      inputMode="decimal"
                       className="form-control"
                       placeholder="Y"
-                      value={filters?.coordinates?.y || ''}
+                      value={coordYInput}
+                      maxLength={254}
                       onChange={(e) => {
-                        const value = e.target.value.replace(/\D/g, '').slice(0, 6);
-                        handleFilterChange('coordinates.y', value ? parseFloat(value) : undefined);
+                        const value = e.target.value.replace(/[^\d.-]/g, '');
+                        const num = parseFloat(value);
+                        if (value === '' || value === '-' || value.endsWith('.') || (!isNaN(num) && num >= -1000000 && num <= 1000000)) {
+                          setCoordYInput(value);
+                          handleFilterChange('coordinates.y', (value && value !== '-' && !value.endsWith('.')) ? parseFloat(value) : undefined);
+                        }
                       }}
                       style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                   />
@@ -913,6 +990,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                      type="text"
                      className="form-control"
                      value={filters?.postalAddress?.street || ''}
+                     maxLength={254}
                      onChange={(e) => handleFilterChange('postalAddress.street', e.target.value || undefined)}
                      placeholder="Street"
                      style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
@@ -933,6 +1011,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                      type="text"
                      className="form-control"
                      value={filters?.postalAddress?.town?.name || ''}
+                     maxLength={254}
                      onChange={(e) => handleFilterChange('postalAddress.town.name', e.target.value || undefined)}
                      placeholder="Town"
                      style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
@@ -951,14 +1030,18 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                   </div>
                   <input
                       type="text"
-                      pattern="[0-9]*"
-                      inputMode="numeric"
+                      inputMode="decimal"
                       className="form-control"
                       placeholder="X"
-                      value={filters?.postalAddress?.town?.x || ''}
+                      value={townXInput}
+                      maxLength={254}
                       onChange={(e) => {
-                        const value = e.target.value.replace(/\D/g, '').slice(0, 6);
-                        handleFilterChange('postalAddress.town.x', value ? parseFloat(value) : undefined);
+                        const value = e.target.value.replace(/[^\d.-]/g, '');
+                        const num = parseFloat(value);
+                        if (value === '' || value === '-' || value.endsWith('.') || (!isNaN(num) && num >= -1000000 && num <= 1000000)) {
+                          setTownXInput(value);
+                          handleFilterChange('postalAddress.town.x', (value && value !== '-' && !value.endsWith('.')) ? parseFloat(value) : undefined);
+                        }
                       }}
                       style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                   />
@@ -974,18 +1057,20 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                       {getSortIcon('ADDRESS_TOWN_Y')}
                     </button>
                   </div>
-                  <NumericFormat
+                  <input
+                      type="text"
                       inputMode="decimal"
                       className="form-control"
-                      isAllowed={(values) => {
-                        const { floatValue } = values;
-                        //todo чекнуть везде ограничения и убрать 0 где надо
-                        return floatValue === undefined || floatValue <= 10000;
-                      }}
                       placeholder="Y"
-                      value={filters?.postalAddress?.town?.y || ''}
+                      value={townYInput}
+                      maxLength={254}
                       onChange={(e) => {
-                        handleFilterChange('postalAddress.town.y', e.target.value ? parseFloat(e.target.value) : undefined);
+                        const value = e.target.value.replace(/[^\d.-]/g, '');
+                        const num = parseFloat(value);
+                        if (value === '' || value === '-' || value.endsWith('.') || (!isNaN(num) && num >= -1000000 && num <= 1000000)) {
+                          setTownYInput(value);
+                          handleFilterChange('postalAddress.town.y', (value && value !== '-' && !value.endsWith('.')) ? parseFloat(value) : undefined);
+                        }
                       }}
                       style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                   />
@@ -1001,13 +1086,20 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                       {getSortIcon('ADDRESS_TOWN_Z')}
                     </button>
                   </div>
-                  <NumericFormat
-                      inputMode="decimal"
+                  <input
+                      type="text"
+                      inputMode="numeric"
                       className="form-control"
                       placeholder="Z"
-                      value={filters?.postalAddress?.town?.z || ''}
+                      value={townZInput}
+                      maxLength={254}
                       onChange={(e) => {
-                        handleFilterChange('postalAddress.town.z', e.target.value ? parseFloat(e.target.value) : undefined);
+                        const value = e.target.value.replace(/[^\d-]/g, '');
+                        const num = parseInt(value);
+                        if (value === '' || value === '-' || (!isNaN(num) && num >= -2147483648 && num <= 2147483647)) {
+                          setTownZInput(value);
+                          handleFilterChange('postalAddress.town.z', (value && value !== '-') ? parseInt(value) : undefined);
+                        }
                       }}
                       style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                   />
