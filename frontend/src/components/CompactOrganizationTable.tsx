@@ -1,5 +1,6 @@
 import React, {useRef, useState} from 'react';
 import {OrganizationRead, OrganizationFilters} from '../store/types.generated';
+import { NumericFormat } from 'react-number-format';
 
 interface CompactOrganizationTableProps {
   organizations: OrganizationRead[];
@@ -973,16 +974,18 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                       {getSortIcon('ADDRESS_TOWN_Y')}
                     </button>
                   </div>
-                  <input
-                      type="text"
-                      pattern="[0-9]*[.]?[0-9]*"
+                  <NumericFormat
                       inputMode="decimal"
                       className="form-control"
+                      isAllowed={(values) => {
+                        const { floatValue } = values;
+                        //todo чекнуть везде ограничения и убрать 0 где надо
+                        return floatValue === undefined || floatValue <= 10000;
+                      }}
                       placeholder="Y"
                       value={filters?.postalAddress?.town?.y || ''}
                       onChange={(e) => {
-                        const value = e.target.value.replace(/\D.\D/g, '').slice(0, 6);
-                        handleFilterChange('postalAddress.town.y', value ? parseFloat(value) : undefined);
+                        handleFilterChange('postalAddress.town.y', e.target.value ? parseFloat(e.target.value) : undefined);
                       }}
                       style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                   />
@@ -998,33 +1001,13 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                       {getSortIcon('ADDRESS_TOWN_Z')}
                     </button>
                   </div>
-                  {/*<input*/}
-                  {/*    type="text"*/}
-                  {/*    pattern="[0-9]*[.]?[0-9]*"*/}
-                  {/*    inputMode="decimal"*/}
-                  {/*    className="form-control"*/}
-                  {/*    placeholder="Z"*/}
-                  {/*    value={filters?.postalAddress?.town?.z || ''}*/}
-                  {/*    onChange={(e) => {*/}
-                  {/*      const value = e.target.value*/}
-                  {/*          .replace(/[^\d.]/g, '')*/}
-                  {/*          .replace(/(\..*)\./g, '$1')*/}
-                  {/*          .slice(0, 10);*/}
-
-                  {/*      handleFilterChange('postalAddress.town.z', value ? parseFloat(value) : undefined);*/}
-                  {/*    }}*/}
-                  {/*    style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}*/}
-                  {/*/>*/}
-                  <input
-                      type="text"
-                      pattern="[0-9]*"
-                      inputMode="numeric"
+                  <NumericFormat
+                      inputMode="decimal"
                       className="form-control"
                       placeholder="Z"
                       value={filters?.postalAddress?.town?.z || ''}
                       onChange={(e) => {
-                        const value = e.target.value.replace(/\D/g, '').slice(0, 6);
-                        handleFilterChange('postalAddress.town.z', value ? parseInt(value) : undefined);
+                        handleFilterChange('postalAddress.town.z', e.target.value ? parseFloat(e.target.value) : undefined);
                       }}
                       style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                   />
