@@ -764,19 +764,29 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                   </div>
                    <div>
                    <input
-                       type="number"
+                       type="text"
+                       pattern="[0-9]*"
+                       inputMode="numeric"
                        className="form-control"
                        value={filters?.annualTurnover?.min || ''}
                        placeholder="Min turnover"
-                       onChange={(e) => handleFilterChange('annualTurnover.min', e.target.value ? parseInt(e.target.value) : undefined)}
+                       onChange={(e) => {
+                         const value = e.target.value.replace(/\D/g, '').slice(0, 6);
+                         handleFilterChange('annualTurnover.min', value ? parseInt(value) : undefined);
+                       }}
                        style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                    />
                    <input
-                       type="number"
+                       type="text"
+                       pattern="[0-9]*"
+                       inputMode="numeric"
                        className="form-control"
                        value={filters?.annualTurnover?.max || ''}
                        placeholder="Max turnover"
-                       onChange={(e) => handleFilterChange('annualTurnover.max', e.target.value ? parseInt(e.target.value) : undefined)}
+                       onChange={(e) => {
+                         const value = e.target.value.replace(/\D/g, '').slice(0, 6);
+                         handleFilterChange('annualTurnover.max', value ? parseInt(value) : undefined);
+                       }}
                        style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                    />
                    </div>
@@ -793,12 +803,17 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                     </button>
                   </div>
                   <input
-                    type="number"
-                    className="form-control"
-                    value={filters?.employeesCount || ''}
-                    onChange={(e) => handleFilterChange('employeesCount', e.target.value ? parseInt(e.target.value) : undefined)}
-                    placeholder="Number"
-                    style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
+                      type="text"
+                      pattern="[0-9]*"
+                      inputMode="numeric"
+                      className="form-control"
+                      value={filters?.employeesCount || ''}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, '').slice(0, 6);
+                        handleFilterChange('employeesCount', value ? parseInt(value) : undefined);
+                      }}
+                      placeholder="Number"
+                      style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                   />
                 </th>
                 <th style={{ width: '120px' }}>
@@ -844,11 +859,16 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                     </button>
                   </div>
                   <input
-                      type="number"
+                      type="text"
+                      pattern="[0-9]*"
+                      inputMode="numeric"
                       className="form-control"
                       placeholder="X"
                       value={filters?.coordinates?.x || ''}
-                      onChange={(e) => handleFilterChange('coordinates.x', e.target.value ? parseInt(e.target.value) : undefined)}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, '').slice(0, 6);
+                        handleFilterChange('coordinates.x', value ? parseInt(value) : undefined);
+                      }}
                       style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                   />
                 </th>
@@ -864,11 +884,16 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                     </button>
                   </div>
                   <input
-                      type="number"
+                      type="text"
+                      pattern="[0-9]*"
+                      inputMode="numeric"
                       className="form-control"
                       placeholder="Y"
                       value={filters?.coordinates?.y || ''}
-                      onChange={(e) => handleFilterChange('coordinates.y', e.target.value ? parseFloat(e.target.value.slice(0,8)) : undefined)}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, '').slice(0, 6);
+                        handleFilterChange('coordinates.y', value ? parseFloat(value) : undefined);
+                      }}
                       style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                   />
                 </th>
@@ -923,14 +948,19 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                       {getSortIcon('ADDRESS_TOWN_X')}
                     </button>
                   </div>
-                   <input
-                     type="number"
-                     className="form-control"
-                     placeholder="X"
-                     value={filters?.postalAddress?.town?.x || ''}
-                     onChange={(e) => handleFilterChange('postalAddress.town.x', e.target.value ? parseFloat(e.target.value) : undefined)}
-                     style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
-                   />
+                  <input
+                      type="text"
+                      pattern="[0-9]*"
+                      inputMode="numeric"
+                      className="form-control"
+                      placeholder="X"
+                      value={filters?.postalAddress?.town?.x || ''}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, '').slice(0, 6);
+                        handleFilterChange('postalAddress.town.x', value ? parseFloat(value) : undefined);
+                      }}
+                      style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
+                  />
                 </th>
                 <th style={{ width: '60px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -943,14 +973,19 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                       {getSortIcon('ADDRESS_TOWN_Y')}
                     </button>
                   </div>
-                   <input
-                     type="number"
-                     className="form-control"
-                     placeholder="Y"
-                     value={filters?.postalAddress?.town?.y || ''}
-                     onChange={(e) => handleFilterChange('postalAddress.town.y', e.target.value ? parseFloat(e.target.value) : undefined)}
-                     style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
-                   />
+                  <input
+                      type="text"
+                      pattern="[0-9]*[.]?[0-9]*"
+                      inputMode="decimal"
+                      className="form-control"
+                      placeholder="Y"
+                      value={filters?.postalAddress?.town?.y || ''}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\D.\D/g, '').slice(0, 6);
+                        handleFilterChange('postalAddress.town.y', value ? parseFloat(value) : undefined);
+                      }}
+                      style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
+                  />
                 </th>
                 <th style={{ width: '60px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -963,14 +998,36 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                       {getSortIcon('ADDRESS_TOWN_Z')}
                     </button>
                   </div>
-                   <input
-                     type="number"
-                     className="form-control"
-                     placeholder="Z"
-                     value={filters?.postalAddress?.town?.z || ''}
-                     onChange={(e) => handleFilterChange('postalAddress.town.z', e.target.value ? parseInt(e.target.value) : undefined)}
-                     style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
-                   />
+                  {/*<input*/}
+                  {/*    type="text"*/}
+                  {/*    pattern="[0-9]*[.]?[0-9]*"*/}
+                  {/*    inputMode="decimal"*/}
+                  {/*    className="form-control"*/}
+                  {/*    placeholder="Z"*/}
+                  {/*    value={filters?.postalAddress?.town?.z || ''}*/}
+                  {/*    onChange={(e) => {*/}
+                  {/*      const value = e.target.value*/}
+                  {/*          .replace(/[^\d.]/g, '')*/}
+                  {/*          .replace(/(\..*)\./g, '$1')*/}
+                  {/*          .slice(0, 10);*/}
+
+                  {/*      handleFilterChange('postalAddress.town.z', value ? parseFloat(value) : undefined);*/}
+                  {/*    }}*/}
+                  {/*    style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}*/}
+                  {/*/>*/}
+                  <input
+                      type="text"
+                      pattern="[0-9]*"
+                      inputMode="numeric"
+                      className="form-control"
+                      placeholder="Z"
+                      value={filters?.postalAddress?.town?.z || ''}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, '').slice(0, 6);
+                        handleFilterChange('postalAddress.town.z', value ? parseInt(value) : undefined);
+                      }}
+                      style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
+                  />
                 </th>
                 <th style={{ width: '100px' }}></th>
               </tr>
