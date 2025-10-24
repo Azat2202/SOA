@@ -86,7 +86,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
 
   const handleFilterChange = (field: string, value: any) => {
     const newFilters = { ...filters };
-    
+
     if (field.includes('.')) {
       const [parent, child, little] = field.split('.');
       if (parent === 'coordinates') {
@@ -107,7 +107,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
     } else {
       (newFilters as any)[field] = value;
     }
-    
+
     setFilters(newFilters);
     onFiltersChange(newFilters);
   };
@@ -120,7 +120,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
     if (existingSort) {
       // Переключаем направление сортировки
       if (existingSort.direction === 'ASC') {
-        newSorting = currentSorting.map(s => 
+        newSorting = currentSorting.map(s =>
           s.field === field ? { ...s, direction: 'DESC' } : s
         );
       } else {
@@ -150,6 +150,12 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
     onSortingChange([]);
   };
 
+  const clearMainTableFilters = () => {
+    setFilters({});
+    setSorting([])
+    onFiltersChange({});
+  };
+
   const handleDeleteByFullname = ()  => {
       if (deleteFullname.trim()) {
         onDeleteByFullname(deleteFullname.trim());
@@ -161,6 +167,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
     const min = parseFloat(turnoverRange.min);
     const max = parseFloat(turnoverRange.max);
     if (!isNaN(min) && !isNaN(max)) {
+      clearMainTableFilters(); // Очищаем фильтры основной таблицы
       onFilterByTurnover(min, max);
     }
   };
@@ -208,7 +215,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
           </div>
         </div>
       </div>
-      
+
       <div className="card-body">
          {/* Advanced Functions Button */}
          <div style={{ marginBottom: '1rem', textAlign: 'right' }}>
@@ -222,16 +229,16 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
          </div>
 
         {showAdvancedFunctions && (
-         <div style={{ 
+         <div style={{
            marginTop: '1rem',
            marginBottom: '2rem',
-           padding: '1.5rem', 
-           background: '#f8f9fa', 
+           padding: '1.5rem',
+           background: '#f8f9fa',
            borderRadius: '8px',
            border: '1px solid #dee2e6'
          }}>
            <h3 style={{ margin: '0 0 1.5rem 0', color: '#2c3e50' }}>Advanced Functions</h3>
-           
+
            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
              {/* Delete by Full Name */}
              <div>
@@ -266,6 +273,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                        setFilterType('');
                        onFilterByType('' as any);
                      } else {
+                       clearMainTableFilters(); // Очищаем фильтры основной таблицы
                        setFilterType('PUBLIC');
                        onFilterByType('PUBLIC');
                      }
@@ -280,6 +288,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                        setFilterType('');
                        onFilterByType('' as any);
                      } else {
+                       clearMainTableFilters(); // Очищаем фильтры основной таблицы
                        setFilterType('TRUST');
                        onFilterByType('TRUST');
                      }
@@ -294,6 +303,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                        setFilterType('');
                        onFilterByType('' as any);
                      } else {
+                       clearMainTableFilters(); // Очищаем фильтры основной таблицы
                        setFilterType('OPEN_JOINT_STOCK_COMPANY');
                        onFilterByType('OPEN_JOINT_STOCK_COMPANY');
                      }
@@ -756,6 +766,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                    <input
                        type="number"
                        className="form-control"
+                       value={filters?.annualTurnover?.min || ''}
                        placeholder="Min turnover"
                        onChange={(e) => handleFilterChange('annualTurnover.min', e.target.value ? parseInt(e.target.value) : undefined)}
                        style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
@@ -763,6 +774,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                    <input
                        type="number"
                        className="form-control"
+                       value={filters?.annualTurnover?.max || ''}
                        placeholder="Max turnover"
                        onChange={(e) => handleFilterChange('annualTurnover.max', e.target.value ? parseInt(e.target.value) : undefined)}
                        style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
@@ -783,6 +795,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                   <input
                     type="number"
                     className="form-control"
+                    value={filters?.employeesCount || ''}
                     onChange={(e) => handleFilterChange('employeesCount', e.target.value ? parseInt(e.target.value) : undefined)}
                     placeholder="Number"
                     style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
@@ -803,6 +816,8 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                   <div>
                     <input
                         type="date"
+                        max={'2999-12-31'}
+                        value={filters?.creationDate?.min || ''}
                         className="form-control"
                         onChange={(e) => handleFilterChange('creationDate.min', e.target.value || undefined)}
                         style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
@@ -810,6 +825,8 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                     <input
                         type="date"
                         className="form-control"
+                        max={'2999-12-31'}
+                        value={filters?.creationDate?.max || ''}
                         onChange={(e) => handleFilterChange('creationDate.max', e.target.value || undefined)}
                         style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                     />
@@ -830,6 +847,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                       type="number"
                       className="form-control"
                       placeholder="X"
+                      value={filters?.coordinates?.x || ''}
                       onChange={(e) => handleFilterChange('coordinates.x', e.target.value ? parseInt(e.target.value) : undefined)}
                       style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                   />
@@ -849,7 +867,8 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                       type="number"
                       className="form-control"
                       placeholder="Y"
-                      onChange={(e) => handleFilterChange('coordinates.y', e.target.value ? parseFloat(e.target.value) : undefined)}
+                      value={filters?.coordinates?.y || ''}
+                      onChange={(e) => handleFilterChange('coordinates.y', e.target.value ? parseFloat(e.target.value.slice(0,8)) : undefined)}
                       style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                   />
                 </th>
@@ -867,6 +886,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                    <input
                      type="text"
                      className="form-control"
+                     value={filters?.postalAddress?.street || ''}
                      onChange={(e) => handleFilterChange('postalAddress.street', e.target.value || undefined)}
                      placeholder="Street"
                      style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
@@ -886,6 +906,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                    <input
                      type="text"
                      className="form-control"
+                     value={filters?.postalAddress?.town?.name || ''}
                      onChange={(e) => handleFilterChange('postalAddress.town.name', e.target.value || undefined)}
                      placeholder="Town"
                      style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
@@ -906,6 +927,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                      type="number"
                      className="form-control"
                      placeholder="X"
+                     value={filters?.postalAddress?.town?.x || ''}
                      onChange={(e) => handleFilterChange('postalAddress.town.x', e.target.value ? parseFloat(e.target.value) : undefined)}
                      style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                    />
@@ -925,6 +947,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                      type="number"
                      className="form-control"
                      placeholder="Y"
+                     value={filters?.postalAddress?.town?.y || ''}
                      onChange={(e) => handleFilterChange('postalAddress.town.y', e.target.value ? parseFloat(e.target.value) : undefined)}
                      style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                    />
@@ -944,6 +967,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                      type="number"
                      className="form-control"
                      placeholder="Z"
+                     value={filters?.postalAddress?.town?.z || ''}
                      onChange={(e) => handleFilterChange('postalAddress.town.z', e.target.value ? parseInt(e.target.value) : undefined)}
                      style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                    />
@@ -1095,7 +1119,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                 {formatNumber(currentPage * pageSize + 1)}-{formatNumber(Math.min((currentPage + 1) * pageSize, totalCount))} out of {formatNumber(totalCount)} orgs
               </strong>
             </div>
-            
+
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
               <div>
                 <label style={{ marginRight: '0.5rem' }}>Orgs by page:</label>
@@ -1111,7 +1135,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                   <option value={100}>100</option>
                 </select>
               </div>
-              
+
               <div className="pagination">
                 <button
                   onClick={() => onPageChange(0)}
@@ -1120,7 +1144,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                 >
                   &lt;&lt;
                 </button>
-                
+
                 <button
                   onClick={() => onPageChange(currentPage - 1)}
                   disabled={currentPage === 0}
@@ -1128,11 +1152,11 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                 >
                   &lt;
                 </button>
-                
+
                 <span style={{ padding: '0.5rem 1rem', color: '#474c4c' }}>
                   Page {currentPage + 1} out of {totalPages}
                 </span>
-                
+
                 <button
                   onClick={() => onPageChange(currentPage + 1)}
                   disabled={currentPage === totalPages - 1}
@@ -1140,7 +1164,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                 >
                   &gt;
                 </button>
-                
+
                 <button
                   onClick={() => onPageChange(totalPages - 1)}
                   disabled={currentPage === totalPages - 1}
@@ -1156,5 +1180,5 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
     </div>
    );
  };
- 
+
  export default CompactOrganizationTable;
