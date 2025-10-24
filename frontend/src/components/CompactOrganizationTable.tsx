@@ -556,11 +556,11 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                        <td>
                          <strong>{orgSearch.id}</strong>
                        </td>
-                       <td>
-                         <div>
-                           <strong>{orgSearch.name}</strong>
-                         </div>
-                       </td>
+                      <td>
+                        <div style={{ whiteSpace: 'pre-wrap' }}>
+                          <strong>{orgSearch.name}</strong>
+                        </div>
+                      </td>
                        <td>
                          <div style={{ maxWidth: '200px', wordWrap: 'break-word' }}>
                            {orgSearch.fullName || (
@@ -1022,7 +1022,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                     <strong>{org.id}</strong>
                   </td>
                   <td>
-                    <div>
+                    <div style={{ whiteSpace: 'pre-wrap' }}>
                       <strong>{org.name}</strong>
                     </div>
                   </td>
