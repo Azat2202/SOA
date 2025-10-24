@@ -44,6 +44,8 @@ public class OrganizationService {
                             .ifPresent(existingEntity::setEmployeesCount);
                     if (organization.getPostalAddress() != null) {
                         existingEntity.getPostalAddress().setStreet(organization.getPostalAddress().getStreet());
+                    } else {
+                        existingEntity.setPostalAddress(null);
                     }
                     if (organization.getPostalAddress() != null && organization.getPostalAddress().getTown() != null) {
                         organization.getPostalAddress().getTown().getName()
@@ -51,6 +53,8 @@ public class OrganizationService {
                         existingEntity.getPostalAddress().getTown().setX(organization.getPostalAddress().getTown().getX());
                         existingEntity.getPostalAddress().getTown().setY(organization.getPostalAddress().getTown().getY());
                         existingEntity.getPostalAddress().getTown().setZ(organization.getPostalAddress().getTown().getZ());
+                    } else {
+                        existingEntity.getPostalAddress().setTown(null);
                     }
                     OrganizationEntity updatedEntity = organizationsRepository.save(existingEntity);
                     Organization updatedOrganization = modelMapper.map(updatedEntity, Organization.class);
