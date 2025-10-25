@@ -292,7 +292,8 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                        setFilterType('');
                        onFilterByType('' as any);
                      } else {
-                       clearMainTableFilters(); // Очищаем фильтры основной таблицы
+                       clearMainTableFilters();
+                       setTurnoverRange({...turnoverRange, min: '', max: ''});
                        setFilterType('PUBLIC');
                        onFilterByType('PUBLIC');
                      }
@@ -307,7 +308,8 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                        setFilterType('');
                        onFilterByType('' as any);
                      } else {
-                       clearMainTableFilters(); // Очищаем фильтры основной таблицы
+                       clearMainTableFilters();
+                       setTurnoverRange({...turnoverRange, min: '', max: ''});
                        setFilterType('TRUST');
                        onFilterByType('TRUST');
                      }
@@ -322,7 +324,8 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                        setFilterType('');
                        onFilterByType('' as any);
                      } else {
-                       clearMainTableFilters(); // Очищаем фильтры основной таблицы
+                       clearMainTableFilters();
+                       setTurnoverRange({...turnoverRange, min: '', max: ''});
                        setFilterType('OPEN_JOINT_STOCK_COMPANY');
                        onFilterByType('OPEN_JOINT_STOCK_COMPANY');
                      }
@@ -383,7 +386,10 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                  />
                  <button
                    className="btn btn-success"
-                   onClick={() => handleFilterByTurnover()}
+                   onClick={() => {
+                     setFilterType('');
+                     handleFilterByTurnover()
+                   }}
                    disabled={!turnoverRange.min || !turnoverRange.max}
                  >
                    Apply Filter
@@ -763,7 +769,11 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                     className="form-control"
                     value={filters?.name || ''}
                     maxLength={254}
-                    onChange={(e) => handleFilterChange('name', e.target.value)}
+                    onChange={(e) => {
+                      setTurnoverRange({...turnoverRange, min: '', max: ''});
+                      setFilterType('');
+                      handleFilterChange('name', e.target.value)
+                    }}
                     placeholder="Name"
                     style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                   />
@@ -784,7 +794,11 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                     className="form-control"
                     value={filters?.fullName || ''}
                     maxLength={254}
-                    onChange={(e) => handleFilterChange('fullName', e.target.value)}
+                    onChange={(e) => {
+                      setTurnoverRange({...turnoverRange, min: '', max: ''});
+                      setFilterType('');
+                      handleFilterChange('fullName', e.target.value)
+                    }}
                     placeholder="Fullname"
                     style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                   />
@@ -803,7 +817,11 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                   <select
                     className="form-control form-select"
                     value={filters?.type || ''}
-                    onChange={(e) => handleFilterChange('type', e.target.value || undefined)}
+                    onChange={(e) => {
+                      setTurnoverRange({...turnoverRange, min: '', max: ''});
+                      setFilterType('');
+                      handleFilterChange('type', e.target.value || undefined)
+                    }}
                     style={{ marginTop: '0.5rem', fontSize: '0.875rem', width: '100px' }}
                   >
                     <option value="">All</option>
@@ -835,6 +853,8 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                          const value = e.target.value.replace(/\D/g, '');
                          const num = parseInt(value);
                          if (value === '' || (!isNaN(num) && num > 0 && num <= 2147483647)) {
+                           setTurnoverRange({...turnoverRange, min: '', max: ''});
+                           setFilterType('');
                            handleFilterChange('annualTurnover.min', value ? parseInt(value) : undefined);
                          }
                        }}
@@ -851,6 +871,8 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                          const value = e.target.value.replace(/\D/g, '');
                          const num = parseInt(value);
                          if (value === '' || (!isNaN(num) && num > 0 && num <= 2147483647)) {
+                           setTurnoverRange({...turnoverRange, min: '', max: ''});
+                           setFilterType('');
                            handleFilterChange('annualTurnover.max', value ? parseInt(value) : undefined);
                          }
                        }}
@@ -879,6 +901,8 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                         const value = e.target.value.replace(/\D/g, '');
                         const num = parseInt(value);
                         if (value === '' || (!isNaN(num) && num > 0 && num <= 2147483647)) {
+                          setTurnoverRange({...turnoverRange, min: '', max: ''});
+                          setFilterType('');
                           handleFilterChange('employeesCount', value ? parseInt(value) : undefined);
                         }
                       }}
@@ -904,7 +928,11 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                         max={'2999-12-31'}
                         value={filters?.creationDate?.min || ''}
                         className="form-control"
-                        onChange={(e) => handleFilterChange('creationDate.min', e.target.value || undefined)}
+                        onChange={(e) => {
+                          setTurnoverRange({...turnoverRange, min: '', max: ''});
+                          setFilterType('');
+                          handleFilterChange('creationDate.min', e.target.value || undefined)
+                        }}
                         style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                     />
                     <input
@@ -912,7 +940,11 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                         className="form-control"
                         max={'2999-12-31'}
                         value={filters?.creationDate?.max || ''}
-                        onChange={(e) => handleFilterChange('creationDate.max', e.target.value || undefined)}
+                        onChange={(e) => {
+                          setTurnoverRange({...turnoverRange, min: '', max: ''});
+                          setFilterType('');
+                          handleFilterChange('creationDate.max', e.target.value || undefined)
+                        }}
                         style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                     />
                   </div>
@@ -939,6 +971,8 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                         const value = e.target.value.replace(/[^\d-]/g, '');
                         const num = parseInt(value);
                         if (value === '' || value === '-' || (!isNaN(num) && num > -366 && num <= 2147483647)) {
+                          setTurnoverRange({...turnoverRange, min: '', max: ''});
+                          setFilterType('');
                           setCoordXInput(value);
                           handleFilterChange('coordinates.x', (value && value !== '-') ? parseInt(value) : undefined);
                         }
@@ -974,6 +1008,8 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                         }
                         const num = parseFloat(value);
                         if (value === '' || value === '-' || value.endsWith('.') || (!isNaN(num) && num >= -1000000 && num <= 1000000)) {
+                          setTurnoverRange({...turnoverRange, min: '', max: ''});
+                          setFilterType('');
                           setCoordYInput(value);
                           handleFilterChange('coordinates.y', (value && value !== '-' && !value.endsWith('.')) ? parseFloat(value) : undefined);
                         }
@@ -997,7 +1033,11 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                      className="form-control"
                      value={filters?.postalAddress?.street || ''}
                      maxLength={254}
-                     onChange={(e) => handleFilterChange('postalAddress.street', e.target.value || undefined)}
+                     onChange={(e) => {
+                       setTurnoverRange({...turnoverRange, min: '', max: ''});
+                       setFilterType('');
+                       handleFilterChange('postalAddress.street', e.target.value || undefined)
+                     }}
                      placeholder="Street"
                      style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                    />
@@ -1018,7 +1058,11 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                      className="form-control"
                      value={filters?.postalAddress?.town?.name || ''}
                      maxLength={254}
-                     onChange={(e) => handleFilterChange('postalAddress.town.name', e.target.value || undefined)}
+                     onChange={(e) => {
+                       setTurnoverRange({...turnoverRange, min: '', max: ''});
+                       setFilterType('');
+                       handleFilterChange('postalAddress.town.name', e.target.value || undefined)
+                     }}
                      placeholder="Town"
                      style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
                    />
@@ -1051,6 +1095,8 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                         }
                         const num = parseFloat(value);
                         if (value === '' || value === '-' || value.endsWith('.') || (!isNaN(num) && num >= -1000000 && num <= 1000000)) {
+                          setTurnoverRange({...turnoverRange, min: '', max: ''});
+                          setFilterType('');
                           setTownXInput(value);
                           handleFilterChange('postalAddress.town.x', (value && value !== '-' && !value.endsWith('.')) ? parseFloat(value) : undefined);
                         }
@@ -1086,6 +1132,8 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                         }
                         const num = parseFloat(value);
                         if (value === '' || value === '-' || value.endsWith('.') || (!isNaN(num) && num >= -1000000 && num <= 1000000)) {
+                          setTurnoverRange({...turnoverRange, min: '', max: ''});
+                          setFilterType('');
                           setTownYInput(value);
                           handleFilterChange('postalAddress.town.y', (value && value !== '-' && !value.endsWith('.')) ? parseFloat(value) : undefined);
                         }
@@ -1115,6 +1163,8 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                         const value = e.target.value.replace(/[^\d-]/g, '');
                         const num = parseInt(value);
                         if (value === '' || value === '-' || (!isNaN(num) && num >= -2147483648 && num <= 2147483647)) {
+                          setTurnoverRange({...turnoverRange, min: '', max: ''});
+                          setFilterType('');
                           setTownZInput(value);
                           handleFilterChange('postalAddress.town.z', (value && value !== '-') ? parseInt(value) : undefined);
                         }
