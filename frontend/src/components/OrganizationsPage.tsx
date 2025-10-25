@@ -264,9 +264,12 @@ const OrganizationsPage: React.FC = () => {
     });
   };
 
+  const handleCancelCreate = () => {
+    setShowForm(false);
+  };
+
   const handleCancelEdit = () => {
     setEditingOrganization(null);
-    setShowForm(false);
   };
 
   const totalPages = Math.ceil(totalCount / pageSize);
@@ -300,7 +303,7 @@ const OrganizationsPage: React.FC = () => {
                   <div className="col-12">
                     <OrganizationForm
                       onSubmit={handleCreateOrganization}
-                      onCancel={handleCancelEdit}
+                      onCancel={handleCancelCreate}
                       title="New Organization"
                     />
                   </div>
