@@ -52,11 +52,11 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
       newErrors.name = 'Name is required';
     }
 
-    if (!formData.coordinates.x) {
+    if (isNaN(formData.coordinates.x)) {
       newErrors.coordinatesX = 'X coordinate is required';
     }
 
-    if (!formData.coordinates.y) {
+    if (isNaN(formData.coordinates.y)) {
       newErrors.coordinatesY = 'Y coordinate is required';
     }
 
@@ -82,8 +82,10 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
       }
     }
 
-    if (!formData.postalAddress?.town.z) {
-      newErrors.townCoordinatesZ = 'Z coordinate is required';
+    if (formData.postalAddress) {
+      if (isNaN(formData.postalAddress.town?.z)) {
+        newErrors.townCoordinatesZ = 'Z coordinate is required';
+      }
     }
 
     setErrors(newErrors);
@@ -190,7 +192,15 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
                     value={coordXInput}
                     maxLength={10}
                     onChange={(e) => {
-                      const value = e.target.value.replace(/[^\d-]/g, '');
+                      let value = e.target.value.replace(/[^\d-]/g, '');
+
+                      if ((value.match(/-/g) || []).length > 1) {
+                        value = value.replace(/-/g, '');
+                        value = '-' + value;
+                      } else if (value.includes('-') && value.indexOf('-') > 0) {
+                        value = value.replace(/-/g, '');
+                      }
+
                       const num = parseInt(value);
                       if (value === '' || value === '-' || (!isNaN(num) && num > -366 && num <= 2147483647)) {
                         setCoordXInput(value);
@@ -213,6 +223,13 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
                     maxLength={7}
                     onChange={(e) => {
                       let value = e.target.value.replace(/[^\d.-]/g, '');
+
+                      if ((value.match(/-/g) || []).length > 1) {
+                        value = value.replace(/-/g, '');
+                        value = '-' + value;
+                      } else if (value.includes('-') && value.indexOf('-') > 0) {
+                        value = value.replace(/-/g, '');
+                      }
 
                       const dotCount = (value.match(/\./g) || []).length;
                       if (dotCount > 1) {
@@ -345,6 +362,13 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
                       onChange={(e) => {
                         let value = e.target.value.replace(/[^\d.-]/g, '');
 
+                        if ((value.match(/-/g) || []).length > 1) {
+                          value = value.replace(/-/g, '');
+                          value = '-' + value;
+                        } else if (value.includes('-') && value.indexOf('-') > 0) {
+                          value = value.replace(/-/g, '');
+                        }
+
                         const dotCount = (value.match(/\./g) || []).length;
                         if (dotCount > 1) {
                           const parts = value.split('.');
@@ -372,6 +396,13 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
                       onChange={(e) => {
                         let value = e.target.value.replace(/[^\d.-]/g, '');
 
+                        if ((value.match(/-/g) || []).length > 1) {
+                          value = value.replace(/-/g, '');
+                          value = '-' + value;
+                        } else if (value.includes('-') && value.indexOf('-') > 0) {
+                          value = value.replace(/-/g, '');
+                        }
+
                         const dotCount = (value.match(/\./g) || []).length;
                         if (dotCount > 1) {
                           const parts = value.split('.');
@@ -397,7 +428,15 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
                       value={townZInput}
                       maxLength={10}
                       onChange={(e) => {
-                        const value = e.target.value.replace(/[^\d-]/g, '');
+                        let value = e.target.value.replace(/[^\d-]/g, '');
+
+                        if ((value.match(/-/g) || []).length > 1) {
+                          value = value.replace(/-/g, '');
+                          value = '-' + value;
+                        } else if (value.includes('-') && value.indexOf('-') > 0) {
+                          value = value.replace(/-/g, '');
+                        }
+
                         const num = parseInt(value);
                         if (value === '' || value === '-' || (!isNaN(num) && num >= -2147483648 && num <= 2147483647)) {
                           setTownZInput(value);

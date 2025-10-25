@@ -968,7 +968,15 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                       value={coordXInput}
                       maxLength={10}
                       onChange={(e) => {
-                        const value = e.target.value.replace(/[^\d-]/g, '');
+                        let value = e.target.value.replace(/[^\d-]/g, '');
+
+                        if ((value.match(/-/g) || []).length > 1) {
+                          value = value.replace(/-/g, '');
+                          value = '-' + value;
+                        } else if (value.includes('-') && value.indexOf('-') > 0) {
+                          value = value.replace(/-/g, '');
+                        }
+
                         const num = parseInt(value);
                         if (value === '' || value === '-' || (!isNaN(num) && num > -366 && num <= 2147483647)) {
                           setTurnoverRange({...turnoverRange, min: '', max: ''});
@@ -1000,6 +1008,13 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                       maxLength={7}
                       onChange={(e) => {
                         let value = e.target.value.replace(/[^\d.-]/g, '');
+
+                        if ((value.match(/-/g) || []).length > 1) {
+                          value = value.replace(/-/g, '');
+                          value = '-' + value;
+                        } else if (value.includes('-') && value.indexOf('-') > 0) {
+                          value = value.replace(/-/g, '');
+                        }
 
                         const dotCount = (value.match(/\./g) || []).length;
                         if (dotCount > 1) {
@@ -1088,6 +1103,13 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                       onChange={(e) => {
                         let value = e.target.value.replace(/[^\d.-]/g, '');
 
+                        if ((value.match(/-/g) || []).length > 1) {
+                          value = value.replace(/-/g, '');
+                          value = '-' + value;
+                        } else if (value.includes('-') && value.indexOf('-') > 0) {
+                          value = value.replace(/-/g, '');
+                        }
+
                         const dotCount = (value.match(/\./g) || []).length;
                         if (dotCount > 1) {
                           const parts = value.split('.');
@@ -1125,6 +1147,13 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                       onChange={(e) => {
                         let value = e.target.value.replace(/[^\d.-]/g, '');
 
+                        if ((value.match(/-/g) || []).length > 1) {
+                          value = value.replace(/-/g, '');
+                          value = '-' + value;
+                        } else if (value.includes('-') && value.indexOf('-') > 0) {
+                          value = value.replace(/-/g, '');
+                        }
+
                         const dotCount = (value.match(/\./g) || []).length;
                         if (dotCount > 1) {
                           const parts = value.split('.');
@@ -1160,7 +1189,15 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                       value={townZInput}
                       maxLength={10}
                       onChange={(e) => {
-                        const value = e.target.value.replace(/[^\d-]/g, '');
+                        let value = e.target.value.replace(/[^\d-]/g, '');
+
+                        if ((value.match(/-/g) || []).length > 1) {
+                          value = value.replace(/-/g, '');
+                          value = '-' + value;
+                        } else if (value.includes('-') && value.indexOf('-') > 0) {
+                          value = value.replace(/-/g, '');
+                        }
+
                         const num = parseInt(value);
                         if (value === '' || value === '-' || (!isNaN(num) && num >= -2147483648 && num <= 2147483647)) {
                           setTurnoverRange({...turnoverRange, min: '', max: ''});
