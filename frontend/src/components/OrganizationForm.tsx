@@ -52,6 +52,10 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
       newErrors.name = 'Name is required';
     }
 
+    if (formData.name && formData.name.length > 250) {
+      newErrors.name = 'Name must be shorter than 251';
+    }
+
     if (isNaN(formData.coordinates.x)) {
       newErrors.coordinatesX = 'X coordinate is required';
     }
