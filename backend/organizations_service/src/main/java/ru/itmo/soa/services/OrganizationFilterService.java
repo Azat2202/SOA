@@ -1,5 +1,6 @@
 package ru.itmo.soa.services;
 
+import io.getunleash.Unleash;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -8,10 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import ru.itmo.gen.model.Organization;
-import ru.itmo.gen.model.OrganizationArray;
-import ru.itmo.gen.model.OrganizationFilters;
-import ru.itmo.gen.model.OrganizationFiltersSortInner;
+import ru.itmo.gen.model.*;
 import ru.itmo.soa.models.OrganizationEntity;
 import ru.itmo.soa.repositories.OrganizationsRepository;
 
@@ -23,8 +21,22 @@ import java.util.List;
 public class OrganizationFilterService {
     private final ModelMapper modelMapper;
     private final OrganizationsRepository organizationsRepository;
+    private final Unleash unleash;
 
     public ResponseEntity<OrganizationArray> organizationsFilterPost(OrganizationFilters organizationFilters) {
+        boolean skipPublic = unleash.isEnabled("skip-public-companies");
+
+        if (skipPublic) {
+            if (organizationFilters.getFilter() == null) {
+                OrganizationFiltersFilter organizationFiltersFilter = new OrganizationFiltersFilter();
+                organizationFiltersFilter.setType(OrganizationFiltersFilter.TypeEnum.PUBLIC);
+                organizationFilters.setFilter(organizationFiltersFilter);
+            } else {
+                organizationFilters.getFilter().setType(OrganizationFiltersFilter.TypeEnum.PUBLIC);
+            }
+        }
+
+
         int page = organizationFilters.getPagination() != null && organizationFilters.getPagination().getPage() != null
                 ? organizationFilters.getPagination().getPage() : 0;
         int size = organizationFilters.getPagination() != null && organizationFilters.getPagination().getSize() != null
