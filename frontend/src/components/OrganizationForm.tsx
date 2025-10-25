@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Organization, OrganizationRead } from '../store/types.generated';
+import * as string_decoder from "node:string_decoder";
 
 interface OrganizationFormProps {
   organization?: OrganizationRead;
@@ -37,6 +38,13 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  // Local state for decimal inputs to preserve intermediate values like "8."
+  const [coordXInput, setCoordXInput] = useState(formData.coordinates?.x?.toString() || '');
+  const [coordYInput, setCoordYInput] = useState(formData.coordinates?.y?.toString() || '');
+  const [townXInput, setTownXInput] = useState(formData.postalAddress?.town?.x?.toString() || '');
+  const [townYInput, setTownYInput] = useState(formData.postalAddress?.town?.y?.toString() || '');
+  const [townZInput, setTownZInput] = useState(formData.postalAddress?.town?.z?.toString() || '');
+
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
@@ -44,24 +52,20 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
       newErrors.name = 'Name is required';
     }
 
-    if (isNaN(formData.coordinates.x)) {
+    if (!formData.coordinates.x) {
       newErrors.coordinatesX = 'X coordinate is required';
     }
 
-    if (isNaN(formData.coordinates.y)) {
+    if (!formData.coordinates.y) {
       newErrors.coordinatesY = 'Y coordinate is required';
     }
 
-    if (isNaN(formData.annualTurnover)) {
-      newErrors.annualTurnover = 'Annual turnover is required';
-    }
-
     if (formData.coordinates.x < -365) {
-      newErrors.coordinatesX = 'Coordinate X must be greater than -365';
+      newErrors.coordinatesX = 'Coordinate X must be greater than -366';
     }
 
-    if (!isNaN(formData.annualTurnover) && formData.annualTurnover < 1) {
-      newErrors.annualTurnover = 'Annual turnover must be greater than 0';
+    if (!formData.annualTurnover || formData.annualTurnover < 1) {
+      newErrors.annualTurnover = 'Annual turnover is required and must be greater than 0';
     }
 
     if (formData.employeesCount && formData.employeesCount < 1) {
@@ -76,6 +80,10 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
       if (!formData.postalAddress.street.trim()) {
         newErrors.postalAddressStreet = 'Street is required';
       }
+    }
+
+    if (!formData.postalAddress?.town.z) {
+      newErrors.townCoordinatesZ = 'Z coordinate is required';
     }
 
     setErrors(newErrors);
@@ -175,11 +183,20 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
               <div className="form-group" style={{maxWidth: '250px'}}>
                 <label className="form-label">Coordinate X *</label>
                 <input
-                  type="number"
-                  className={`form-control ${errors.coordinatesX ? 'error' : ''}`}
-                  value={formData.coordinates.x}
-                  onChange={(e) => handleInputChange('coordinates.x', parseInt(e.target.value))}
-                  placeholder="X"
+                    type="text"
+                    inputMode="numeric"
+                    className={`form-control ${errors.coordinatesX ? 'error' : ''}`}
+                    placeholder="X"
+                    value={coordXInput}
+                    maxLength={10}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/[^\d-]/g, '');
+                      const num = parseInt(value);
+                      if (value === '' || value === '-' || (!isNaN(num) && num > -366 && num <= 2147483647)) {
+                        setCoordXInput(value);
+                        handleInputChange('coordinates.x', (value && value !== '-') ? parseInt(value) : undefined);
+                      }
+                    }}
                 />
                 {errors.coordinatesX && <div className="error-message">{errors.coordinatesX}</div>}
               </div>
@@ -188,12 +205,26 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
               <div className="form-group" style={{maxWidth: '250px'}}>
                 <label className="form-label">Coordinate Y *</label>
                 <input
-                  type="number"
-                  step="0.01"
-                  className={`form-control ${errors.coordinatesY ? 'error' : ''}`}
-                  value={formData.coordinates.y}
-                  onChange={(e) => handleInputChange('coordinates.y', parseFloat(e.target.value))}
-                  placeholder="Y"
+                    type="text"
+                    inputMode="decimal"
+                    className={`form-control ${errors.coordinatesY ? 'error' : ''}`}
+                    placeholder="Y"
+                    value={coordYInput}
+                    maxLength={7}
+                    onChange={(e) => {
+                      let value = e.target.value.replace(/[^\d.-]/g, '');
+
+                      const dotCount = (value.match(/\./g) || []).length;
+                      if (dotCount > 1) {
+                        const parts = value.split('.');
+                        value = parts[0] + '.' + parts.slice(1).join('');
+                      }
+                      const num = parseFloat(value);
+                      if (value === '' || value === '-' || value.endsWith('.') || (!isNaN(num) && num >= -1000000 && num <= 1000000)) {
+                        setCoordYInput(value);
+                        handleInputChange('coordinates.y', (value && value !== '-' && !value.endsWith('.')) ? parseFloat(value) : undefined);
+                      }
+                    }}
                 />
                 {errors.coordinatesY && <div className="error-message">{errors.coordinatesY}</div>}
               </div>
@@ -219,11 +250,19 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
               <div className="form-group" style={{maxWidth: '250px'}}>
                 <label className="form-label">Annual turnover *</label>
                 <input
-                  type="number"
-                  className={`form-control ${errors.annualTurnover ? 'error' : ''}`}
-                  value={formData.annualTurnover}
-                  onChange={(e) => handleInputChange('annualTurnover', parseInt(e.target.value))}
-                  placeholder="Annual turnover"
+                    type="text"
+                    inputMode="numeric"
+                    className={`form-control ${errors.annualTurnover ? 'error' : ''}`}
+                    value={formData.annualTurnover}
+                    maxLength={10}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, '');
+                      const num = parseInt(value);
+                      if (value === '' || (!isNaN(num) && num > 0 && num <= 2147483647)) {
+                        handleInputChange('annualTurnover', value ? parseInt(value) : null);
+                      }
+                    }}
+                    placeholder="Annual turnover"
                 />
                 {errors.annualTurnover && <div className="error-message">{errors.annualTurnover}</div>}
               </div>
@@ -232,11 +271,19 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
               <div className="form-group" style={{maxWidth: '250px'}}>
                 <label className="form-label">Employee number</label>
                 <input
-                  type="number"
-                  className={`form-control ${errors.employeesCount ? 'error' : ''}`}
-                  value={formData.employeesCount || ''}
-                  onChange={(e) => handleInputChange('employeesCount', e.target.value ? parseInt(e.target.value) : null)}
-                  placeholder="Number"
+                    type="text"
+                    inputMode="numeric"
+                    className={`form-control ${errors.employeesCount ? 'error' : ''}`}
+                    value={formData.employeesCount || ''}
+                    maxLength={10}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, '');
+                      const num = parseInt(value);
+                      if (value === '' || (!isNaN(num) && num > 0 && num <= 2147483647)) {
+                        handleInputChange('employeesCount', value ? parseInt(value) : null);
+                      }
+                    }}
+                    placeholder="Number"
                 />
                 {errors.employeesCount && <div className="error-message">{errors.employeesCount}</div>}
               </div>
@@ -289,12 +336,26 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
                 <div className="form-group" style={{maxWidth: '250px'}}>
                   <label className="form-label">Town location X</label>
                   <input
-                    type="number"
-                    step="0.01"
-                    className="form-control"
-                    value={formData.postalAddress.town.x}
-                    onChange={(e) => handleInputChange('postalAddress.town.x', parseFloat(e.target.value))}
-                    placeholder="X"
+                      type="text"
+                      inputMode="decimal"
+                      className="form-control"
+                      placeholder="X"
+                      value={townXInput}
+                      maxLength={7}
+                      onChange={(e) => {
+                        let value = e.target.value.replace(/[^\d.-]/g, '');
+
+                        const dotCount = (value.match(/\./g) || []).length;
+                        if (dotCount > 1) {
+                          const parts = value.split('.');
+                          value = parts[0] + '.' + parts.slice(1).join('');
+                        }
+                        const num = parseFloat(value);
+                        if (value === '' || value === '-' || value.endsWith('.') || (!isNaN(num) && num >= -1000000 && num <= 1000000)) {
+                          setTownXInput(value);
+                          handleInputChange('postalAddress.town.x', (value && value !== '-' && !value.endsWith('.')) ? parseFloat(value) : undefined);
+                        }
+                      }}
                   />
                 </div>
               </div>
@@ -302,25 +363,49 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
                 <div className="form-group" style={{maxWidth: '250px'}}>
                   <label className="form-label">Town location Y</label>
                   <input
-                    type="number"
-                    step="0.01"
-                    className="form-control"
-                    value={formData.postalAddress.town.y}
-                    onChange={(e) => handleInputChange('postalAddress.town.y', parseFloat(e.target.value))}
-                    placeholder="Y"
+                      type="text"
+                      inputMode="decimal"
+                      className="form-control"
+                      placeholder="Y"
+                      value={townYInput}
+                      maxLength={7}
+                      onChange={(e) => {
+                        let value = e.target.value.replace(/[^\d.-]/g, '');
+
+                        const dotCount = (value.match(/\./g) || []).length;
+                        if (dotCount > 1) {
+                          const parts = value.split('.');
+                          value = parts[0] + '.' + parts.slice(1).join('');
+                        }
+                        const num = parseFloat(value);
+                        if (value === '' || value === '-' || value.endsWith('.') || (!isNaN(num) && num >= -1000000 && num <= 1000000)) {
+                          setTownYInput(value);
+                          handleInputChange('postalAddress.town.y', (value && value !== '-' && !value.endsWith('.')) ? parseFloat(value) : undefined);
+                        }
+                      }}
                   />
                 </div>
               </div>
               <div className="col-4">
                 <div className="form-group" style={{maxWidth: '250px'}}>
-                  <label className="form-label">Town location Z</label>
+                  <label className="form-label">Town location Z *</label>
                   <input
-                    type="number"
-                    className="form-control"
-                    value={formData.postalAddress.town.z}
-                    onChange={(e) => handleInputChange('postalAddress.town.z', parseInt(e.target.value))}
-                    placeholder="Z"
+                      type="text"
+                      inputMode="numeric"
+                      className={`form-control ${errors.townCoordinatesZ ? 'error' : ''}`}
+                      placeholder="Z"
+                      value={townZInput}
+                      maxLength={10}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/[^\d-]/g, '');
+                        const num = parseInt(value);
+                        if (value === '' || value === '-' || (!isNaN(num) && num >= -2147483648 && num <= 2147483647)) {
+                          setTownZInput(value);
+                          handleInputChange('postalAddress.town.z', (value && value !== '-') ? parseInt(value) : undefined);
+                        }
+                      }}
                   />
+                  {errors.townCoordinatesZ && <div className="error-message">{errors.townCoordinatesZ}</div>}
                 </div>
               </div>
             </div>
