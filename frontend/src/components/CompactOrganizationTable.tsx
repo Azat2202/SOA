@@ -356,8 +356,8 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                    value={turnoverRange.min}
                    maxLength={254}
                    onChange={(e) => {
-                     const value = e.target.value.replace(/[^\d.-]/g, '');
-                     const num = parseFloat(value);
+                     const value = e.target.value.replace(/\D/g, '');
+                     const num = parseInt(value);
                      if (value === '' || value === '-' || (!isNaN(num) && num >= 0)) {
                        setTurnoverRange({...turnoverRange, min: value});
                      }
@@ -373,8 +373,8 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                    value={turnoverRange.max}
                    maxLength={254}
                    onChange={(e) => {
-                     const value = e.target.value.replace(/[^\d.-]/g, '');
-                     const num = parseFloat(value);
+                     const value = e.target.value.replace(/\D/g, '');
+                     const num = parseInt(value);
                      if (value === '' || value === '-' || (!isNaN(num) && num >= 0)) {
                        setTurnoverRange({...turnoverRange, max: value});
                      }
@@ -834,7 +834,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                        onChange={(e) => {
                          const value = e.target.value.replace(/\D/g, '');
                          const num = parseInt(value);
-                         if (value === '' || (!isNaN(num) && num >= 0 && num <= 2147483647)) {
+                         if (value === '' || (!isNaN(num) && num > 0 && num <= 2147483647)) {
                            handleFilterChange('annualTurnover.min', value ? parseInt(value) : undefined);
                          }
                        }}
@@ -850,7 +850,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                        onChange={(e) => {
                          const value = e.target.value.replace(/\D/g, '');
                          const num = parseInt(value);
-                         if (value === '' || (!isNaN(num) && num >= 0 && num <= 2147483647)) {
+                         if (value === '' || (!isNaN(num) && num > 0 && num <= 2147483647)) {
                            handleFilterChange('annualTurnover.max', value ? parseInt(value) : undefined);
                          }
                        }}
@@ -874,11 +874,11 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                       inputMode="numeric"
                       className="form-control"
                       value={filters?.employeesCount || ''}
-                      maxLength={254}
+                      maxLength={10}
                       onChange={(e) => {
                         const value = e.target.value.replace(/\D/g, '');
                         const num = parseInt(value);
-                        if (value === '' || (!isNaN(num) && num >= 0 && num <= 2147483647)) {
+                        if (value === '' || (!isNaN(num) && num > 0 && num <= 2147483647)) {
                           handleFilterChange('employeesCount', value ? parseInt(value) : undefined);
                         }
                       }}
@@ -934,11 +934,11 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                       className="form-control"
                       placeholder="X"
                       value={coordXInput}
-                      maxLength={254}
+                      maxLength={10}
                       onChange={(e) => {
                         const value = e.target.value.replace(/[^\d-]/g, '');
                         const num = parseInt(value);
-                        if (value === '' || value === '-' || (!isNaN(num) && num >= -2147483648 && num <= 2147483647)) {
+                        if (value === '' || value === '-' || (!isNaN(num) && num > -366 && num <= 2147483647)) {
                           setCoordXInput(value);
                           handleFilterChange('coordinates.x', (value && value !== '-') ? parseInt(value) : undefined);
                         }
@@ -963,9 +963,15 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                       className="form-control"
                       placeholder="Y"
                       value={coordYInput}
-                      maxLength={254}
+                      maxLength={7}
                       onChange={(e) => {
-                        const value = e.target.value.replace(/[^\d.-]/g, '');
+                        let value = e.target.value.replace(/[^\d.-]/g, '');
+
+                        const dotCount = (value.match(/\./g) || []).length;
+                        if (dotCount > 1) {
+                          const parts = value.split('.');
+                          value = parts[0] + '.' + parts.slice(1).join('');
+                        }
                         const num = parseFloat(value);
                         if (value === '' || value === '-' || value.endsWith('.') || (!isNaN(num) && num >= -1000000 && num <= 1000000)) {
                           setCoordYInput(value);
@@ -1034,9 +1040,15 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                       className="form-control"
                       placeholder="X"
                       value={townXInput}
-                      maxLength={254}
+                      maxLength={7}
                       onChange={(e) => {
-                        const value = e.target.value.replace(/[^\d.-]/g, '');
+                        let value = e.target.value.replace(/[^\d.-]/g, '');
+
+                        const dotCount = (value.match(/\./g) || []).length;
+                        if (dotCount > 1) {
+                          const parts = value.split('.');
+                          value = parts[0] + '.' + parts.slice(1).join('');
+                        }
                         const num = parseFloat(value);
                         if (value === '' || value === '-' || value.endsWith('.') || (!isNaN(num) && num >= -1000000 && num <= 1000000)) {
                           setTownXInput(value);
@@ -1063,9 +1075,15 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                       className="form-control"
                       placeholder="Y"
                       value={townYInput}
-                      maxLength={254}
+                      maxLength={7}
                       onChange={(e) => {
-                        const value = e.target.value.replace(/[^\d.-]/g, '');
+                        let value = e.target.value.replace(/[^\d.-]/g, '');
+
+                        const dotCount = (value.match(/\./g) || []).length;
+                        if (dotCount > 1) {
+                          const parts = value.split('.');
+                          value = parts[0] + '.' + parts.slice(1).join('');
+                        }
                         const num = parseFloat(value);
                         if (value === '' || value === '-' || value.endsWith('.') || (!isNaN(num) && num >= -1000000 && num <= 1000000)) {
                           setTownYInput(value);
@@ -1092,7 +1110,7 @@ const CompactOrganizationTable: React.FC<CompactOrganizationTableProps> = ({
                       className="form-control"
                       placeholder="Z"
                       value={townZInput}
-                      maxLength={254}
+                      maxLength={10}
                       onChange={(e) => {
                         const value = e.target.value.replace(/[^\d-]/g, '');
                         const num = parseInt(value);
