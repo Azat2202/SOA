@@ -20,20 +20,6 @@ public class UnleashSubscriptionService implements UnleashSubscriber {
     @Value("${unleash.database.feature-flag:use-postgresql}")
     private String databaseFeatureFlag;
 
-//    @PostConstruct
-//    public void init() {
-//        // Подписываемся на обновления фичей
-//        if (unleash instanceof DefaultUnleash) {
-//            ((DefaultUnleash) unleash).addSubscriber(this);
-//            log.info("Subscribed to Unleash feature flag updates");
-//        } else {
-//            log.warn("Unleash instance is not DefaultUnleash, cannot subscribe to updates");
-//        }
-//
-//        // Устанавливаем начальное значение БД на основе текущего состояния фичафлага
-//        updateDatabaseType();
-//    }
-
     @Override
     public void on(UnleashEvent event) {
         log.info("Unleash toggles updated, updating database type");
