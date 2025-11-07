@@ -5,6 +5,7 @@
  */
 package ru.itmo.gen.api;
 
+import ru.itmo.gen.model.DatabaseVariant;
 import ru.itmo.gen.model.Error;
 import ru.itmo.gen.model.Organization;
 import ru.itmo.gen.model.OrganizationArray;
@@ -47,6 +48,90 @@ public interface OrganizationsApi {
     default Optional<NativeWebRequest> getRequest() {
         return Optional.empty();
     }
+
+    public static final String PATH_ORGANIZATIONS_CONFIGURATIONS_DATABASE_GET = "/organizations/configurations/database";
+    /**
+     * GET /organizations/configurations/database : Получить конфигурацию базы данных
+     * Возвращает конфигурацию базы данных, используемой в приложении
+     *
+     * @return Конфигурация базы данных получена (status code 200)
+     */
+    @Operation(
+        operationId = "organizationsConfigurationsDatabaseGet",
+        summary = "Получить конфигурацию базы данных",
+        description = "Возвращает конфигурацию базы данных, используемой в приложении",
+        tags = { "Organizations" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Конфигурация базы данных получена", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = DatabaseVariant.class))
+            })
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = OrganizationsApi.PATH_ORGANIZATIONS_CONFIGURATIONS_DATABASE_GET,
+        produces = { "application/json" }
+    )
+    
+    default ResponseEntity<DatabaseVariant> organizationsConfigurationsDatabaseGet(
+        
+    ) {
+        getRequest().ifPresent(request -> {
+            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "\"MYSQL\"";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
+            }
+        });
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+
+    }
+
+
+    public static final String PATH_ORGANIZATIONS_CONFIGURATIONS_DATABASE_POST = "/organizations/configurations/database";
+    /**
+     * POST /organizations/configurations/database : Установить конфигурацию базы данных
+     * Устанавливает конфигурацию базы данных, используемой в приложении
+     *
+     * @param body  (required)
+     * @return Конфигурация базы данных установлена (status code 200)
+     */
+    @Operation(
+        operationId = "organizationsConfigurationsDatabasePost",
+        summary = "Установить конфигурацию базы данных",
+        description = "Устанавливает конфигурацию базы данных, используемой в приложении",
+        tags = { "Organizations" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Конфигурация базы данных установлена", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = DatabaseVariant.class))
+            })
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.POST,
+        value = OrganizationsApi.PATH_ORGANIZATIONS_CONFIGURATIONS_DATABASE_POST,
+        produces = { "application/json" },
+        consumes = { "application/json" }
+    )
+    
+    default ResponseEntity<DatabaseVariant> organizationsConfigurationsDatabasePost(
+        @Parameter(name = "body", description = "", required = true) @Valid @RequestBody String body
+    ) {
+        getRequest().ifPresent(request -> {
+            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "\"MYSQL\"";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
+            }
+        });
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+
+    }
+
 
     public static final String PATH_ORGANIZATIONS_DELETE_BY_FULLNAME_POST = "/organizations/delete/by-fullname";
     /**

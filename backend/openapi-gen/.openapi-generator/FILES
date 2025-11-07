@@ -1,9 +1,11 @@
 README.md
+src/main/java/org/openapitools/configuration/EnumConverterConfiguration.java
 src/main/java/ru/itmo/gen/api/ApiUtil.java
 src/main/java/ru/itmo/gen/api/OrgDirectoriesApi.java
 src/main/java/ru/itmo/gen/api/OrganizationsApi.java
 src/main/java/ru/itmo/gen/model/Address.java
 src/main/java/ru/itmo/gen/model/Coordinates.java
+src/main/java/ru/itmo/gen/model/DatabaseVariant.java
 src/main/java/ru/itmo/gen/model/Error.java
 src/main/java/ru/itmo/gen/model/Location.java
 src/main/java/ru/itmo/gen/model/Organization.java

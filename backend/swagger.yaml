@@ -8,8 +8,9 @@ servers:
     description: localhost ssl
   - url: http://localhost:8080
     description: localhost
-  - url: https://se.ifmo.ru/~s368796/
-    description: Helios
+  - url: http://localhost:8081
+    description: Organizations service
+
 
 tags:
   - name: Organizations
@@ -253,6 +254,9 @@ components:
         timestamp:
           type: string
           format: date-time
+    DatabaseVariant:
+      type: string
+      enum: [ MYSQL, POSTGRESQL ]
   parameters:
     pageParam:
       name: page
@@ -328,6 +332,37 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /organizations/configurations/database:
+    get:
+      tags:
+        - Organizations
+      summary: Получить конфигурацию базы данных
+      description: Возвращает конфигурацию базы данных, используемой в приложении
+      responses:
+        '200':
+          description: Конфигурация базы данных получена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatabaseVariant'
+    post:
+      tags:
+        - Organizations
+      summary: Установить конфигурацию базы данных
+      description: Устанавливает конфигурацию базы данных, используемой в приложении
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatabaseVariant'
+      responses:
+        '200':
+          description: Конфигурация базы данных установлена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatabaseVariant'
   /organizations/{id}:
     get:
       tags:

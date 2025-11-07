@@ -1,7 +1,11 @@
 package ru.itmo.soa.services;
 
 import io.getunleash.Unleash;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.dialect.Dialect;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,7 +27,16 @@ public class OrganizationFilterService {
     private final OrganizationsRepository organizationsRepository;
     private final Unleash unleash;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     public ResponseEntity<OrganizationArray> organizationsFilterPost(OrganizationFilters organizationFilters) {
+        SessionFactoryImplementor sfi =
+                entityManager.getEntityManagerFactory()
+                        .unwrap(SessionFactoryImplementor.class);
+        Dialect dialect = sfi.getJdbcServices().getDialect();
+        System.out.println("dialect = " + dialect);
+
         boolean skipPublic = unleash.isEnabled("skip-public-companies");
 
         if (skipPublic) {
