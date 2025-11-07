@@ -1,16 +1,13 @@
 package ru.itmo.soa.services;
 
-import io.getunleash.DefaultUnleash;
 import io.getunleash.Unleash;
 import io.getunleash.event.UnleashEvent;
 import io.getunleash.event.UnleashSubscriber;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.itmo.soa.datasource_configuration.ClientDatabase;
-import ru.itmo.soa.datasource_configuration.ClientDatabaseContextHolder;
 
 @Slf4j
 @Service
@@ -45,24 +42,14 @@ public class UnleashSubscriptionService implements UnleashSubscriber {
     }
 
     /**
-     * Обновляет тип используемой БД на основе значения фичафлага.
-     * Если фичафлаг включен, используется PostgreSQL, иначе MySQL.
+     * Обновляет тип используемой БД на основе значения фичафлага
+     * Если фичафлаг включен, используется MySQL, иначе PostgreSQL
      */
     private void updateDatabaseType() {
         try {
-            boolean usePostgreSQL = unleash.isEnabled(databaseFeatureFlag);
-            ClientDatabase newDatabaseType = usePostgreSQL ? ClientDatabase.POSTGRESQL : ClientDatabase.MYSQL;
+            boolean useMySQL = unleash.isEnabled(databaseFeatureFlag);
+            ClientDatabase newDatabaseType = useMySQL ? ClientDatabase.MYSQL : ClientDatabase.POSTGRESQL;
             databaseService.setConfiguration(newDatabaseType);
-//            ClientDatabase currentDatabaseType = ClientDatabaseContextHolder.getClientDatabase();
-//
-//            if (currentDatabaseType != newDatabaseType) {
-//                log.info("Switching database from {} to {} based on feature flag '{}' (value: {})",
-//                        currentDatabaseType, newDatabaseType, databaseFeatureFlag, usePostgreSQL);
-//                ClientDatabaseContextHolder.set(newDatabaseType);
-//            } else {
-//                log.debug("Database type unchanged: {} (feature flag '{}' = {})",
-//                        currentDatabaseType, databaseFeatureFlag, usePostgreSQL);
-//            }
         } catch (Exception e) {
             log.error("Error updating database type based on feature flag '{}'", databaseFeatureFlag, e);
         }
