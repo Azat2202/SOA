@@ -14,7 +14,6 @@ public class DatabaseService {
 
     public ClientDatabase setConfiguration(ClientDatabase clientDatabase){
         ClientDatabaseContextHolder.set(clientDatabase);
-        OrganizationsApplication.restart();
         return ClientDatabaseContextHolder.getClientDatabase();
     }
 }

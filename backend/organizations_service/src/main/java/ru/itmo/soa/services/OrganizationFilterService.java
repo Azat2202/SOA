@@ -25,28 +25,13 @@ import java.util.List;
 public class OrganizationFilterService {
     private final ModelMapper modelMapper;
     private final OrganizationsRepository organizationsRepository;
-    private final Unleash unleash;
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     public ResponseEntity<OrganizationArray> organizationsFilterPost(OrganizationFilters organizationFilters) {
-        SessionFactoryImplementor sfi =
-                entityManager.getEntityManagerFactory()
-                        .unwrap(SessionFactoryImplementor.class);
-        Dialect dialect = sfi.getJdbcServices().getDialect();
-        System.out.println("dialect = " + dialect);
 
-        boolean skipPublic = unleash.isEnabled("skip-public-companies");
-
-        if (skipPublic) {
-            if (organizationFilters.getFilter() == null) {
-                OrganizationFiltersFilter organizationFiltersFilter = new OrganizationFiltersFilter();
-                organizationFiltersFilter.setType(OrganizationFiltersFilter.TypeEnum.PUBLIC);
-                organizationFilters.setFilter(organizationFiltersFilter);
-            } else {
-                organizationFilters.getFilter().setType(OrganizationFiltersFilter.TypeEnum.PUBLIC);
-            }
+        if (organizationFilters.getFilter() == null) {
+            OrganizationFiltersFilter organizationFiltersFilter = new OrganizationFiltersFilter();
+            organizationFiltersFilter.setType(OrganizationFiltersFilter.TypeEnum.PUBLIC);
+            organizationFilters.setFilter(organizationFiltersFilter);
         }
 
 

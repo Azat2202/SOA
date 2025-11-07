@@ -81,23 +81,4 @@ public class DbRoutingConfiguration {
         router.afterPropertiesSet();
         return router;
     }
-
-    public DataSource getCustomDataSource() {
-        PostgreSQLDialect postgreSQLDialect = new PostgreSQLDialect();
-        MySQLDialect mySQLDialect = new MySQLDialect();
-
-        Proxy.newProxyInstance(
-                DataSource.class.getClassLoader(),
-                DataSource.class,
-                (InvocationHandler) (proxy, method, args) -> {
-                    switch (ClientDatabaseContextHolder.getClientDatabase()) {
-                        case POSTGRESQL ->
-                                postgreSQLDialect.getClass().getMethod(method.getName(), method.getParameterTypes())
-                                        .invoke(postgreSQLDialect, args);
-                        case MYSQL -> mySQLDialect.getClass().getMethod(method.getName(), method.getParameterTypes())
-                                .invoke(mySQLDialect, args);
-                    }
-                });
-
-    }
 }
