@@ -14,7 +14,7 @@ import {
   OrganizationFilters,
   Organization,
   OrganizationRead,
-  Pagination,
+  Pagination, useGetOrganizationsConfigurationsDatabaseQuery, DatabaseVariant,
 } from '../store/types.generated';
 import OrganizationForm from './OrganizationForm';
 import CompactOrganizationTable from './CompactOrganizationTable';
@@ -32,6 +32,7 @@ const OrganizationsPage: React.FC = () => {
   const [empStats, setEmpStats] = useState(0);
   const [turnoverStats, setTurnoverStats] = useState(0);
   const [orgSearch, setOrgSearch] = useState<OrganizationRead | null>(null);
+  // const [dbType, setDbType] = useState<DatabaseVariant | null>(null)
 
   const editFormRef = useRef<HTMLDivElement>(null);
 
@@ -48,6 +49,14 @@ const OrganizationsPage: React.FC = () => {
   useEffect(() => {
     loadOrganizations();
   }, [currentPage, pageSize, filters, sorting]);
+
+  const { data: dbType } = useGetOrganizationsConfigurationsDatabaseQuery();
+
+  // useEffect(() => {
+  //   if (error) {
+  //     toast.error(`Error getting db type: ${error.data?.message || error.message}`);
+  //   }
+  // }, [error]);
 
   const loadOrganizations = async () => {
     try {
@@ -256,6 +265,18 @@ const OrganizationsPage: React.FC = () => {
     }
   };
 
+  // const handleGetDatabaseType = async () => {
+  //   try {
+  //     const result = await dispatch(organizationsApi.endpoints.getOrganizationsConfigurationsDatabase.initiate());
+  //     // if (result.data) {
+  //     setDbType(result.data || null);
+  //     // }
+  //   } catch (error: any) {
+  //     console.error('Error getting db type:', error);
+  //     toast.error(`Error getting db type: ${error.data?.message || error.message}`);
+  //   }
+  // };
+
   const handleEditOrganization = (organization: OrganizationRead) => {
     setEditingOrganization(organization);
     editFormRef.current?.scrollIntoView({
@@ -292,6 +313,7 @@ const OrganizationsPage: React.FC = () => {
                   >
                     ➕ Create Organization
                   </button>
+                  {dbType}
                 </div>
               </div>
 
