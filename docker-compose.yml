@@ -16,7 +16,7 @@ services:
       timeout: 1s
       retries: 10
     restart: unless-stopped
-    networks:
+    networks:вы
       - backend
   db-mysql:
     image: mysql:9.5.0
@@ -30,8 +30,9 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -prootpassword | grep 'mysqld is alive'"]
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -pstudy | grep 'mysqld is alive'"]
       interval: 5s
       timeout: 1s
       retries: 10
@@ -70,6 +71,8 @@ services:
     container_name: organizations
     ports:
       - "8081:8081"
+    environment:
+      - UNLEASH_API_KEY=${UNLEASH_API_KEY}
     networks:
       - backend
   frontend:
