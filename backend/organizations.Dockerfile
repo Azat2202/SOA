@@ -17,4 +17,6 @@ COPY --from=build /app/organizations_service/target/organizations_service.jar ./
 
 ENV DATABASE_HOST=db
 ENV DATABASE_PORT=5432
+ENV MYSQL_DATABASE_HOST=db-mysql
+ENV MYSQL_DATABASE_PORT=3306
 ENTRYPOINT java -jar ./organizations_service.jar
