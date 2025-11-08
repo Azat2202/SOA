@@ -16,7 +16,7 @@ services:
       timeout: 1s
       retries: 10
     restart: unless-stopped
-    networks:вы
+    networks:
       - backend
   db-mysql:
     image: mysql:9.5.0
