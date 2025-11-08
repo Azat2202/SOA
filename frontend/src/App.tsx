@@ -3,6 +3,7 @@ import { Provider } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import { store } from './store/store';
 import OrganizationsPage from './components/OrganizationsPage';
+import Header from './components/Header';
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
 
@@ -10,9 +11,7 @@ function App() {
   return (
     <Provider store={store}>
       <div className="App">
-        <header className="app-header">
-          <p>SOA Lab2</p>
-        </header>
+        <Header />
         
         <main className="app-main">
           <OrganizationsPage />
