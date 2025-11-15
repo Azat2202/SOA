@@ -21,6 +21,22 @@ const injectedRtkApi = api.injectEndpoints({
         body: queryArg.organizationFilters,
       }),
     }),
+    getOrganizationsConfigurationsDatabase: build.query<
+      GetOrganizationsConfigurationsDatabaseApiResponse,
+      GetOrganizationsConfigurationsDatabaseApiArg
+    >({
+      query: () => ({ url: `/organizations/configurations/database` }),
+    }),
+    postOrganizationsConfigurationsDatabase: build.mutation<
+      PostOrganizationsConfigurationsDatabaseApiResponse,
+      PostOrganizationsConfigurationsDatabaseApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/organizations/configurations/database`,
+        method: "POST",
+        body: queryArg.databaseVariant,
+      }),
+    }),
     getOrganizationsById: build.query<
       GetOrganizationsByIdApiResponse,
       GetOrganizationsByIdApiArg
@@ -112,6 +128,14 @@ export type PostOrganizationsFilterApiResponse =
   /** status 200 Успешное получение списка организаций */ OrganizationArrayRead;
 export type PostOrganizationsFilterApiArg = {
   organizationFilters: OrganizationFilters;
+};
+export type GetOrganizationsConfigurationsDatabaseApiResponse =
+  /** status 200 Конфигурация базы данных получена */ DatabaseVariant;
+export type GetOrganizationsConfigurationsDatabaseApiArg = void;
+export type PostOrganizationsConfigurationsDatabaseApiResponse =
+  /** status 200 Конфигурация базы данных установлена */ DatabaseVariant;
+export type PostOrganizationsConfigurationsDatabaseApiArg = {
+  databaseVariant: DatabaseVariant;
 };
 export type GetOrganizationsByIdApiResponse =
   /** status 200 Организация найдена */ OrganizationRead;
@@ -280,9 +304,12 @@ export type OrganizationFilters = {
     };
   };
 };
+export type DatabaseVariant = "MYSQL" | "POSTGRESQL";
 export const {
   usePostOrganizationsMutation,
   usePostOrganizationsFilterMutation,
+  useGetOrganizationsConfigurationsDatabaseQuery,
+  usePostOrganizationsConfigurationsDatabaseMutation,
   useGetOrganizationsByIdQuery,
   usePutOrganizationsByIdMutation,
   useDeleteOrganizationsByIdMutation,

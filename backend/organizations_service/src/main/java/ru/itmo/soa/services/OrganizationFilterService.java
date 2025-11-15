@@ -1,6 +1,11 @@
 package ru.itmo.soa.services;
 
+import io.getunleash.Unleash;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.dialect.Dialect;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -8,10 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import ru.itmo.gen.model.Organization;
-import ru.itmo.gen.model.OrganizationArray;
-import ru.itmo.gen.model.OrganizationFilters;
-import ru.itmo.gen.model.OrganizationFiltersSortInner;
+import ru.itmo.gen.model.*;
 import ru.itmo.soa.models.OrganizationEntity;
 import ru.itmo.soa.repositories.OrganizationsRepository;
 
@@ -25,6 +27,14 @@ public class OrganizationFilterService {
     private final OrganizationsRepository organizationsRepository;
 
     public ResponseEntity<OrganizationArray> organizationsFilterPost(OrganizationFilters organizationFilters) {
+
+        if (organizationFilters.getFilter() == null) {
+            OrganizationFiltersFilter organizationFiltersFilter = new OrganizationFiltersFilter();
+            organizationFiltersFilter.setType(OrganizationFiltersFilter.TypeEnum.PUBLIC);
+            organizationFilters.setFilter(organizationFiltersFilter);
+        }
+
+
         int page = organizationFilters.getPagination() != null && organizationFilters.getPagination().getPage() != null
                 ? organizationFilters.getPagination().getPage() : 0;
         int size = organizationFilters.getPagination() != null && organizationFilters.getPagination().getSize() != null

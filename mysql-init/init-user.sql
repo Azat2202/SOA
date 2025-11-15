@@ -1,0 +1,6 @@
+CREATE USER IF NOT EXISTS 'study'@'%' IDENTIFIED BY 'study';
+GRANT ALL PRIVILEGES ON study.* TO 'study'@'%';
+FLUSH PRIVILEGES;
+
+
+

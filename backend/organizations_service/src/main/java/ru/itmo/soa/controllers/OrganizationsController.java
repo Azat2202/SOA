@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.itmo.gen.api.OrganizationsApi;
 import ru.itmo.gen.model.*;
 import lombok.RequiredArgsConstructor;
+import ru.itmo.soa.datasource_configuration.ClientDatabase;
+import ru.itmo.soa.services.DatabaseService;
 import ru.itmo.soa.services.OrganizationFilterService;
 import ru.itmo.soa.services.OrganizationService;
 
@@ -14,6 +16,7 @@ public class OrganizationsController implements OrganizationsApi {
 
     private final OrganizationFilterService organizationFilterService;
     private final OrganizationService organizationService;
+    private final DatabaseService databaseService;
 
     @Override
     public ResponseEntity<Organization> organizationsPost(Organization organization) {
@@ -23,6 +26,16 @@ public class OrganizationsController implements OrganizationsApi {
     @Override
     public ResponseEntity<OrganizationArray> organizationsFilterPost(OrganizationFilters organizationFilters) {
         return organizationFilterService.organizationsFilterPost(organizationFilters);
+    }
+
+    @Override
+    public ResponseEntity<DatabaseVariant> organizationsConfigurationsDatabaseGet() {
+        return ResponseEntity.ok(DatabaseVariant.fromValue(databaseService.getConfiguration().name()));
+    }
+
+    @Override
+    public ResponseEntity<DatabaseVariant> organizationsConfigurationsDatabasePost(String body) {
+        return ResponseEntity.ok(DatabaseVariant.fromValue(databaseService.setConfiguration(ClientDatabase.valueOf(body)).name()));
     }
 
     @Override
