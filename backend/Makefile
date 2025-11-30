@@ -1,12 +1,18 @@
 build/organizations:
-	mvn clean package -pl organizations_service -am -DskipTests
-	mvn -pl organizations_service payara-micro:bundle -f pom.xml
+	mvn clean package -pl organizations_ear -am -DskipTests
 
-run/organizations: build/organizations
-	export DATABASE_HOST=localhost
-	export DATABASE_PORT=5433
-	export DATABASE_DB=study
-	export DATABASE_USERNAME=study
-	export DATABASE_PASSWORD=study
-	java -jar organizations_service/target/organizations_service-1.0-microbundle.jar
+docker/build:
+	docker build -f organizations.Dockerfile -t organizations-app .
 
+docker/run:
+	docker run -it --rm \
+		-p 8080:8080 \
+		-p 4848:4848 \
+		-e DATABASE_HOST=host.docker.internal \
+		-e DATABASE_PORT=5433 \
+		-e DATABASE_DB=study \
+		-e DATABASE_USERNAME=study \
+		-e DATABASE_PASSWORD=study \
+		organizations-app
+
+run/organizations: build/organizations docker/build docker/run

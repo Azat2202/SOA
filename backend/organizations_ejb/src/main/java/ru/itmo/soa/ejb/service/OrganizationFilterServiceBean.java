@@ -1,40 +1,38 @@
-package ru.itmo.soa.services;
+package ru.itmo.soa.ejb.service;
 
-import jakarta.enterprise.context.RequestScoped;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.core.Response;
 import org.modelmapper.ModelMapper;
 import ru.itmo.gen.model.Organization;
 import ru.itmo.gen.model.OrganizationArray;
 import ru.itmo.gen.model.OrganizationFilters;
 import ru.itmo.gen.model.OrganizationFiltersSortInner;
-import ru.itmo.soa.models.OrganizationEntity;
-import ru.itmo.soa.repositories.OrganizationsRepository;
+import ru.itmo.soa.api.OrganizationFilterServiceLocal;
+import ru.itmo.soa.api.OrganizationFilterServiceRemote;
+import ru.itmo.soa.ejb.model.OrganizationEntity;
+import ru.itmo.soa.ejb.repository.OrganizationsRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@RequestScoped
-public class OrganizationFilterService {
+@Stateless
+public class OrganizationFilterServiceBean implements OrganizationFilterServiceLocal, OrganizationFilterServiceRemote {
 
     @Inject
     private ModelMapper modelMapper;
 
-    @Inject
+    @EJB
     private OrganizationsRepository organizationsRepository;
 
-    public Response organizationsFilterPost(OrganizationFilters organizationFilters) {
-        if (organizationFilters.getFilter() == null) {
-            OrganizationFiltersFilter organizationFiltersFilter = new OrganizationFiltersFilter();
-            organizationFiltersFilter.setType(OrganizationFiltersFilter.TypeEnum.PUBLIC);
-            organizationFilters.setFilter(organizationFiltersFilter);
-        }
+    @Override
+    public OrganizationArray filterOrganizations(OrganizationFilters organizationFilters) {
         int page = organizationFilters.getPagination() != null && organizationFilters.getPagination().getPage() != null
                 ? organizationFilters.getPagination().getPage() : 0;
         int size = organizationFilters.getPagination() != null && organizationFilters.getPagination().getSize() != null
                 ? organizationFilters.getPagination().getSize() : 20;
 
-        List<SortOrder> sortOrders = buildSort(organizationFilters);
+        List<OrganizationsRepository.SortOrder> sortOrders = buildSort(organizationFilters);
 
         OrganizationsRepository.PageResult<OrganizationEntity> result =
                 organizationsRepository.findAllByFilters(organizationFilters, page, size, sortOrders);
@@ -44,19 +42,17 @@ public class OrganizationFilterService {
                 .map(entity -> modelMapper.map(entity, Organization.class))
                 .toList();
 
-        OrganizationArray response = new OrganizationArray()
+        return new OrganizationArray()
                 .organizations(organizations)
                 .totalCount((int) result.getTotalElements())
                 .page(page)
                 .size(size);
-
-        return Response.ok(response).build();
     }
 
-    private List<SortOrder> buildSort(OrganizationFilters filters) {
-        List<SortOrder> orders = new ArrayList<>();
+    private List<OrganizationsRepository.SortOrder> buildSort(OrganizationFilters filters) {
+        List<OrganizationsRepository.SortOrder> orders = new ArrayList<>();
         if (filters.getSort() == null || filters.getSort().isEmpty()) {
-            orders.add(new SortOrder("id", true));
+            orders.add(new OrganizationsRepository.SortOrder("id", true));
             return orders;
         }
         for (OrganizationFiltersSortInner s : filters.getSort()) {
@@ -65,9 +61,9 @@ public class OrganizationFilterService {
                 continue;
             }
             boolean ascending = s.getDirection() != OrganizationFiltersSortInner.DirectionEnum.DESC;
-            orders.add(new SortOrder(property, ascending));
+            orders.add(new OrganizationsRepository.SortOrder(property, ascending));
         }
-        return orders.isEmpty() ? List.of(new SortOrder("id", true)) : orders;
+        return orders.isEmpty() ? List.of(new OrganizationsRepository.SortOrder("id", true)) : orders;
     }
 
     private String mapSortFieldToProperty(OrganizationFiltersSortInner.FieldEnum field) {
@@ -90,23 +86,5 @@ public class OrganizationFilterService {
             case LOCATION_NAME -> "postalAddress.town.name";
             default -> null;
         };
-    }
-
-    public static class SortOrder {
-        private final String property;
-        private final boolean ascending;
-
-        public SortOrder(String property, boolean ascending) {
-            this.property = property;
-            this.ascending = ascending;
-        }
-
-        public String getProperty() {
-            return property;
-        }
-
-        public boolean isAscending() {
-            return ascending;
-        }
     }
 }

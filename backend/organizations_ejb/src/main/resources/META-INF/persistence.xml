@@ -5,7 +5,10 @@
              version="3.0">
     <persistence-unit name="OrganizationsPU" transaction-type="JTA">
         <jta-data-source>java:app/jdbc/OrganizationsDS</jta-data-source>
-        <class>ru.itmo.soa.models.OrganizationEntity</class>
+        <class>ru.itmo.soa.ejb.model.OrganizationEntity</class>
+        <class>ru.itmo.soa.ejb.model.CoordinatesEmbeddable</class>
+        <class>ru.itmo.soa.ejb.model.AddressEmbeddable</class>
+        <class>ru.itmo.soa.ejb.model.LocationEmbeddable</class>
         <properties>
             <property name="jakarta.persistence.schema-generation.database.action" value="none"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>

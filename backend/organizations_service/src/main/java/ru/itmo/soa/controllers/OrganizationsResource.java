@@ -1,23 +1,25 @@
 package ru.itmo.soa.controllers;
 
-import jakarta.inject.Inject;
+import jakarta.ejb.EJB;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import ru.itmo.gen.model.*;
-import ru.itmo.soa.services.OrganizationFilterService;
-import ru.itmo.soa.services.OrganizationService;
+import ru.itmo.soa.api.OrganizationFilterServiceLocal;
+import ru.itmo.soa.api.OrganizationServiceLocal;
 
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@RequestScoped
 public class OrganizationsResource {
 
-    @Inject
-    private OrganizationFilterService organizationFilterService;
+    @EJB(lookup = "java:app/organizations_ejb/OrganizationFilterServiceBean!ru.itmo.soa.api.OrganizationFilterServiceLocal")
+    private OrganizationFilterServiceLocal organizationFilterService;
 
-    @Inject
-    private OrganizationService organizationService;
+    @EJB(lookup = "java:app/organizations_ejb/OrganizationServiceBean!ru.itmo.soa.api.OrganizationServiceLocal")
+    private OrganizationServiceLocal organizationService;
 
     @POST
     public Response createOrganization(Organization organization) {
@@ -28,31 +30,48 @@ public class OrganizationsResource {
     @POST
     @Path("/filter")
     public Response filterOrganizations(OrganizationFilters organizationFilters) {
-        return organizationFilterService.organizationsFilterPost(organizationFilters);
+        OrganizationArray result = organizationFilterService.filterOrganizations(organizationFilters);
+        return Response.ok(result).build();
     }
 
     @GET
     @Path("/{id}")
     public Response getOrganization(@PathParam("id") Integer id) {
-        return organizationService.getOrganization(id);
+        Organization organization = organizationService.getOrganization(id);
+        if (organization != null) {
+            return Response.ok(organization).build();
+        }
+        return Response.status(Response.Status.NOT_FOUND).build();
     }
 
     @PUT
     @Path("/{id}")
     public Response updateOrganization(@PathParam("id") Integer id, Organization organization) {
-        return organizationService.updateOrganization(id, organization);
+        Organization updated = organizationService.updateOrganization(id, organization);
+        if (updated != null) {
+            return Response.ok(updated).build();
+        }
+        return Response.status(Response.Status.NOT_FOUND).build();
     }
 
     @DELETE
     @Path("/{id}")
     public Response deleteOrganization(@PathParam("id") Integer id) {
-        return organizationService.deleteOrganizationById(id);
+        boolean deleted = organizationService.deleteOrganizationById(id);
+        if (deleted) {
+            return Response.noContent().build();
+        }
+        return Response.status(Response.Status.NOT_FOUND).build();
     }
 
     @POST
     @Path("/delete-by-fullname")
     public Response deleteOrganizationByFullname(OrganizationsDeleteByFullnamePostRequest fullname) {
-        return organizationService.deleteOrganizationByFullname(fullname);
+        boolean deleted = organizationService.deleteOrganizationByFullname(fullname);
+        if (deleted) {
+            return Response.noContent().build();
+        }
+        return Response.status(Response.Status.NOT_FOUND).build();
     }
 
     @GET
@@ -73,4 +92,3 @@ public class OrganizationsResource {
         return Response.ok(response).build();
     }
 }
-

@@ -1,4 +1,4 @@
-package ru.itmo.soa.models;
+package ru.itmo.soa.ejb.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -28,4 +28,5 @@ public class LocationEmbeddable {
 
     @Column(name = "location_name")
     private String name;
-} 
+}
+

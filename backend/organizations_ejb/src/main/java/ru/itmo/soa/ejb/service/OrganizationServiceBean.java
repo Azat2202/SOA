@@ -1,23 +1,26 @@
-package ru.itmo.soa.services;
+package ru.itmo.soa.ejb.service;
 
-import jakarta.enterprise.context.RequestScoped;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.core.Response;
 import org.modelmapper.ModelMapper;
 import ru.itmo.gen.model.Organization;
 import ru.itmo.gen.model.OrganizationsDeleteByFullnamePostRequest;
-import ru.itmo.soa.models.OrganizationEntity;
-import ru.itmo.soa.repositories.OrganizationsRepository;
+import ru.itmo.soa.api.OrganizationServiceLocal;
+import ru.itmo.soa.api.OrganizationServiceRemote;
+import ru.itmo.soa.ejb.model.OrganizationEntity;
+import ru.itmo.soa.ejb.repository.OrganizationsRepository;
 
-@RequestScoped
-public class OrganizationService {
+@Stateless
+public class OrganizationServiceBean implements OrganizationServiceLocal, OrganizationServiceRemote {
 
-    @Inject
+    @EJB
     private OrganizationsRepository organizationsRepository;
 
     @Inject
     private ModelMapper modelMapper;
 
+    @Override
     public Organization createOrganization(Organization organization) {
         OrganizationEntity organizationEntity = modelMapper.map(organization, OrganizationEntity.class);
         organizationEntity.setId(null);
@@ -26,18 +29,20 @@ public class OrganizationService {
         return modelMapper.map(savedOrganizationEntity, Organization.class);
     }
 
-    public Response getOrganization(Integer id) {
+    @Override
+    public Organization getOrganization(Integer id) {
         OrganizationEntity entity = organizationsRepository.findById(id.longValue());
         if (entity != null) {
-            return Response.ok(modelMapper.map(entity, Organization.class)).build();
+            return modelMapper.map(entity, Organization.class);
         }
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return null;
     }
 
-    public Response updateOrganization(Integer id, Organization organization) {
+    @Override
+    public Organization updateOrganization(Integer id, Organization organization) {
         OrganizationEntity existingEntity = organizationsRepository.findById(id.longValue());
         if (existingEntity == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+            return null;
         }
 
         existingEntity.setName(organization.getName());
@@ -64,32 +69,35 @@ public class OrganizationService {
         }
 
         OrganizationEntity updatedEntity = organizationsRepository.save(existingEntity);
-        Organization updatedOrganization = modelMapper.map(updatedEntity, Organization.class);
-        return Response.ok(updatedOrganization).build();
+        return modelMapper.map(updatedEntity, Organization.class);
     }
 
-    public Response deleteOrganizationById(Integer id) {
+    @Override
+    public boolean deleteOrganizationById(Integer id) {
         OrganizationEntity entity = organizationsRepository.findById(id.longValue());
         if (entity != null) {
             organizationsRepository.delete(entity);
-            return Response.noContent().build();
+            return true;
         }
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return false;
     }
 
-    public Response deleteOrganizationByFullname(OrganizationsDeleteByFullnamePostRequest fullname) {
+    @Override
+    public boolean deleteOrganizationByFullname(OrganizationsDeleteByFullnamePostRequest fullname) {
         OrganizationEntity organizationEntity = organizationsRepository.findByFullName(fullname.getFullname());
         if (organizationEntity != null) {
             organizationsRepository.delete(organizationEntity);
-            return Response.noContent().build();
+            return true;
         }
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return false;
     }
 
+    @Override
     public Integer countOrganizationsByEmployeesCount(Integer quantity) {
         return organizationsRepository.countByEmployeesCount(quantity);
     }
 
+    @Override
     public Long countOrganizationsByAnnualTurnoverLess(Long annualTurnover) {
         return organizationsRepository.countByAnnualTurnoverBefore(annualTurnover + 1);
     }

@@ -1,26 +1,26 @@
-package ru.itmo.soa.repositories;
+package ru.itmo.soa.ejb.repository;
 
-import jakarta.enterprise.context.RequestScoped;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
-import jakarta.transaction.Transactional;
 import ru.itmo.gen.model.OrganizationFilters;
 import ru.itmo.gen.model.OrganizationFiltersFilter;
-import ru.itmo.soa.models.OrganizationEntity;
-import ru.itmo.soa.services.OrganizationFilterService;
+import ru.itmo.soa.ejb.model.OrganizationEntity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@RequestScoped
-@Transactional
+@Stateless
 public class OrganizationsRepository {
 
     @PersistenceContext(unitName = "OrganizationsPU")
     private EntityManager entityManager;
 
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public OrganizationEntity save(OrganizationEntity entity) {
         if (entity.getId() == null) {
             entityManager.persist(entity);
@@ -38,6 +38,7 @@ public class OrganizationsRepository {
         return findById(id) != null;
     }
 
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void delete(OrganizationEntity entity) {
         if (entityManager.contains(entity)) {
             entityManager.remove(entity);
@@ -47,6 +48,7 @@ public class OrganizationsRepository {
         }
     }
 
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void deleteById(Long id) {
         OrganizationEntity entity = findById(id);
         if (entity != null) {
@@ -77,7 +79,7 @@ public class OrganizationsRepository {
     }
 
     public PageResult<OrganizationEntity> findAllByFilters(
-            OrganizationFilters filters, int page, int size, List<OrganizationFilterService.SortOrder> sortOrders) {
+            OrganizationFilters filters, int page, int size, List<SortOrder> sortOrders) {
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
@@ -88,7 +90,7 @@ public class OrganizationsRepository {
         cq.where(predicates.toArray(new Predicate[0]));
 
         List<Order> orders = new ArrayList<>();
-        for (OrganizationFilterService.SortOrder sortOrder : sortOrders) {
+        for (SortOrder sortOrder : sortOrders) {
             Path<?> path = resolvePath(root, sortOrder.getProperty());
             if (sortOrder.isAscending()) {
                 orders.add(cb.asc(path));
@@ -196,6 +198,24 @@ public class OrganizationsRepository {
         return path;
     }
 
+    public static class SortOrder {
+        private final String property;
+        private final boolean ascending;
+
+        public SortOrder(String property, boolean ascending) {
+            this.property = property;
+            this.ascending = ascending;
+        }
+
+        public String getProperty() {
+            return property;
+        }
+
+        public boolean isAscending() {
+            return ascending;
+        }
+    }
+
     public static class PageResult<T> {
         private final List<T> content;
         private final long totalElements;
@@ -226,3 +246,4 @@ public class OrganizationsRepository {
         }
     }
 }
+

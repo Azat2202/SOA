@@ -1,4 +1,4 @@
-package ru.itmo.soa.models;
+package ru.itmo.soa.ejb.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -23,4 +23,5 @@ public class AddressEmbeddable {
     @NotNull
     @Embedded
     private LocationEmbeddable town;
-} 
+}
+

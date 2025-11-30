@@ -136,7 +136,6 @@ buildNumber.properties
 
 # End of https://www.toptal.com/developers/gitignore/api/jetbrains+all,java,maven
 
-
-**/*/secrets.properties
-
 ./.vscode/
+**/*/secrets.properties
+payara-micro.jar

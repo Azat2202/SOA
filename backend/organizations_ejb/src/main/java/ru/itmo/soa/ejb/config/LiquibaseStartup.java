@@ -1,4 +1,4 @@
-package ru.itmo.soa.configurations;
+package ru.itmo.soa.ejb.config;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
@@ -17,9 +17,9 @@ import java.util.logging.Logger;
 
 @Singleton
 @Startup
-public class LiquibaseProducer {
+public class LiquibaseStartup {
 
-    private static final Logger log = Logger.getLogger(LiquibaseProducer.class.getName());
+    private static final Logger log = Logger.getLogger(LiquibaseStartup.class.getName());
 
     @Resource(lookup = "java:app/jdbc/OrganizationsDS")
     private DataSource dataSource;

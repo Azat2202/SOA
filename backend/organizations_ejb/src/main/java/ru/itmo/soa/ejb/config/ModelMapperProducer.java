@@ -1,4 +1,4 @@
-package ru.itmo.soa.configurations;
+package ru.itmo.soa.ejb.config;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
