@@ -1,16 +1,16 @@
 package ru.itmo.soa.configurations;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Produces;
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.openapitools.jackson.nullable.JsonNullable;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
-public class ModelMapperConfig {
+@ApplicationScoped
+public class ModelMapperProducer {
 
-    final Converter<String, JsonNullable<String>> stringFromJsonNullableConverter = new AbstractConverter<>() {
+    private final Converter<String, JsonNullable<String>> stringFromJsonNullableConverter = new AbstractConverter<>() {
         @Override
         protected JsonNullable<String> convert(final String source) {
             if (source == null) {
@@ -20,7 +20,7 @@ public class ModelMapperConfig {
         }
     };
 
-    final Converter<Integer, JsonNullable<Integer>> integerFromJsonNullableConverter = new AbstractConverter<>() {
+    private final Converter<Integer, JsonNullable<Integer>> integerFromJsonNullableConverter = new AbstractConverter<>() {
         @Override
         protected JsonNullable<Integer> convert(final Integer source) {
             if (source == null) {
@@ -30,22 +30,22 @@ public class ModelMapperConfig {
         }
     };
 
-    final Converter<JsonNullable<Integer>, Integer> integerToJsonNullableConverter = new AbstractConverter<>() {
+    private final Converter<JsonNullable<Integer>, Integer> integerToJsonNullableConverter = new AbstractConverter<>() {
         @Override
         protected Integer convert(final JsonNullable<Integer> source) {
             return source.orElse(null);
         }
     };
 
-    final Converter<JsonNullable<String>, String> stringToJsonNullableConverter = new AbstractConverter<>() {
+    private final Converter<JsonNullable<String>, String> stringToJsonNullableConverter = new AbstractConverter<>() {
         @Override
         protected String convert(final JsonNullable<String> source) {
             return source.orElse(null);
         }
     };
 
-
-    @Bean
+    @Produces
+    @ApplicationScoped
     public ModelMapper modelMapper() {
         ModelMapper mapper = new ModelMapper();
         mapper.addConverter(stringFromJsonNullableConverter);
@@ -54,4 +54,5 @@ public class ModelMapperConfig {
         mapper.addConverter(stringToJsonNullableConverter);
         return mapper;
     }
-} 
+}
+

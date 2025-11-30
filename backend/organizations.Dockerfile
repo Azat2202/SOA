@@ -10,13 +10,12 @@ RUN mvn dependency:go-offline -B
 COPY . .
 RUN mvn package -pl organizations_service -am -DskipTests
 
-FROM amazoncorretto:17-alpine
-WORKDIR /app
+FROM payara/server-full:6.2024.10-jdk17
 
-COPY --from=build /app/organizations_service/target/organizations_service.jar ./organizations_service.jar
+COPY --from=build /app/organizations_service/target/organizations_service-1.0.war ${DEPLOY_DIR}/organizations_service.war
 
 ENV DATABASE_HOST=db
 ENV DATABASE_PORT=5432
-ENV MYSQL_DATABASE_HOST=db-mysql
-ENV MYSQL_DATABASE_PORT=3306
-ENTRYPOINT java -jar ./organizations_service.jar
+ENV DATABASE_DB=study
+ENV DATABASE_USERNAME=study
+ENV DATABASE_PASSWORD=study
