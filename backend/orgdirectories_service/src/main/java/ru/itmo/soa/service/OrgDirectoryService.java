@@ -1,16 +1,15 @@
 package ru.itmo.soa.service;
 
-
-import jakarta.enterprise.context.RequestScoped;
-import jakarta.inject.Inject;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import ru.itmo.soa.external.OrganizationsClient;
 import ru.itmo.soa.model.*;
 
-
-@RequestScoped
+@Service
+@RequiredArgsConstructor
 public class OrgDirectoryService {
-    @Inject
-    OrganizationsClient organizationsClient;
+
+    private final OrganizationsClient organizationsClient;
 
     public OrganizationArray getOrganizationsInRange(Integer min, Integer max, Pagination pagination) {
         OrganizationFilters filters = new OrganizationFilters();

@@ -138,3 +138,6 @@ buildNumber.properties
 
 
 **/*/secrets.properties
+/organizations_service/mvnw
+/openapi-gen/mvnw
+/orgdirectories_service/mvnw
