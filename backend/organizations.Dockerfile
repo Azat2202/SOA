@@ -26,9 +26,3 @@ RUN chown payara:payara /opt/payara/glassfish/lib/postgresql-42.7.2.jar
 USER payara
 
 COPY --from=build /app/organizations_ear/target/organizations_ear-1.0.ear ${DEPLOY_DIR}/
-
-ENV DATABASE_HOST=db
-ENV DATABASE_PORT=5432
-ENV DATABASE_DB=study
-ENV DATABASE_USERNAME=study
-ENV DATABASE_PASSWORD=study
