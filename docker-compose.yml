@@ -45,6 +45,7 @@ services:
     container_name: nginx
     ports:
       - "443:443"
+      - "80:80"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/ssl/server.crt:/etc/nginx/ssl/server.crt:ro
@@ -97,8 +98,6 @@ services:
       HOST_ADDRESS: organizations
     ports:
       - "8081:8081"
-    environment:
-      - UNLEASH_API_KEY=${UNLEASH_API_KEY}
     networks:
       - backend
   frontend:
