@@ -22,6 +22,7 @@
         <module>organizations_ejb</module>
         <module>organizations_service</module>
         <module>organizations_ear</module>
+        <module>orgdirectories_config_server</module>
         <module>orgdirectories_service</module>
     </modules>
 
