@@ -12,7 +12,7 @@ COPY orgdirectories_config_server/pom.xml orgdirectories_config_server/
 COPY orgdirectories_eureka/pom.xml orgdirectories_eureka/
 RUN mvn dependency:go-offline -pl orgdirectories_eureka -am -B --no-transfer-progress
 
-COPY eureka_server/src eureka_server/src
+COPY orgdirectories_eureka/src orgdirectories_eureka/src
 RUN mvn package -pl orgdirectories_eureka -am -DskipTests --no-transfer-progress
 
 FROM amazoncorretto:17-alpine
