@@ -9,6 +9,7 @@ COPY organizations_ejb/pom.xml organizations_ejb/
 COPY organizations_service/pom.xml organizations_service/
 COPY organizations_ear/pom.xml organizations_ear/
 COPY orgdirectories_service/pom.xml orgdirectories_service/
+COPY orgdirectories_config_server/pom.xml orgdirectories_config_server/
 
 RUN mvn dependency:go-offline -B || true
 

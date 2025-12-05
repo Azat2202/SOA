@@ -8,7 +8,6 @@
         <version>1.0</version>
     </parent>
     <artifactId>orgdirectories_config_server</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <name>Organizations :: Orgdirectiries config server</name>
     <description>orgdirectories_config_server</description>
     <properties>
@@ -46,10 +45,28 @@
     </dependencyManagement>
 
     <build>
+        <finalName>orgdirectories_config_server</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>3.3.4</version>
+                <configuration>
+                    <mainClass>ru.itmo.orgdirectories_config_server.OrgdirectoriesConfigServerApplication</mainClass>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
