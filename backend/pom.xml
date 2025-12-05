@@ -24,6 +24,7 @@
         <module>organizations_ear</module>
         <module>orgdirectories_config_server</module>
         <module>orgdirectories_service</module>
+        <module>orgdirectories_eureka</module>
     </modules>
 
     <build>
