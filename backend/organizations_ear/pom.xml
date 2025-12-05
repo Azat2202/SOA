@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>ru.itmo</groupId>
+        <artifactId>soa</artifactId>
+        <version>1.0</version>
+    </parent>
+
+    <artifactId>organizations_ear</artifactId>
+    <name>Organizations :: EAR (Enterprise Archive)</name>
+    <packaging>ear</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.2</version>
+        </dependency>
+        <dependency>
+            <groupId>ru.itmo</groupId>
+            <artifactId>organizations_api</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>ru.itmo</groupId>
+            <artifactId>openapi-gen</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>ru.itmo</groupId>
+            <artifactId>organizations_ejb</artifactId>
+            <version>${project.version}</version>
+            <type>ejb</type>
+        </dependency>
+        <dependency>
+            <groupId>ru.itmo</groupId>
+            <artifactId>organizations_service</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>organizations_ear-${project.version}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-ear-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <version>10</version>
+                    <defaultLibBundleDir>lib</defaultLibBundleDir>
+                    <generateApplicationXml>true</generateApplicationXml>
+                    <modules>
+                        <jarModule>
+                            <groupId>ru.itmo</groupId>
+                            <artifactId>organizations_api</artifactId>
+                            <bundleDir>lib</bundleDir>
+                        </jarModule>
+                        <jarModule>
+                            <groupId>ru.itmo</groupId>
+                            <artifactId>openapi-gen</artifactId>
+                            <bundleDir>lib</bundleDir>
+                        </jarModule>
+                        <ejbModule>
+                            <groupId>ru.itmo</groupId>
+                            <artifactId>organizations_ejb</artifactId>
+                            <bundleFileName>organizations_ejb.jar</bundleFileName>
+                        </ejbModule>
+                        <webModule>
+                            <groupId>ru.itmo</groupId>
+                            <artifactId>organizations_service</artifactId>
+                            <bundleFileName>organizations_service.war</bundleFileName>
+                            <contextRoot>/organizations</contextRoot>
+                        </webModule>
+                    </modules>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

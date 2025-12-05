@@ -136,8 +136,7 @@ buildNumber.properties
 
 # End of https://www.toptal.com/developers/gitignore/api/jetbrains+all,java,maven
 
-
+./.vscode/settings.json
+./.vscode/
 **/*/secrets.properties
-/organizations_service/mvnw
-/openapi-gen/mvnw
-/orgdirectories_service/mvnw
+payara-micro.jar

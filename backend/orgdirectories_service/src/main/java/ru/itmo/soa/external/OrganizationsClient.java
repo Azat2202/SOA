@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import ru.itmo.soa.model.OrganizationArray;
 import ru.itmo.soa.model.OrganizationFilters;
 
-@FeignClient(name = "organizations-service", path = "/organizations", fallback = OrganizationsClientFallback.class)
+@FeignClient(name = "organizations-service")
 public interface OrganizationsClient {
 
     @PostMapping("/filter")

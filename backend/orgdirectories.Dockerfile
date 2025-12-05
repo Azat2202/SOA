@@ -1,24 +1,26 @@
-FROM maven:3.9.11-amazoncorretto-11-alpine AS build
+FROM maven:3.9.11-amazoncorretto-17-alpine AS build
 WORKDIR /app
-
-RUN apk --no-cache add curl
-
-RUN curl -L -o payara-micro.jar \
-    https://nexus.payara.fish/repository/payara-community/fish/payara/extras/payara-micro/6.2025.9/payara-micro-6.2025.9.jar
 
 COPY pom.xml .
-COPY orgdirectories_service/pom.xml orgdirectories_service/
-COPY organizations_service/pom.xml organizations_service/
 COPY openapi-gen/pom.xml openapi-gen/
-RUN mvn dependency:go-offline -B
+COPY organizations_api/pom.xml organizations_api/
+COPY organizations_ejb/pom.xml organizations_ejb/
+COPY organizations_service/pom.xml organizations_service/
+COPY organizations_ear/pom.xml organizations_ear/
+COPY orgdirectories_service/pom.xml orgdirectories_service/
+COPY orgdirectories_config_server/pom.xml orgdirectories_config_server/
+RUN mvn dependency:go-offline -pl orgdirectories_service -am -B --no-transfer-progress
 
-COPY . .
-RUN mvn package -pl orgdirectories_service -am -DskipTests
+COPY openapi-gen/src openapi-gen/src
+COPY orgdirectories_service/src orgdirectories_service/src
+COPY swagger.yaml swagger.yaml
+RUN mvn package -pl orgdirectories_service -am -DskipTests --no-transfer-progress
 
-FROM amazoncorretto:11-alpine
+FROM amazoncorretto:17-alpine
 WORKDIR /app
 
-COPY --from=build /app/payara-micro.jar .
-COPY --from=build /app/orgdirectories_service/target/orgdirectories_service-1.0.war ./orgdirectories_service.war
+COPY --from=build /app/orgdirectories_service/target/orgdirectories_service.jar ./orgdirectories_service.jar
 
-ENTRYPOINT java -jar ./payara-micro.jar --deploy ./orgdirectories_service.war --port 8082
+ENV DATABASE_HOST=db
+ENV DATABASE_PORT=5432
+ENTRYPOINT java -jar ./orgdirectories_service.jar
