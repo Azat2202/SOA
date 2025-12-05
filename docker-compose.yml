@@ -47,7 +47,7 @@ services:
       timeout: 3s
       retries: 3
   eureka:
-    image: springcloud/eureka:latest
+    image: netflixoss/eureka/tags
     container_name: eureka
     ports:
       - "8761:8761"
