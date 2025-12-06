@@ -11,6 +11,7 @@ COPY organizations_ear/pom.xml organizations_ear/
 COPY orgdirectories_service/pom.xml orgdirectories_service/
 COPY orgdirectories_config_server/pom.xml orgdirectories_config_server/
 COPY orgdirectories_eureka/pom.xml orgdirectories_eureka/
+COPY orgdirectories_gateway/pom.xml orgdirectories_gateway/
 
 RUN mvn dependency:go-offline -pl organizations_ear -am -B --no-transfer-progress
 

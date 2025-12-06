@@ -40,12 +40,25 @@ services:
       - "8600:8600/udp"
     command: consul agent -dev -client=0.0.0.0 -ui
     networks:
-      - backend
+      backend:
+        ipv4_address: 172.28.0.10
     healthcheck:
       test: [ "CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8500/v1/status/leader" ]
       interval: 10s
       timeout: 3s
       retries: 3
+  consul-dns:
+    image: coredns/coredns:latest
+    container_name: consul-dns
+    command: -conf /Corefile
+    volumes:
+      - ./consul-dns/Corefile:/Corefile:ro
+    networks:
+      backend:
+        ipv4_address: 172.28.0.11
+    depends_on:
+      consul:
+        condition: service_healthy
   orgdirectories-eureka:
     build:
       context: ./backend
@@ -82,8 +95,37 @@ services:
       SPRING_PROFILES_ACTIVE: docker
     ports:
       - "8082:8082"
+    dns:
+      - 172.28.0.11
+      - 127.0.0.11
     networks:
       - backend
+    depends_on:
+      consul-dns:
+        condition: service_started
+      orgdirectories-eureka:
+        condition: service_healthy
+  orgdirectories-gateway:
+    build:
+      context: ./backend
+      dockerfile: orgdirectories_gateway.Dockerfile
+    image: docker.io/azat222/soa:orgdirectories_gateway
+    container_name: orgdirectories-gateway
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      CONFIG_SERVER: "http://orgdirectories-config-server:8888"
+    ports:
+      - "8083:8080"
+    networks:
+      - backend
+    depends_on:
+      orgdirectories-eureka:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   organizations:
     build:
       context: ./backend
@@ -101,11 +143,12 @@ services:
       SERVICE_NAME: organizations-service
       SERVICE_PORT: 8080
       SERVICE_ID: organizations-1
-      HOST_ADDRESS: organizations
+      HOST_ADDRESS: 172.28.0.20
     ports:
       - "8081:8081"
     networks:
-      - backend
+      backend:
+        ipv4_address: 172.28.0.20
   frontend:
     build:
       context: ./frontend
@@ -123,5 +166,8 @@ volumes:
 networks:
   backend:
     name: backend
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
   frontend:
     name: frontend
