@@ -8,6 +8,7 @@ import jakarta.ws.rs.core.Response;
 import ru.itmo.gen.model.*;
 import ru.itmo.soa.api.OrganizationFilterServiceLocal;
 import ru.itmo.soa.api.OrganizationServiceLocal;
+import ru.itmo.soa.utls.EJBLookupHelper;
 
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
@@ -15,11 +16,15 @@ import ru.itmo.soa.api.OrganizationServiceLocal;
 @RequestScoped
 public class OrganizationsResource {
 
-    @EJB(lookup = "java:app/organizations_ejb/OrganizationFilterServiceBean!ru.itmo.soa.api.OrganizationFilterServiceLocal")
-    private OrganizationFilterServiceLocal organizationFilterService;
-
     @EJB(lookup = "java:app/organizations_ejb/OrganizationServiceBean!ru.itmo.soa.api.OrganizationServiceLocal")
     private OrganizationServiceLocal organizationService;
+
+    private final OrganizationFilterServiceLocal organizationFilterService;
+
+    public OrganizationsResource() {
+        organizationFilterService = EJBLookupHelper.lookupRemoteOrganizationFilterService();
+    }
+
 
     @POST
     public Response createOrganization(Organization organization) {
