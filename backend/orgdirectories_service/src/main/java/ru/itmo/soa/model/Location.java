@@ -148,5 +148,14 @@ public class Location {
     }
     return o.toString().replace("\n", "\n    ");
   }
+
+  public ru.itmo.soa.gen.Location toGenLocation() {
+    ru.itmo.soa.gen.Location location = new ru.itmo.soa.gen.Location();
+    location.setX(x);
+    location.setY(y);
+    location.setZ(z);
+    location.setName(name);
+    return location;
+  }
 }
 

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.itmo.ru/soa/gen"
+           targetNamespace="http://www.itmo.ru/soa/gen" elementFormDefault="qualified">
+
+    <xs:element name="getByAnnualTurnoverRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="minAnnualTurnover" type="xs:int"/>
+                <xs:element name="maxAnnualTurnover" type="xs:int"/>
+                <xs:element name="page" type="xs:int"/>
+                <xs:element name="size" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getByType">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="type" type="tns:organizationType"/>
+                <xs:element name="page" type="xs:int"/>
+                <xs:element name="size" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="organizationWithPaging">
+        <xs:sequence>
+            <xs:element name="organizations" type="tns:organization" maxOccurs="unbounded"/>
+            <xs:element name="totalCount" type="xs:int"/>
+            <xs:element name="page" type="xs:int"/>
+            <xs:element name="size" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="organization">
+        <xs:sequence>
+            <xs:element name="id" type="xs:int"/>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="coordinates" type="tns:coordinates"/>
+            <xs:element name="creationDate" type="xs:date" nillable="true"/>
+            <xs:element name="annualTurnover" type="xs:long"/>
+            <xs:element name="fullName" type="xs:string" nillable="true"/>
+            <xs:element name="employeesCount" type="xs:int" nillable="true"/>
+            <xs:element name="type" type="tns:organizationType"/>
+            <xs:element name="postalAddress" type="tns:address"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="coordinates">
+        <xs:sequence>
+            <xs:element name="x" type="xs:int"/>
+            <xs:element name="y" type="xs:double"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="address">
+        <xs:sequence>
+            <xs:element name="street" type="xs:string"/>
+            <xs:element name="town" type="tns:location"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="location">
+        <xs:sequence>
+            <xs:element name="x" type="xs:float"/>
+            <xs:element name="y" type="xs:double"/>
+            <xs:element name="z" type="xs:long"/>
+            <xs:element name="name" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="organizationType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="PUBLIC"/>
+            <xs:enumeration value="TRUST"/>
+            <xs:enumeration value="OPEN_JOINT_STOCK_COMPANY"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

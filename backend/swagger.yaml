@@ -8,6 +8,8 @@ servers:
     description: localhost ssl
   - url: http://localhost:8080
     description: localhost
+  - url: http://localhost:80
+    description: localhost 80
   - url: http://localhost:8081
     description: Organizations service
 

@@ -101,5 +101,12 @@ public class Coordinates {
     }
     return o.toString().replace("\n", "\n    ");
   }
+
+  public ru.itmo.soa.gen.Coordinates toGenCoordinates() {
+    ru.itmo.soa.gen.Coordinates result = new ru.itmo.soa.gen.Coordinates();
+    result.setX(x);
+    result.setY(y);
+    return result;
+  }
 }
 

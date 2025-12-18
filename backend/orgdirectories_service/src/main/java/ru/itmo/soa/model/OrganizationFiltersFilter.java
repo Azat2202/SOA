@@ -63,6 +63,10 @@ public class OrganizationFiltersFilter {
       }
       throw new IllegalArgumentException("Unexpected value '" + value + "'");
     }
+
+    public static TypeEnum fromType(ru.itmo.soa.gen.OrganizationType organizationType) {
+      return TypeEnum.valueOf(organizationType.name());
+    }
   }
 
   private TypeEnum type;

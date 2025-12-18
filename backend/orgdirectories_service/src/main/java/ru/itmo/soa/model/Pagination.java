@@ -7,7 +7,6 @@ import java.util.Objects;
 /**
  * Pagination
  */
-
 public class Pagination {
 
   private Integer page = 0;
@@ -17,6 +16,11 @@ public class Pagination {
   public Pagination page(Integer page) {
     this.page = page;
     return this;
+  }
+
+  public Pagination(Integer page, Integer size) {
+    this.page = page;
+    this.size = size;
   }
 
   /**

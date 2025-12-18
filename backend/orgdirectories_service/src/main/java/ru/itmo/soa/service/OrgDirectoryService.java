@@ -1,6 +1,7 @@
 package ru.itmo.soa.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.stereotype.Service;
 import ru.itmo.soa.external.OrganizationsClient;
 import ru.itmo.soa.model.*;
@@ -22,7 +23,15 @@ public class OrgDirectoryService {
         filters = filters.filter(filter);
         filters = filters.pagination(pagination);
 
-        return organizationsClient.getOrganizations(filters);
+        System.out.println(filters);
+        OrganizationArray array;
+        try{
+            array = organizationsClient.getOrganizations(filters);
+            return array;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw e;
+        }
     }
 
     public OrganizationArray getOrganizationsByType(OrganizationFiltersFilter.TypeEnum type, Pagination pagination) {

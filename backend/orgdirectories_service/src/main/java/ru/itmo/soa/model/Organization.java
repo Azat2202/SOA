@@ -3,9 +3,13 @@ package ru.itmo.soa.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.SneakyThrows;
+import ru.itmo.soa.gen.OrganizationType;
 
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.time.LocalDate;
-import java.util.Arrays;
+import java.util.GregorianCalendar;
 import java.util.Objects;
 
 /**
@@ -62,6 +66,14 @@ public class Organization {
         }
       }
       throw new IllegalArgumentException("Unexpected value '" + value + "'");
+    }
+
+    public static ru.itmo.soa.gen.OrganizationType toGenType(TypeEnum type) {
+      return switch (type) {
+        case PUBLIC -> ru.itmo.soa.gen.OrganizationType.PUBLIC;
+        case TRUST -> ru.itmo.soa.gen.OrganizationType.TRUST;
+        case OPEN_JOINT_STOCK_COMPANY -> ru.itmo.soa.gen.OrganizationType.OPEN_JOINT_STOCK_COMPANY;
+      };
     }
   }
 
@@ -292,6 +304,35 @@ public class Organization {
       return "null";
     }
     return o.toString().replace("\n", "\n    ");
+  }
+
+  public ru.itmo.soa.gen.Organization toGenOrganization() {
+    ru.itmo.soa.gen.Organization organization = new ru.itmo.soa.gen.Organization();
+    organization.setId(this.id);
+    organization.setName(this.name);
+    organization.setCoordinates(this.coordinates.toGenCoordinates());
+    organization.setCreationDate(toXmlDate(this.creationDate));
+    organization.setAnnualTurnover(this.annualTurnover);
+    organization.setFullName(this.fullName);
+    organization.setEmployeesCount(this.employeesCount);
+    organization.setType(TypeEnum.toGenType(this.type));
+    organization.setPostalAddress(this.postalAddress.toGenAddress());
+    return organization;
+  }
+
+  @SneakyThrows
+  public static XMLGregorianCalendar toXmlDate(LocalDate date) {
+    if (date == null) {
+      return null;
+    }
+
+    return DatatypeFactory.newInstance()
+            .newXMLGregorianCalendarDate(
+                    date.getYear(),
+                    date.getMonthValue(),
+                    date.getDayOfMonth(),
+                    javax.xml.datatype.DatatypeConstants.FIELD_UNDEFINED
+            );
   }
 }
 

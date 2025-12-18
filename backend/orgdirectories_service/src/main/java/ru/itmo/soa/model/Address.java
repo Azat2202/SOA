@@ -100,5 +100,12 @@ public class Address {
     }
     return o.toString().replace("\n", "\n    ");
   }
+
+  public ru.itmo.soa.gen.Address toGenAddress() {
+    ru.itmo.soa.gen.Address address = new ru.itmo.soa.gen.Address();
+    address.setStreet(street);
+    address.setTown(this.town.toGenLocation());
+    return address;
+  }
 }
 
