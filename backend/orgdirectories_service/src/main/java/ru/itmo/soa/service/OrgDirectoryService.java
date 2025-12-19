@@ -1,10 +1,13 @@
 package ru.itmo.soa.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 import org.springframework.stereotype.Service;
+import ru.itmo.gen.model.OrganizationArray;
+import ru.itmo.gen.model.OrganizationFilters;
+import ru.itmo.gen.model.OrganizationFiltersFilter;
+import ru.itmo.gen.model.OrganizationFiltersFilterAnnualTurnover;
+import ru.itmo.gen.model.Pagination;
 import ru.itmo.soa.external.OrganizationsClient;
-import ru.itmo.soa.model.*;
 
 @Service
 @RequiredArgsConstructor
@@ -13,34 +16,28 @@ public class OrgDirectoryService {
     private final OrganizationsClient organizationsClient;
 
     public OrganizationArray getOrganizationsInRange(Integer min, Integer max, Pagination pagination) {
-        OrganizationFilters filters = new OrganizationFilters();
-        OrganizationFiltersFilter filter = new OrganizationFiltersFilter();
-        OrganizationFiltersFilterAnnualTurnover turnoverFilter = new OrganizationFiltersFilterAnnualTurnover();
+        OrganizationFiltersFilterAnnualTurnover turnoverFilter = new OrganizationFiltersFilterAnnualTurnover()
+                .min(min)
+                .max(max);
 
-        turnoverFilter.setMin(min);
-        turnoverFilter.setMax(max);
-        filter = filter.annualTurnover(turnoverFilter);
-        filters = filters.filter(filter);
-        filters = filters.pagination(pagination);
+        OrganizationFiltersFilter filter = new OrganizationFiltersFilter()
+                .annualTurnover(turnoverFilter);
 
-        System.out.println(filters);
-        OrganizationArray array;
-        try{
-            array = organizationsClient.getOrganizations(filters);
-            return array;
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            throw e;
-        }
+        OrganizationFilters filters = new OrganizationFilters()
+                .filter(filter)
+                .pagination(pagination);
+
+        return organizationsClient.getOrganizations(filters);
     }
 
     public OrganizationArray getOrganizationsByType(OrganizationFiltersFilter.TypeEnum type, Pagination pagination) {
-        OrganizationFilters filters = new OrganizationFilters();
-        OrganizationFiltersFilter filter = new OrganizationFiltersFilter();
+        OrganizationFiltersFilter filter = new OrganizationFiltersFilter()
+                .type(type);
 
-        filter = filter.type(type);
-        filters = filters.filter(filter);
-        filters = filters.pagination(pagination);
+        OrganizationFilters filters = new OrganizationFilters()
+                .filter(filter)
+                .pagination(pagination);
+
         return organizationsClient.getOrganizations(filters);
     }
 }
