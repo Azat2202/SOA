@@ -13,15 +13,17 @@ COPY orgdirectories_eureka/pom.xml orgdirectories_eureka/
 COPY orgdirectories_gateway/pom.xml orgdirectories_gateway/
 COPY orgdirectories_gen/pom.xml orgdirectories_gen/pom.xml
 COPY orgdirectories_rest/pom.xml orgdirectories_rest/pom.xml
-RUN mvn dependency:go-offline -pl orgdirectories_eureka -am -B --no-transfer-progress
+COPY orgdirectories_gen/src/main/resources/contract.xsd orgdirectories_gen/src/main/resources/contract.xsd
+RUN mvn dependency:go-offline -pl orgdirectories_rest -am -B --no-transfer-progress
 
-COPY orgdirectories_eureka/src orgdirectories_eureka/src
-RUN mvn package -pl orgdirectories_eureka -am -DskipTests --no-transfer-progress
+COPY openapi-gen/src openapi-gen/src
+COPY orgdirectories_rest/src orgdirectories_rest/src
+COPY swagger.yaml swagger.yaml
+RUN mvn package -pl orgdirectories_rest -am -DskipTests --no-transfer-progress
 
 FROM amazoncorretto:17-alpine
 WORKDIR /app
 
-COPY --from=build /app/orgdirectories_eureka/target/orgdirectories_eureka.jar ./orgdirectories_eureka.jar
+COPY --from=build /app/orgdirectories_rest/target/orgdirectories_rest.jar ./orgdirectories_rest.jar
 
-ENTRYPOINT ["java", "-jar", "./orgdirectories_eureka.jar"]
-
+ENTRYPOINT java -jar ./orgdirectories_rest.jar

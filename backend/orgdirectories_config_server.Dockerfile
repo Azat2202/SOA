@@ -11,6 +11,8 @@ COPY orgdirectories_service/pom.xml orgdirectories_service/
 COPY orgdirectories_config_server/pom.xml orgdirectories_config_server/
 COPY orgdirectories_eureka/pom.xml orgdirectories_eureka/
 COPY orgdirectories_gateway/pom.xml orgdirectories_gateway/
+COPY orgdirectories_gen/pom.xml orgdirectories_gen/pom.xml
+COPY orgdirectories_rest/pom.xml orgdirectories_rest/pom.xml
 RUN mvn dependency:go-offline -pl orgdirectories_config_server -am -B --no-transfer-progress
 
 COPY orgdirectories_config_server/src orgdirectories_config_server/src
