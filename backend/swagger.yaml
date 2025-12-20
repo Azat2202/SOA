@@ -10,6 +10,8 @@ servers:
     description: localhost
   - url: http://localhost:80
     description: localhost 80
+  - url: http://localhost:8085
+    description: orgdirectories rest
   - url: http://localhost:8081
     description: Organizations service
 
