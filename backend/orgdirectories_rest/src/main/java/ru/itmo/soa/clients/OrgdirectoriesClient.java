@@ -60,8 +60,12 @@ public class OrgdirectoriesClient extends WebServiceGatewaySupport {
         org.setName(organization.getName());
         org.setAnnualTurnover(organization.getAnnualTurnover());
         org.setCreationDate(organization.getCreationDate().toGregorianCalendar().toZonedDateTime().toLocalDate());
-        org.setEmployeesCount(JsonNullable.of(organization.getEmployeesCount()));
-        org.setFullName(JsonNullable.of(organization.getFullName()));
+        Integer employeesCount = organization.getEmployeesCount();
+        org.setEmployeesCount(
+                employeesCount == null ? JsonNullable.undefined() : JsonNullable.of(employeesCount)
+        );
+        String fullName = organization.getFullName();
+        org.setFullName(fullName == null ? JsonNullable.undefined() : JsonNullable.of(fullName));
         org.setCoordinates(toCoordinatesFromGen(organization.getCoordinates()));
         org.setPostalAddress(toAddressFromGen(organization.getPostalAddress()));
         org.setAnnualTurnover(organization.getAnnualTurnover());
