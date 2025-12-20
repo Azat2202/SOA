@@ -23,6 +23,8 @@
         </xs:complexType>
     </xs:element>
 
+    <xs:element name="organizationWithPaging" type="tns:organizationWithPaging"/>
+
     <xs:complexType name="organizationWithPaging">
         <xs:sequence>
             <xs:element name="organizations" type="tns:organization" maxOccurs="unbounded"/>

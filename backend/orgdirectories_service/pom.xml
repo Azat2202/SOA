@@ -116,6 +116,12 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- Organizations API Generated Models -->
+        <dependency>
+            <groupId>ru.itmo</groupId>
+            <artifactId>openapi-gen</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!-- Spring boot web services starter -->
         <dependency>
@@ -132,7 +138,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>3.3.4</version>
                 <configuration>
-                    <mainClass>ru.itmo.soa.OrgDirectoriesRestApplication</mainClass>
+                    <mainClass>ru.itmo.soa.OrgDirectoriesApplication</mainClass>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>

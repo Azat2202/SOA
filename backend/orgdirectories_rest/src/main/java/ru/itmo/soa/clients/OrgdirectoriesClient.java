@@ -13,8 +13,6 @@ import javax.xml.namespace.QName;
 
 public class OrgdirectoriesClient extends WebServiceGatewaySupport {
 
-    private final String NAMESPACE_URI = "http://www.itmo.ru/soa/gen";
-
     public OrganizationArray getOrganizationsInTurnoverRange(Long minAnnualTurnover,
                                                              Long maxAnnualTurnover,
                                                              Pagination pagination) {
@@ -24,16 +22,10 @@ public class OrgdirectoriesClient extends WebServiceGatewaySupport {
         request.setPage(pagination.getPage());
         request.setSize(pagination.getSize());
 
-        JAXBElement<GetByAnnualTurnoverRequest> requestElement = new JAXBElement<>(
-                new QName(NAMESPACE_URI, "getByAnnualTurnoverRequest"),
-                GetByAnnualTurnoverRequest.class,
-                request
-        );
 
-        OrganizationWithPaging response = (OrganizationWithPaging) getWebServiceTemplate()
-                .marshalSendAndReceive(requestElement);
+        OrganizationWithPaging response = ((JAXBElement<OrganizationWithPaging>) getWebServiceTemplate()
+                .marshalSendAndReceive(request)).getValue();
 
-//        OrganizationWithPaging response = responseElement.getValue();
 
         OrganizationArray organizationArray = new OrganizationArray();
         organizationArray.setOrganizations(
@@ -50,8 +42,8 @@ public class OrgdirectoriesClient extends WebServiceGatewaySupport {
         request.setPage(pagination.getPage());
         request.setSize(pagination.getSize());
 
-        OrganizationWithPaging response = (OrganizationWithPaging) getWebServiceTemplate()
-                .marshalSendAndReceive(request);
+        OrganizationWithPaging response = ((JAXBElement<OrganizationWithPaging>) getWebServiceTemplate()
+                .marshalSendAndReceive(request)).getValue();
 
         OrganizationArray organizationArray = new OrganizationArray();
         organizationArray.setOrganizations(
@@ -85,6 +77,9 @@ public class OrgdirectoriesClient extends WebServiceGatewaySupport {
     }
 
     private static Address toAddressFromGen(ru.itmo.soa.gen.Address address) {
+        if (address == null) {
+            return null;
+        }
         Address addr = new Address();
         addr.setStreet(address.getStreet());
         addr.setTown(toLocationFromGen(address.getTown()));

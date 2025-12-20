@@ -12,6 +12,13 @@
     <artifactId>orgdirectories_rest</artifactId>
     <name>Organizations :: Orgdirectories REST API</name>
 
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring-cloud.version>2023.0.3</spring-cloud.version>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -21,14 +28,15 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 
     <dependencies>
         <!-- Spring Boot Starter Web -->
@@ -83,11 +91,35 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- Organizations API Generated Models -->
+        <dependency>
+            <groupId>ru.itmo</groupId>
+            <artifactId>openapi-gen</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!-- Spring boot web services starter -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web-services</artifactId>
+        </dependency>
+
+        <!-- Spring Cloud Starter -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter</artifactId>
+        </dependency>
+
+        <!-- Spring Cloud Eureka Client -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+
+        <!-- Spring Cloud Config Client -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-config</artifactId>
         </dependency>
     </dependencies>
 
@@ -99,7 +131,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>3.3.4</version>
                 <configuration>
-                    <mainClass>ru.itmo.soa.OrgDirectoriesApplication</mainClass>
+                    <mainClass>ru.itmo.soa.OrgDirectoriesRestApplication</mainClass>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>

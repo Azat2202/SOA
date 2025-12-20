@@ -133,6 +133,30 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+  orgdirectories-rest:
+    build:
+      context: ./backend
+      dockerfile: orgdirectories_rest.Dockerfile
+    image: docker.io/azat222/soa:orgdirectories-rest
+    container_name: orgdirectories-rest
+    environment:
+      CONFIG_SERVER: "http://orgdirectories-config-server:8888"
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8085:8085"
+    dns:
+      - 172.28.0.11
+      - 127.0.0.11
+    networks:
+      - backend
+    depends_on:
+      consul-dns:
+        condition: service_started
+      orgdirectories-eureka:
+        condition: service_healthy
+      orgdirectories:
+        condition: service_started
+
   organizations:
     build:
       context: ./backend
