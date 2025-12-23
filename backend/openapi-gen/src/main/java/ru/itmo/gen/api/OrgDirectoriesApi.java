@@ -5,7 +5,10 @@
  */
 package ru.itmo.gen.api;
 
+import ru.itmo.gen.model.Balance;
+import ru.itmo.gen.model.Organization;
 import ru.itmo.gen.model.OrganizationArray;
+import ru.itmo.gen.model.OrganizationPayment;
 import ru.itmo.gen.model.Pagination;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,6 +46,74 @@ public interface OrgDirectoriesApi {
     default Optional<NativeWebRequest> getRequest() {
         return Optional.empty();
     }
+
+    public static final String PATH_ORGDIRECTORY_BALANCE_GET = "/orgdirectory/balance";
+    /**
+     * GET /orgdirectory/balance : Получить баланс
+     *
+     * @return Баланс (status code 200)
+     */
+    @Operation(
+        operationId = "orgdirectoryBalanceGet",
+        summary = "Получить баланс",
+        tags = { "OrgDirectories" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Баланс", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = Balance.class))
+            })
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = OrgDirectoriesApi.PATH_ORGDIRECTORY_BALANCE_GET,
+        produces = { "application/json" }
+    )
+    
+    default ResponseEntity<Balance> orgdirectoryBalanceGet(
+        
+    ) {
+        getRequest().ifPresent(request -> {
+            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"balance\" : 0.8008281904610115 }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
+            }
+        });
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+
+    }
+
+
+    public static final String PATH_ORGDIRECTORY_BALANCE_POST = "/orgdirectory/balance";
+    /**
+     * POST /orgdirectory/balance : Пополнить счет
+     *
+     * @param balance  (required)
+     * @return Успешное пополнение (status code 200)
+     */
+    @Operation(
+        operationId = "orgdirectoryBalancePost",
+        summary = "Пополнить счет",
+        tags = { "OrgDirectories" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Успешное пополнение")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.POST,
+        value = OrgDirectoriesApi.PATH_ORGDIRECTORY_BALANCE_POST,
+        consumes = { "application/json" }
+    )
+    
+    default ResponseEntity<Void> orgdirectoryBalancePost(
+        @Parameter(name = "Balance", description = "", required = true) @Valid @RequestBody Balance balance
+    ) {
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+
+    }
+
 
     public static final String PATH_ORGDIRECTORY_FILTER_TURNOVER_MIN_ANNUAL_TURNOVER_MAX_ANNUAL_TURNOVER_POST = "/orgdirectory/filter/turnover/{min-annual-turnover}/{max-annual-turnover}";
     /**
@@ -128,6 +199,97 @@ public interface OrgDirectoriesApi {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
                     String exampleString = "{ \"size\" : 1, \"organizations\" : [ { \"postalAddress\" : { \"town\" : { \"x\" : 2.302136, \"name\" : \"name\", \"y\" : 7.061401241503109, \"z\" : 9 }, \"street\" : \"street\" }, \"employeesCount\" : 1, \"name\" : \"name\", \"coordinates\" : { \"x\" : -364, \"y\" : 1.4658129805029452 }, \"fullName\" : \"fullName\", \"annualTurnover\" : 1, \"id\" : 1, \"creationDate\" : \"2000-01-23\", \"type\" : \"PUBLIC\" }, { \"postalAddress\" : { \"town\" : { \"x\" : 2.302136, \"name\" : \"name\", \"y\" : 7.061401241503109, \"z\" : 9 }, \"street\" : \"street\" }, \"employeesCount\" : 1, \"name\" : \"name\", \"coordinates\" : { \"x\" : -364, \"y\" : 1.4658129805029452 }, \"fullName\" : \"fullName\", \"annualTurnover\" : 1, \"id\" : 1, \"creationDate\" : \"2000-01-23\", \"type\" : \"PUBLIC\" } ], \"page\" : 6, \"totalCount\" : 0 }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
+            }
+        });
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+
+    }
+
+
+    public static final String PATH_ORGDIRECTORY_ORGANIZATION_GET = "/orgdirectory/organization";
+    /**
+     * GET /orgdirectory/organization : Получить статус созданной организации
+     * Возвращает статус операции
+     *
+     * @param uuid  (required)
+     * @return Созданная организация (status code 200)
+     *         or Операция не найдена (status code 404)
+     *         or Недостаточно средств (status code 402)
+     *         or Проблема при создании организации, попробуйте еще раз (status code 500)
+     */
+    @Operation(
+        operationId = "orgdirectoryOrganizationGet",
+        summary = "Получить статус созданной организации",
+        description = "Возвращает статус операции",
+        tags = { "OrgDirectories" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Созданная организация", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = Organization.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "Операция не найдена"),
+            @ApiResponse(responseCode = "402", description = "Недостаточно средств"),
+            @ApiResponse(responseCode = "500", description = "Проблема при создании организации, попробуйте еще раз")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = OrgDirectoriesApi.PATH_ORGDIRECTORY_ORGANIZATION_GET,
+        produces = { "application/json" }
+    )
+    
+    default ResponseEntity<Organization> orgdirectoryOrganizationGet(
+        @NotNull @Parameter(name = "uuid", description = "", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "uuid", required = true) String uuid
+    ) {
+        getRequest().ifPresent(request -> {
+            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"postalAddress\" : { \"town\" : { \"x\" : 2.302136, \"name\" : \"name\", \"y\" : 7.061401241503109, \"z\" : 9 }, \"street\" : \"street\" }, \"employeesCount\" : 1, \"name\" : \"name\", \"coordinates\" : { \"x\" : -364, \"y\" : 1.4658129805029452 }, \"fullName\" : \"fullName\", \"annualTurnover\" : 1, \"id\" : 1, \"creationDate\" : \"2000-01-23\", \"type\" : \"PUBLIC\" }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
+            }
+        });
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+
+    }
+
+
+    public static final String PATH_ORGDIRECTORY_ORGANIZATION_POST = "/orgdirectory/organization";
+    /**
+     * POST /orgdirectory/organization : Добавить новую организацию с оплатой размещения
+     * Создает новую организацию в коллекции
+     *
+     * @param organization  (required)
+     * @return UUID воркфлоу по созданию организации (status code 201)
+     */
+    @Operation(
+        operationId = "orgdirectoryOrganizationPost",
+        summary = "Добавить новую организацию с оплатой размещения",
+        description = "Создает новую организацию в коллекции",
+        tags = { "OrgDirectories" },
+        responses = {
+            @ApiResponse(responseCode = "201", description = "UUID воркфлоу по созданию организации", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = OrganizationPayment.class))
+            })
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.POST,
+        value = OrgDirectoriesApi.PATH_ORGDIRECTORY_ORGANIZATION_POST,
+        produces = { "application/json" },
+        consumes = { "application/json" }
+    )
+    
+    default ResponseEntity<OrganizationPayment> orgdirectoryOrganizationPost(
+        @Parameter(name = "Organization", description = "", required = true) @Valid @RequestBody Organization organization
+    ) {
+        getRequest().ifPresent(request -> {
+            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
