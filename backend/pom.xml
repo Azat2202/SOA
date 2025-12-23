@@ -28,6 +28,7 @@
         <module>orgdirectories_gateway</module>
         <module>orgdirectories_gen</module>
         <module>orgdirectories_rest</module>
+        <module>temporal-models</module>
     </modules>
 
     <build>

@@ -14,6 +14,7 @@ COPY orgdirectories_eureka/pom.xml orgdirectories_eureka/
 COPY orgdirectories_gateway/pom.xml orgdirectories_gateway/
 COPY orgdirectories_gen/pom.xml orgdirectories_gen/pom.xml
 COPY orgdirectories_rest/pom.xml orgdirectories_rest/pom.xml
+COPY temporal-models/pom.xml temporal-models/pom.xml
 
 RUN mvn dependency:go-offline -pl organizations_ear -am -B --no-transfer-progress
 

@@ -14,6 +14,7 @@ COPY orgdirectories_gateway/pom.xml orgdirectories_gateway/
 COPY orgdirectories_gen/pom.xml orgdirectories_gen/pom.xml
 COPY orgdirectories_rest/pom.xml orgdirectories_rest/pom.xml
 COPY orgdirectories_gen/src/main/resources/contract.xsd orgdirectories_gen/src/main/resources/contract.xsd
+COPY temporal-models/pom.xml temporal-models/pom.xml
 RUN mvn dependency:go-offline -pl orgdirectories_rest -am -B --no-transfer-progress
 
 COPY openapi-gen/src openapi-gen/src
