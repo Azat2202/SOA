@@ -50,11 +50,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link OrganizationWithPaging }
+     * Create an instance of {@link CreateOrganizationPayment }
      * 
      */
-    public OrganizationWithPaging createOrganizationWithPaging() {
-        return new OrganizationWithPaging();
+    public CreateOrganizationPayment createCreateOrganizationPayment() {
+        return new CreateOrganizationPayment();
     }
 
     /**
@@ -63,6 +63,46 @@ public class ObjectFactory {
      */
     public Organization createOrganization() {
         return new Organization();
+    }
+
+    /**
+     * Create an instance of {@link GetOrganizationPayment }
+     * 
+     */
+    public GetOrganizationPayment createGetOrganizationPayment() {
+        return new GetOrganizationPayment();
+    }
+
+    /**
+     * Create an instance of {@link OrganizationPayment }
+     * 
+     */
+    public OrganizationPayment createOrganizationPayment() {
+        return new OrganizationPayment();
+    }
+
+    /**
+     * Create an instance of {@link GetBalance }
+     * 
+     */
+    public GetBalance createGetBalance() {
+        return new GetBalance();
+    }
+
+    /**
+     * Create an instance of {@link AddBalance }
+     * 
+     */
+    public AddBalance createAddBalance() {
+        return new AddBalance();
+    }
+
+    /**
+     * Create an instance of {@link OrganizationWithPaging }
+     * 
+     */
+    public OrganizationWithPaging createOrganizationWithPaging() {
+        return new OrganizationWithPaging();
     }
 
     /**

@@ -18,6 +18,25 @@ services:
     restart: unless-stopped
     networks:
       - backend
+  db-orgdirectories:
+    image: postgres:15
+    container_name: db-orgdirectories
+    environment:
+      - POSTGRES_DB=study
+      - POSTGRES_USER=study
+      - POSTGRES_PASSWORD=study
+    ports:
+      - 5400:5432
+    volumes:
+      - db-orgdirectories-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U study -d study" ]
+      interval: 5s
+      timeout: 1s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - backend
   nginx:
     image: nginx:alpine
     container_name: nginx
@@ -249,6 +268,7 @@ services:
 
 volumes:
   db-organizations-data:
+  db-orgdirectories-data:
 
 networks:
   backend:

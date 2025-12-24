@@ -75,7 +75,7 @@ public interface OrgDirectoriesApi {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"balance\" : 0.8008281904610115 }";
+                    String exampleString = "{ \"balance\" : 0 }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
@@ -98,18 +98,30 @@ public interface OrgDirectoriesApi {
         summary = "Пополнить счет",
         tags = { "OrgDirectories" },
         responses = {
-            @ApiResponse(responseCode = "200", description = "Успешное пополнение")
+            @ApiResponse(responseCode = "200", description = "Успешное пополнение", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = Balance.class))
+            })
         }
     )
     @RequestMapping(
         method = RequestMethod.POST,
         value = OrgDirectoriesApi.PATH_ORGDIRECTORY_BALANCE_POST,
+        produces = { "application/json" },
         consumes = { "application/json" }
     )
     
-    default ResponseEntity<Void> orgdirectoryBalancePost(
+    default ResponseEntity<Balance> orgdirectoryBalancePost(
         @Parameter(name = "Balance", description = "", required = true) @Valid @RequestBody Balance balance
     ) {
+        getRequest().ifPresent(request -> {
+            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"balance\" : 0 }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
+            }
+        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
     }

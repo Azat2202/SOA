@@ -4,7 +4,6 @@ import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import java.math.BigDecimal;
 import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.time.OffsetDateTime;
@@ -23,9 +22,9 @@ import jakarta.annotation.Generated;
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.15.0")
 public class Balance {
 
-  private @Nullable BigDecimal balance;
+  private @Nullable Long balance;
 
-  public Balance balance(@Nullable BigDecimal balance) {
+  public Balance balance(@Nullable Long balance) {
     this.balance = balance;
     return this;
   }
@@ -34,14 +33,14 @@ public class Balance {
    * Количество денег в копейках
    * @return balance
    */
-  @Valid 
+  
   @Schema(name = "balance", description = "Количество денег в копейках", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("balance")
-  public @Nullable BigDecimal getBalance() {
+  public @Nullable Long getBalance() {
     return balance;
   }
 
-  public void setBalance(@Nullable BigDecimal balance) {
+  public void setBalance(@Nullable Long balance) {
     this.balance = balance;
   }
 

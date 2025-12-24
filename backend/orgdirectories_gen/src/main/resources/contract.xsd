@@ -23,6 +23,36 @@
         </xs:complexType>
     </xs:element>
 
+    <xs:element name="createOrganizationPayment">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="request" type="tns:organization"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getOrganizationPayment">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="request" type="tns:organizationPayment"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getBalance">
+        <xs:complexType>
+            <xs:sequence/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="addBalance">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="balance" type="xs:long"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
     <xs:element name="organizationWithPaging" type="tns:organizationWithPaging"/>
 
     <xs:complexType name="organizationWithPaging">
@@ -78,4 +108,10 @@
             <xs:enumeration value="OPEN_JOINT_STOCK_COMPANY"/>
         </xs:restriction>
     </xs:simpleType>
+
+    <xs:complexType name="organizationPayment">
+        <xs:sequence>
+            <xs:element name="id" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
 </xs:schema>

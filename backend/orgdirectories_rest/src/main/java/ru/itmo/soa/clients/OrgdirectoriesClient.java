@@ -54,6 +54,27 @@ public class OrgdirectoriesClient extends WebServiceGatewaySupport {
         return organizationArray;
     }
 
+    public Balance getBalance() {
+        ru.itmo.soa.gen.EmptyBalanceRequest request = new ru.itmo.soa.gen.EmptyBalanceRequest();
+
+        ru.itmo.soa.gen.Balance response = ((JAXBElement<ru.itmo.soa.gen.Balance>) getWebServiceTemplate()
+                .marshalSendAndReceive(request)).getValue();
+        Balance balance = new Balance();
+        balance.setBalance(response.getBalance());
+        return balance;
+    }
+
+    public Balance addBalance(Balance requestBalance) {
+        ru.itmo.soa.gen.Balance request = new ru.itmo.soa.gen.Balance();
+        request.setBalance(requestBalance.getBalance());
+
+        ru.itmo.soa.gen.Balance response = ((JAXBElement<ru.itmo.soa.gen.Balance>) getWebServiceTemplate()
+                .marshalSendAndReceive(request)).getValue();
+        Balance balance = new Balance();
+        balance.setBalance(response.getBalance());
+        return balance;
+    }
+
     private static Organization toOrganizationFromGen(ru.itmo.soa.gen.Organization organization) {
         Organization org = new Organization();
         org.setId(organization.getId());

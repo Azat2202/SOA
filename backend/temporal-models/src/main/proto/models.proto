@@ -4,8 +4,53 @@ package ru.itmo.temporal_models;
 option java_multiple_files = true;
 
 option java_package = "ru.itmo.temporal_models";
+import "google/protobuf/timestamp.proto";
 
-message User {
-  string id = 1;
+message Coordinates {
+  int32 x = 1;
+  double y = 2;
+}
+
+message Location {
+  float x = 1;
+  double y = 2;
+  int64 z = 3;
+  optional string name = 4;
+}
+
+message Address {
+  string street = 1;
+  Location town = 2;
+}
+
+enum OrganizationType {
+  ORGANIZATION_TYPE_UNSPECIFIED = 0;
+  PUBLIC = 1;
+  TRUST = 2;
+  OPEN_JOINT_STOCK_COMPANY = 3;
+}
+
+message Organization {
+  int64 id = 1;
   string name = 2;
+  Coordinates coordinates = 3;
+  google.protobuf.Timestamp creation_date = 4;
+  int64 annual_turnover = 5;
+  optional string full_name = 6;
+  optional int32 employees_count = 7;
+  OrganizationType type = 8;
+  optional Address postal_address = 9;
+}
+
+message OrganizationArray {
+  repeated Organization organizations = 1;
+  int32 total_count = 2;
+  int32 page = 3;
+  int32 size = 4;
+}
+
+message Error {
+  string error = 1;
+  string message = 2;
+  google.protobuf.Timestamp timestamp = 3;
 }

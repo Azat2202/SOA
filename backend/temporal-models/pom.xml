@@ -27,6 +27,11 @@
             <artifactId>protobuf-java</artifactId>
             <version>${protobuf.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.temporal</groupId>
+            <artifactId>temporal-sdk</artifactId>
+            <version>1.32.1</version>
+        </dependency>
     </dependencies>
     <build>
         <finalName>temporal-models</finalName>

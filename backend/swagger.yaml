@@ -35,7 +35,7 @@ components:
       type: object
       properties:
         balance:
-          type: number
+          type: integer
           format: int64
           description: Количество денег в копейках
     Pagination:
@@ -693,3 +693,7 @@ paths:
       responses:
         '200':
           description: Успешное пополнение
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Balance'

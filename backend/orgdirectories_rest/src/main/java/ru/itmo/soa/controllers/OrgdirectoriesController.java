@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import ru.itmo.gen.api.OrgDirectoriesApi;
+import ru.itmo.gen.model.Balance;
 import ru.itmo.gen.model.OrganizationArray;
 import ru.itmo.gen.model.Pagination;
 import ru.itmo.soa.clients.OrgdirectoriesClient;
@@ -28,6 +29,20 @@ public class OrgdirectoriesController implements OrgDirectoriesApi {
     public ResponseEntity<OrganizationArray> orgdirectoryFilterTypeTypePost(String type, Pagination pagination) {
         return ResponseEntity.ok(
                 orgdirectoriesClient.getOrganizationsByType(type, pagination)
+        );
+    }
+
+    @Override
+    public ResponseEntity<Balance> orgdirectoryBalanceGet() {
+        return ResponseEntity.ok(
+                orgdirectoriesClient.getBalance()
+        );
+    }
+
+    @Override
+    public ResponseEntity<Balance> orgdirectoryBalancePost(Balance balance) {
+        return ResponseEntity.ok(
+            orgdirectoriesClient.addBalance(balance)
         );
     }
 }

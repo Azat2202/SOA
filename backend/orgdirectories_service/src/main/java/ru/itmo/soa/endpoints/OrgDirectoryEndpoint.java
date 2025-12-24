@@ -14,9 +14,9 @@ import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 import ru.itmo.gen.model.OrganizationArray;
 import ru.itmo.gen.model.OrganizationFiltersFilter;
 import ru.itmo.gen.model.Pagination;
-import ru.itmo.soa.gen.GetByAnnualTurnoverRequest;
-import ru.itmo.soa.gen.GetByType;
-import ru.itmo.soa.gen.OrganizationWithPaging;
+import ru.itmo.soa.entities.BalanceEntity;
+import ru.itmo.soa.gen.*;
+import ru.itmo.soa.repository.BalanceRepository;
 import ru.itmo.soa.service.OrgDirectoryService;
 
 @Endpoint
@@ -27,6 +27,7 @@ public class OrgDirectoryEndpoint {
     private static final String NAMESPACE_URI = "http://www.itmo.ru/soa/gen";
 
     private final OrgDirectoryService orgDirectoryService;
+    private final BalanceRepository balanceRepository;
 
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "getByAnnualTurnoverRequest")
     @ResponsePayload
@@ -63,6 +64,40 @@ public class OrgDirectoryEndpoint {
                 result
         );
     }
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "getBalance")
+    @ResponsePayload
+    public JAXBElement<Balance> getBalance(
+            @RequestPayload EmptyBalanceRequest request) {
+        Long balanceKopecks = balanceRepository.getBalanceById(BalanceRepository.BALANCE_KEY).getBalanceKopecks();
+        Balance balance = new Balance();
+        balance.setBalance(balanceKopecks);
+        return new JAXBElement<>(
+                new QName(NAMESPACE_URI, "balance"),
+                Balance.class,
+                balance
+        );
+    }
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "addBalance")
+    @ResponsePayload
+    public JAXBElement<Balance> addBalance(
+            @RequestPayload Balance request) {
+        BalanceEntity balanceEntity = balanceRepository.getReferenceById(BalanceRepository.BALANCE_KEY);
+        balanceEntity.setBalanceKopecks(
+                balanceEntity.getBalanceKopecks() + request.getBalance()
+        );
+        request.setBalance(balanceEntity.getBalanceKopecks());
+        return new JAXBElement<>(
+                new QName(NAMESPACE_URI, "balance"),
+                Balance.class,
+                request
+        );
+    }
+
+
+
+
 
     private static OrganizationWithPaging toOrganizationWithPaging(OrganizationArray organizationArray){
         OrganizationWithPaging result = new OrganizationWithPaging();
