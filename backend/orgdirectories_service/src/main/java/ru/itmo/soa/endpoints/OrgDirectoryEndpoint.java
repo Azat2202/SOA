@@ -67,36 +67,24 @@ public class OrgDirectoryEndpoint {
 
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "getBalance")
     @ResponsePayload
-    public JAXBElement<Balance> getBalance(
-            @RequestPayload EmptyBalanceRequest request) {
+    public Balance getBalance(
+            @RequestPayload GetBalance request) {
         Long balanceKopecks = balanceRepository.getBalanceById(BalanceRepository.BALANCE_KEY).getBalanceKopecks();
         Balance balance = new Balance();
         balance.setBalance(balanceKopecks);
-        return new JAXBElement<>(
-                new QName(NAMESPACE_URI, "balance"),
-                Balance.class,
-                balance
-        );
+        return balance;
     }
 
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "addBalance")
     @ResponsePayload
-    public JAXBElement<Balance> addBalance(
-            @RequestPayload Balance request) {
-        BalanceEntity balanceEntity = balanceRepository.getReferenceById(BalanceRepository.BALANCE_KEY);
-        balanceEntity.setBalanceKopecks(
-                balanceEntity.getBalanceKopecks() + request.getBalance()
-        );
-        request.setBalance(balanceEntity.getBalanceKopecks());
-        return new JAXBElement<>(
-                new QName(NAMESPACE_URI, "balance"),
-                Balance.class,
-                request
-        );
+    public Balance addBalance(
+            @RequestPayload AddBalance request) {
+        balanceRepository.addBalance(request.getBalance());
+        Long balanceKopecks = balanceRepository.getBalanceById(BalanceRepository.BALANCE_KEY).getBalanceKopecks();
+        Balance response = new Balance();
+        response.setBalance(balanceKopecks);
+        return response;
     }
-
-
-
 
 
     private static OrganizationWithPaging toOrganizationWithPaging(OrganizationArray organizationArray){

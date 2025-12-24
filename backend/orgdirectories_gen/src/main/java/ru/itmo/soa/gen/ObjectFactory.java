@@ -98,6 +98,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Balance }
+     * 
+     */
+    public Balance createBalance() {
+        return new Balance();
+    }
+
+    /**
      * Create an instance of {@link OrganizationWithPaging }
      * 
      */
