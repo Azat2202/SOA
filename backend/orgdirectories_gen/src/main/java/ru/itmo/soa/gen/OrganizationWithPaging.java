@@ -6,16 +6,17 @@ import java.util.List;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for organizationWithPaging complex type.
+ * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="organizationWithPaging"&gt;
+ * &lt;complexType&gt;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
@@ -32,12 +33,13 @@ import jakarta.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "organizationWithPaging", propOrder = {
+@XmlType(name = "", propOrder = {
     "organizations",
     "totalCount",
     "page",
     "size"
 })
+@XmlRootElement(name = "organizationWithPaging")
 public class OrganizationWithPaging {
 
     @XmlElement(required = true)

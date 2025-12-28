@@ -1,9 +1,6 @@
 
 package ru.itmo.soa.gen;
 
-import javax.xml.namespace.QName;
-import jakarta.xml.bind.JAXBElement;
-import jakarta.xml.bind.annotation.XmlElementDecl;
 import jakarta.xml.bind.annotation.XmlRegistry;
 
 
@@ -24,7 +21,6 @@ import jakarta.xml.bind.annotation.XmlRegistry;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _OrganizationWithPaging_QNAME = new QName("http://www.itmo.ru/soa/gen", "organizationWithPaging");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: ru.itmo.soa.gen
@@ -74,11 +70,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link OrganizationPayment }
+     * Create an instance of {@link CreateOrganizationWorkflowId }
      * 
      */
-    public OrganizationPayment createOrganizationPayment() {
-        return new OrganizationPayment();
+    public CreateOrganizationWorkflowId createCreateOrganizationWorkflowId() {
+        return new CreateOrganizationWorkflowId();
     }
 
     /**
@@ -103,6 +99,14 @@ public class ObjectFactory {
      */
     public Balance createBalance() {
         return new Balance();
+    }
+
+    /**
+     * Create an instance of {@link OrganizationPayment }
+     * 
+     */
+    public OrganizationPayment createOrganizationPayment() {
+        return new OrganizationPayment();
     }
 
     /**
@@ -135,19 +139,6 @@ public class ObjectFactory {
      */
     public Location createLocation() {
         return new Location();
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link OrganizationWithPaging }{@code >}
-     * 
-     * @param value
-     *     Java instance representing xml element's value.
-     * @return
-     *     the new instance of {@link JAXBElement }{@code <}{@link OrganizationWithPaging }{@code >}
-     */
-    @XmlElementDecl(namespace = "http://www.itmo.ru/soa/gen", name = "organizationWithPaging")
-    public JAXBElement<OrganizationWithPaging> createOrganizationWithPaging(OrganizationWithPaging value) {
-        return new JAXBElement<OrganizationWithPaging>(_OrganizationWithPaging_QNAME, OrganizationWithPaging.class, null, value);
     }
 
 }

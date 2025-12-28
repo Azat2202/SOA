@@ -18,7 +18,7 @@ import jakarta.xml.bind.annotation.XmlType;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
- *         &lt;element name="request" type="{http://www.itmo.ru/soa/gen}organizationPayment"/&gt;
+ *         &lt;element name="request" type="{http://www.itmo.ru/soa/gen}createOrganizationWorkflowId"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -35,17 +35,17 @@ import jakarta.xml.bind.annotation.XmlType;
 public class GetOrganizationPayment {
 
     @XmlElement(required = true)
-    protected OrganizationPayment request;
+    protected CreateOrganizationWorkflowId request;
 
     /**
      * Gets the value of the request property.
      * 
      * @return
      *     possible object is
-     *     {@link OrganizationPayment }
+     *     {@link CreateOrganizationWorkflowId }
      *     
      */
-    public OrganizationPayment getRequest() {
+    public CreateOrganizationWorkflowId getRequest() {
         return request;
     }
 
@@ -54,10 +54,10 @@ public class GetOrganizationPayment {
      * 
      * @param value
      *     allowed object is
-     *     {@link OrganizationPayment }
+     *     {@link CreateOrganizationWorkflowId }
      *     
      */
-    public void setRequest(OrganizationPayment value) {
+    public void setRequest(CreateOrganizationWorkflowId value) {
         this.request = value;
     }
 

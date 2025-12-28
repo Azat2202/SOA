@@ -34,7 +34,7 @@
     <xs:element name="getOrganizationPayment">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="request" type="tns:organizationPayment"/>
+                <xs:element name="request" type="tns:createOrganizationWorkflowId"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -61,16 +61,30 @@
         </xs:complexType>
     </xs:element>
 
-    <xs:element name="organizationWithPaging" type="tns:organizationWithPaging"/>
+    <xs:element name="organizationPayment">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="tns:createOrganizationWorkflowId"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
 
-    <xs:complexType name="organizationWithPaging">
+    <xs:complexType name="createOrganizationWorkflowId">
         <xs:sequence>
-            <xs:element name="organizations" type="tns:organization" maxOccurs="unbounded"/>
-            <xs:element name="totalCount" type="xs:int"/>
-            <xs:element name="page" type="xs:int"/>
-            <xs:element name="size" type="xs:int"/>
+            <xs:element name="id" type="xs:string"/>
         </xs:sequence>
     </xs:complexType>
+
+    <xs:element name="organizationWithPaging">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="organizations" type="tns:organization" maxOccurs="unbounded"/>
+                <xs:element name="totalCount" type="xs:int"/>
+                <xs:element name="page" type="xs:int"/>
+                <xs:element name="size" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
 
     <xs:complexType name="organization">
         <xs:sequence>
@@ -116,10 +130,4 @@
             <xs:enumeration value="OPEN_JOINT_STOCK_COMPANY"/>
         </xs:restriction>
     </xs:simpleType>
-
-    <xs:complexType name="organizationPayment">
-        <xs:sequence>
-            <xs:element name="id" type="xs:string"/>
-        </xs:sequence>
-    </xs:complexType>
 </xs:schema>

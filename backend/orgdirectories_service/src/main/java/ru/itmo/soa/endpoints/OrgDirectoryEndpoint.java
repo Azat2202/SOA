@@ -1,10 +1,14 @@
 package ru.itmo.soa.endpoints;
 
+import io.temporal.client.WorkflowClient;
+import io.temporal.client.WorkflowOptions;
+import io.temporal.workflow.Async;
 import jakarta.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.openapitools.jackson.nullable.JsonNullable;
 import org.springframework.stereotype.Component;
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
@@ -18,6 +22,9 @@ import ru.itmo.soa.entities.BalanceEntity;
 import ru.itmo.soa.gen.*;
 import ru.itmo.soa.repository.BalanceRepository;
 import ru.itmo.soa.service.OrgDirectoryService;
+import ru.itmo.workflows.OrganizationWorkflow;
+
+import java.util.UUID;
 
 @Endpoint
 @Component
@@ -28,10 +35,12 @@ public class OrgDirectoryEndpoint {
 
     private final OrgDirectoryService orgDirectoryService;
     private final BalanceRepository balanceRepository;
+    private final WorkflowClient workflowClient;
+    private final ModelMapper modelMapper;
 
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "getByAnnualTurnoverRequest")
     @ResponsePayload
-    public JAXBElement<OrganizationWithPaging> getOrganizationsInTurnoverRange(
+    public OrganizationWithPaging getOrganizationsInTurnoverRange(
             @RequestPayload GetByAnnualTurnoverRequest request) {
         OrganizationArray organizationArray = orgDirectoryService
                 .getOrganizationsInRange(
@@ -41,16 +50,12 @@ public class OrgDirectoryEndpoint {
                                 .page(request.getPage())
                                 .size(request.getSize()));
         OrganizationWithPaging result = toOrganizationWithPaging(organizationArray);
-        return new JAXBElement<>(
-                new QName(NAMESPACE_URI, "organizationWithPaging"),
-                OrganizationWithPaging.class,
-                result
-        );
+        return result;
     }
 
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "getByType")
     @ResponsePayload
-    public JAXBElement<OrganizationWithPaging> getOrganizationsByType(
+    public OrganizationWithPaging getOrganizationsByType(
             @RequestPayload GetByType request) {
         OrganizationArray organizationArray = orgDirectoryService.getOrganizationsByType(
                 OrganizationFiltersFilter.TypeEnum.fromValue(request.getType().value()),
@@ -58,11 +63,7 @@ public class OrgDirectoryEndpoint {
                         .page(request.getPage())
                         .size(request.getSize()));
         OrganizationWithPaging result = toOrganizationWithPaging(organizationArray);
-        return new JAXBElement<>(
-                new QName(NAMESPACE_URI, "organizationWithPaging"),
-                OrganizationWithPaging.class,
-                result
-        );
+        return result;
     }
 
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "getBalance")
@@ -84,6 +85,25 @@ public class OrgDirectoryEndpoint {
         Balance response = new Balance();
         response.setBalance(balanceKopecks);
         return response;
+    }
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "createOrganizationPayment")
+    @ResponsePayload
+    public OrganizationPayment createOrganizationPayment(
+            @RequestPayload Organization request) {
+        String workflowId = UUID.randomUUID().toString();
+        OrganizationWorkflow organizationWorkflow = workflowClient.newWorkflowStub(
+                OrganizationWorkflow.class,
+                WorkflowOptions.newBuilder()
+                        .setTaskQueue("organizations")
+                        .setWorkflowId(workflowId).build()
+        );
+        WorkflowClient.start(organizationWorkflow::processOrder, modelMapper.map(request, ru.itmo.temporal_models.Organization.class));
+        OrganizationPayment organizationPayment = new OrganizationPayment();
+        CreateOrganizationWorkflowId workflowIdResponse = new CreateOrganizationWorkflowId();
+        workflowIdResponse.setId(workflowId);
+        organizationPayment.setId(workflowIdResponse);
+        return organizationPayment;
     }
 
 
