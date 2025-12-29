@@ -4,6 +4,7 @@ src/main/java/ru/itmo/gen/api/ApiUtil.java
 src/main/java/ru/itmo/gen/api/OrgDirectoriesApi.java
 src/main/java/ru/itmo/gen/api/OrganizationsApi.java
 src/main/java/ru/itmo/gen/model/Address.java
+src/main/java/ru/itmo/gen/model/Balance.java
 src/main/java/ru/itmo/gen/model/Coordinates.java
 src/main/java/ru/itmo/gen/model/DatabaseVariant.java
 src/main/java/ru/itmo/gen/model/Error.java
@@ -18,6 +19,7 @@ src/main/java/ru/itmo/gen/model/OrganizationFiltersFilterCreationDate.java
 src/main/java/ru/itmo/gen/model/OrganizationFiltersFilterPostalAddress.java
 src/main/java/ru/itmo/gen/model/OrganizationFiltersFilterPostalAddressTown.java
 src/main/java/ru/itmo/gen/model/OrganizationFiltersSortInner.java
+src/main/java/ru/itmo/gen/model/OrganizationPayment.java
 src/main/java/ru/itmo/gen/model/OrganizationsDeleteByFullnamePostRequest.java
 src/main/java/ru/itmo/gen/model/OrganizationsQuantityByEmployeesGet200Response.java
 src/main/java/ru/itmo/gen/model/Pagination.java

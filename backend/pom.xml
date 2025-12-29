@@ -26,6 +26,9 @@
         <module>orgdirectories_service</module>
         <module>orgdirectories_eureka</module>
         <module>orgdirectories_gateway</module>
+        <module>orgdirectories_gen</module>
+        <module>orgdirectories_rest</module>
+        <module>temporal-models</module>
     </modules>
 
     <build>
