@@ -10,6 +10,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.openapitools.jackson.nullable.JsonNullable;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
@@ -32,6 +33,9 @@ import java.util.UUID;
 public class OrgDirectoryEndpoint {
 
     private static final String NAMESPACE_URI = "http://www.itmo.ru/soa/gen";
+
+    @Value("${spring.temporal.task-queue}")
+    private String taskQueue;
 
     private final OrgDirectoryService orgDirectoryService;
     private final BalanceRepository balanceRepository;
@@ -95,7 +99,7 @@ public class OrgDirectoryEndpoint {
         OrganizationWorkflow organizationWorkflow = workflowClient.newWorkflowStub(
                 OrganizationWorkflow.class,
                 WorkflowOptions.newBuilder()
-                        .setTaskQueue("organizations")
+                        .setTaskQueue(taskQueue)
                         .setWorkflowId(workflowId).build()
         );
         WorkflowClient.start(organizationWorkflow::processOrder, modelMapper.map(request, ru.itmo.temporal_models.Organization.class));

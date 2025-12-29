@@ -11,7 +11,7 @@ import ru.itmo.workflows.OrganizationWorkflow;
 import java.time.Duration;
 
 @Service
-@WorkflowImpl(taskQueues = "organizations")
+@WorkflowImpl(taskQueues = "${spring.temporal.task-queue}")
 public class OrganizationWorkflowImpl implements OrganizationWorkflow {
 
     @Override
