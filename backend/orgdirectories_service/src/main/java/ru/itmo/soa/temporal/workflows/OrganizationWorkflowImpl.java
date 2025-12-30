@@ -8,6 +8,8 @@ import io.temporal.workflow.Workflow;
 import org.springframework.stereotype.Service;
 import ru.itmo.activities.OrgDirectoriesActivities;
 import ru.itmo.activities.OrganizationActivities;
+import ru.itmo.temporal_models.CreateOrganizationStatus;
+import ru.itmo.temporal_models.MoneyKopecks;
 import ru.itmo.temporal_models.Organization;
 import ru.itmo.workflows.OrganizationWorkflow;
 
@@ -17,6 +19,13 @@ import java.time.Duration;
 @WorkflowImpl(taskQueues = "${spring.temporal.task-queue}")
 public class OrganizationWorkflowImpl implements OrganizationWorkflow {
 
+    private final MoneyKopecks newOrganizationCost =
+            MoneyKopecks
+                    .newBuilder()
+                    .setMoney(5000L)
+                    .build();
+
+    private CreateOrganizationStatus createOrganizationStatus = CreateOrganizationStatus.INITIATED;
 
     @Override
     public void processOrder(Organization organization) {
@@ -45,16 +54,21 @@ public class OrganizationWorkflowImpl implements OrganizationWorkflow {
                             .build()
             );
 
+            orgDirectoriesActivities.takeMoney(newOrganizationCost);
+            createOrganizationStatus = CreateOrganizationStatus.MONEY_TAKEN;
+            Workflow.sleep(5000); // just for test :)
+            saga.addCompensation(orgDirectoriesActivities::returnMoney, newOrganizationCost);
+
             organizationActivities.createOrganization(organization);
-            saga.addCompensation(organizationActivities::removeOrganization, organization);
-            orgDirectoriesActivities.processOrder(organization);
-            saga.addCompensation(orgDirectoriesActivities::removeOrder, organization);
-            orgDirectoriesActivities.processOrder(organization);
-            saga.addCompensation(orgDirectoriesActivities::removeOrder, organization);
-            orgDirectoriesActivities.processOrder(organization);
-            saga.addCompensation(orgDirectoriesActivities::removeOrder, organization);
+            createOrganizationStatus = CreateOrganizationStatus.ORGANIZATION_CREATED;
         } catch (Exception e) {
             saga.compensate();
+            createOrganizationStatus = CreateOrganizationStatus.MONEY_RETURNING;
         }
+    }
+
+    @Override
+    public CreateOrganizationStatus getStatus() {
+        return createOrganizationStatus;
     }
 }

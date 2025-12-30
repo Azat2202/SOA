@@ -1,0 +1,1 @@
+alter table organizations add constraint name_unique unique(name);

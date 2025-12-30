@@ -54,3 +54,15 @@ message Error {
   string message = 2;
   google.protobuf.Timestamp timestamp = 3;
 }
+
+message MoneyKopecks {
+  uint64 money = 1;
+}
+
+enum CreateOrganizationStatus {
+  INITIATED = 0;
+  MONEY_TAKEN = 1;
+  ORGANIZATION_CREATED = 2;
+
+  MONEY_RETURNING = 101;
+}

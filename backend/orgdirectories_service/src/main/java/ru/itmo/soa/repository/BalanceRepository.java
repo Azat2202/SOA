@@ -19,4 +19,9 @@ public interface BalanceRepository extends JpaRepository<BalanceEntity, Long> {
     @Transactional
     @Query("update BalanceEntity b set b.balanceKopecks = b.balanceKopecks + :newBalance where b.id = 1")
     void addBalance(@Param("newBalance") Long newBalance);
+
+    @Modifying
+    @Transactional
+    @Query("update BalanceEntity b set b.balanceKopecks = b.balanceKopecks - :newBalance where b.id = 1")
+    void removeBalance(@Param("newBalance") Long newBalance);
 }
