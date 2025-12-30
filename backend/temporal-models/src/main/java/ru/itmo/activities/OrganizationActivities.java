@@ -5,7 +5,7 @@ import ru.itmo.temporal_models.Organization;
 
 @ActivityInterface
 public interface OrganizationActivities {
-    void processOrder(Organization organization);
+    void createOrganization(Organization organization);
 
-    void removeOrder(Organization organization);
+    void removeOrganization(Organization organization);
 }

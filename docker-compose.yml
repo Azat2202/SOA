@@ -126,6 +126,7 @@ services:
       - 127.0.0.11
     networks:
       - backend
+      - temporal-network
     depends_on:
       consul-dns:
         condition: service_started
@@ -199,6 +200,7 @@ services:
     networks:
       backend:
         ipv4_address: 172.28.0.20
+      temporal-network:
   frontend:
     build:
       context: ./frontend
