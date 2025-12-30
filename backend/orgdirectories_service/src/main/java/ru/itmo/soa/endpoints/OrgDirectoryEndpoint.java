@@ -1,12 +1,15 @@
 package ru.itmo.soa.endpoints;
 
+import com.google.protobuf.Timestamp;
 import io.temporal.client.WorkflowClient;
 import io.temporal.client.WorkflowOptions;
 import io.temporal.workflow.Async;
 import jakarta.xml.bind.JAXBElement;
+
 import javax.xml.namespace.QName;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.openapitools.jackson.nullable.JsonNullable;
@@ -25,6 +28,7 @@ import ru.itmo.soa.repository.BalanceRepository;
 import ru.itmo.soa.service.OrgDirectoryService;
 import ru.itmo.workflows.OrganizationWorkflow;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Endpoint
@@ -94,7 +98,7 @@ public class OrgDirectoryEndpoint {
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "createOrganizationPayment")
     @ResponsePayload
     public OrganizationPayment createOrganizationPayment(
-            @RequestPayload Organization request) {
+            @RequestPayload CreateOrganizationPayment request) {
         String workflowId = UUID.randomUUID().toString();
         OrganizationWorkflow organizationWorkflow = workflowClient.newWorkflowStub(
                 OrganizationWorkflow.class,
@@ -102,7 +106,8 @@ public class OrgDirectoryEndpoint {
                         .setTaskQueue(taskQueue)
                         .setWorkflowId(workflowId).build()
         );
-        WorkflowClient.start(organizationWorkflow::processOrder, modelMapper.map(request, ru.itmo.temporal_models.Organization.class));
+
+        WorkflowClient.start(organizationWorkflow::processOrder, toProtoOrganization(request.getRequest()));
         OrganizationPayment organizationPayment = new OrganizationPayment();
         CreateOrganizationWorkflowId workflowIdResponse = new CreateOrganizationWorkflowId();
         workflowIdResponse.setId(workflowId);
@@ -111,7 +116,7 @@ public class OrgDirectoryEndpoint {
     }
 
 
-    private static OrganizationWithPaging toOrganizationWithPaging(OrganizationArray organizationArray){
+    private static OrganizationWithPaging toOrganizationWithPaging(OrganizationArray organizationArray) {
         OrganizationWithPaging result = new OrganizationWithPaging();
         if (organizationArray.getOrganizations() != null) {
             organizationArray.getOrganizations().stream()
@@ -193,5 +198,70 @@ public class OrgDirectoryEndpoint {
             return null;
         }
     }
+
+    private static com.google.protobuf.Timestamp toProtoTimestamp(Instant instant) {
+        return Timestamp.newBuilder()
+                .setSeconds(instant.getEpochSecond())
+                .setNanos(instant.getNano())
+                .build();
+    }
+
+    private static ru.itmo.temporal_models.Organization toProtoOrganization(
+            ru.itmo.soa.gen.Organization source
+    ) {
+        if (source == null) {
+            return ru.itmo.temporal_models.Organization.getDefaultInstance();
+        }
+        ru.itmo.temporal_models.Organization.Builder builder =
+                ru.itmo.temporal_models.Organization.newBuilder();
+        if (source.getName() != null) {
+            builder.setName(source.getName());
+        }
+        if (source.getCoordinates() != null) {
+            ru.itmo.temporal_models.Coordinates.Builder coords = ru.itmo.temporal_models.Coordinates.newBuilder();
+            coords.setX(source.getCoordinates().getX());
+            coords.setY(source.getCoordinates().getY());
+            builder.setCoordinates(coords.build());
+        }
+        builder.setAnnualTurnover(source.getAnnualTurnover());
+        if (source.getFullName() != null) {
+            builder.setFullName(source.getFullName());
+        }
+        if (source.getEmployeesCount() != null) {
+            builder.setEmployeesCount(source.getEmployeesCount());
+        }
+        if (source.getType() != null) {
+            try {
+                builder.setType(
+                        ru.itmo.temporal_models.OrganizationType
+                                .valueOf(source.getType().name())
+                );
+            } catch (IllegalArgumentException ignored) {
+                // unknown enum value -> leave default
+            }
+        }
+        if (source.getPostalAddress() != null) {
+            ru.itmo.temporal_models.Address.Builder address =
+                    ru.itmo.temporal_models.Address.newBuilder();
+            if (source.getPostalAddress().getStreet() != null) {
+                address.setStreet(source.getPostalAddress().getStreet());
+            }
+            if (source.getPostalAddress().getTown() != null) {
+                ru.itmo.temporal_models.Location.Builder town =
+                        ru.itmo.temporal_models.Location.newBuilder();
+                town.setX(source.getPostalAddress().getTown().getX());
+                town.setY(source.getPostalAddress().getTown().getY());
+                town.setZ(source.getPostalAddress().getTown().getZ());
+                if (source.getPostalAddress().getTown().getName() != null) {
+                    town.setName(source.getPostalAddress().getTown().getName());
+                }
+                address.setTown(town.build());
+            }
+            builder.setPostalAddress(address.build());
+        }
+        return builder.build();
+    }
+
+
 }
 

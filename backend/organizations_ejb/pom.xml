@@ -107,6 +107,11 @@
             <version>1.31.0</version>
         </dependency>
         <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+        </dependency>
+        <dependency>
             <groupId>ru.itmo</groupId>
             <artifactId>temporal-models</artifactId>
             <version>1.0</version>

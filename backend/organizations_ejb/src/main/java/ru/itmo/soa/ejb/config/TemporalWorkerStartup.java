@@ -1,6 +1,7 @@
 package ru.itmo.soa.ejb.config;
 
 import io.temporal.client.WorkflowClient;
+import io.temporal.client.WorkflowClientOptions;
 import io.temporal.serviceclient.WorkflowServiceStubs;
 import io.temporal.serviceclient.WorkflowServiceStubsOptions;
 import io.temporal.worker.Worker;
@@ -14,18 +15,17 @@ import ru.itmo.soa.ejb.temporal.activities.OrganizationActivitiesImpl;
 @Singleton
 @Startup
 public class TemporalWorkerStartup {
-    private Worker worker;
-
     private static String taskQueueName = "organizations";
 
     @PostConstruct
     public void initWorker() {
         WorkflowServiceStubs service = WorkflowServiceStubs.newServiceStubs(
                 WorkflowServiceStubsOptions.newBuilder()
-                        .setTarget("http://temporal:7233")
+                        .setTarget("temporal:7233")
                         .build()
         );
-        WorkflowClient client = WorkflowClient.newInstance(service);
+        WorkflowClient client = WorkflowClient.newInstance(service,
+                WorkflowClientOptions.newBuilder().build());
         WorkerFactory factory = WorkerFactory.newInstance(client);
         Worker worker = factory.newWorker(taskQueueName);
 
