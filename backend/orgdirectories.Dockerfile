@@ -15,9 +15,11 @@ COPY orgdirectories_gen/pom.xml orgdirectories_gen/pom.xml
 COPY orgdirectories_rest/pom.xml orgdirectories_rest/pom.xml
 COPY orgdirectories_gen/src/main/resources/contract.xsd orgdirectories_gen/src/main/resources/contract.xsd
 COPY temporal-models/pom.xml temporal-models/pom.xml
+COPY temporal-models/src/main/proto/models.proto temporal-models/src/main/proto/models.proto
 RUN mvn dependency:go-offline -pl orgdirectories_service -am -B --no-transfer-progress
 
 COPY openapi-gen/src openapi-gen/src
+COPY temporal-models/src  temporal-models/src
 COPY orgdirectories_service/src orgdirectories_service/src
 COPY swagger.yaml swagger.yaml
 RUN mvn package -pl orgdirectories_service -am -DskipTests --no-transfer-progress
