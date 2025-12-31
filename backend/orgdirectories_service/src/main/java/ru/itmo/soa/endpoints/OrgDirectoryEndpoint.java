@@ -95,6 +95,20 @@ public class OrgDirectoryEndpoint {
         return response;
     }
 
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "organizationStatusRequest")
+    @ResponsePayload
+    public OrganizationStatusResponse getOrganizationStatus(
+            @RequestPayload OrganizationStatusRequest request) {
+        OrganizationWorkflow organizationWorkflow = workflowClient.newWorkflowStub(
+                OrganizationWorkflow.class,
+                request.getId().getId()
+        );
+
+        OrganizationStatusResponse response =  new OrganizationStatusResponse();
+        response.setStatus(CreateOrganizatonStatus.fromValue(organizationWorkflow.getStatus().name()));
+        return response;
+    }
+
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "createOrganizationPayment")
     @ResponsePayload
     public OrganizationPayment createOrganizationPayment(

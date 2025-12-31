@@ -9,6 +9,7 @@ import ru.itmo.gen.model.Balance;
 import ru.itmo.gen.model.Organization;
 import ru.itmo.gen.model.OrganizationArray;
 import ru.itmo.gen.model.OrganizationPayment;
+import ru.itmo.gen.model.OrganizationStatus;
 import ru.itmo.gen.model.Pagination;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
@@ -227,7 +228,7 @@ public interface OrgDirectoriesApi {
      * Возвращает статус операции
      *
      * @param uuid  (required)
-     * @return Созданная организация (status code 200)
+     * @return Статус создания организации (status code 200)
      *         or Операция не найдена (status code 404)
      *         or Недостаточно средств (status code 402)
      *         or Проблема при создании организации, попробуйте еще раз (status code 500)
@@ -238,8 +239,8 @@ public interface OrgDirectoriesApi {
         description = "Возвращает статус операции",
         tags = { "OrgDirectories" },
         responses = {
-            @ApiResponse(responseCode = "200", description = "Созданная организация", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Organization.class))
+            @ApiResponse(responseCode = "200", description = "Статус создания организации", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = OrganizationStatus.class))
             }),
             @ApiResponse(responseCode = "404", description = "Операция не найдена"),
             @ApiResponse(responseCode = "402", description = "Недостаточно средств"),
@@ -252,13 +253,13 @@ public interface OrgDirectoriesApi {
         produces = { "application/json" }
     )
     
-    default ResponseEntity<Organization> orgdirectoryOrganizationGet(
+    default ResponseEntity<OrganizationStatus> orgdirectoryOrganizationGet(
         @NotNull @Parameter(name = "uuid", description = "", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "uuid", required = true) String uuid
     ) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"postalAddress\" : { \"town\" : { \"x\" : 2.302136, \"name\" : \"name\", \"y\" : 7.061401241503109, \"z\" : 9 }, \"street\" : \"street\" }, \"employeesCount\" : 1, \"name\" : \"name\", \"coordinates\" : { \"x\" : -364, \"y\" : 1.4658129805029452 }, \"fullName\" : \"fullName\", \"annualTurnover\" : 1, \"id\" : 1, \"creationDate\" : \"2000-01-23\", \"type\" : \"PUBLIC\" }";
+                    String exampleString = "\"INITIATED\"";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }

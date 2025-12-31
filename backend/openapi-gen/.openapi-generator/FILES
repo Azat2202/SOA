@@ -20,6 +20,7 @@ src/main/java/ru/itmo/gen/model/OrganizationFiltersFilterPostalAddress.java
 src/main/java/ru/itmo/gen/model/OrganizationFiltersFilterPostalAddressTown.java
 src/main/java/ru/itmo/gen/model/OrganizationFiltersSortInner.java
 src/main/java/ru/itmo/gen/model/OrganizationPayment.java
+src/main/java/ru/itmo/gen/model/OrganizationStatus.java
 src/main/java/ru/itmo/gen/model/OrganizationsDeleteByFullnamePostRequest.java
 src/main/java/ru/itmo/gen/model/OrganizationsQuantityByEmployeesGet200Response.java
 src/main/java/ru/itmo/gen/model/Pagination.java

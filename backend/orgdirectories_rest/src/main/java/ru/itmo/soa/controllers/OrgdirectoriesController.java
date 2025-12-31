@@ -50,4 +50,11 @@ public class OrgdirectoriesController implements OrgDirectoriesApi {
                 orgdirectoriesClient.createOrganization(organization)
         );
     }
+
+    @Override
+    public ResponseEntity<OrganizationStatus> orgdirectoryOrganizationGet(String uuid) {
+        return ResponseEntity.ok(
+                orgdirectoriesClient.getOrganizationStatus(uuid)
+        );
+    }
 }

@@ -82,4 +82,16 @@ public class OrgdirectoriesClient extends WebServiceGatewaySupport {
         organizationPayment.setId(UUID.fromString(response.getId().getId()));
         return organizationPayment;
     }
+
+    public OrganizationStatus getOrganizationStatus(String id) {
+        ru.itmo.soa.gen.OrganizationStatusRequest request = new ru.itmo.soa.gen.OrganizationStatusRequest();
+        ru.itmo.soa.gen.CreateOrganizationWorkflowId createOrganizationWorkflowId = new ru.itmo.soa.gen.CreateOrganizationWorkflowId();
+        createOrganizationWorkflowId.setId(id);
+        request.setId(createOrganizationWorkflowId);
+
+        ru.itmo.soa.gen.OrganizationStatusResponse response = (ru.itmo.soa.gen.OrganizationStatusResponse) getWebServiceTemplate()
+                .marshalSendAndReceive(request);
+
+        return OrganizationStatus.fromValue(response.getStatus().value());
+    }
 }

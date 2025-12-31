@@ -69,6 +69,22 @@
         </xs:complexType>
     </xs:element>
 
+    <xs:element name="organizationStatusRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="tns:createOrganizationWorkflowId"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="organizationStatusResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="status" type="tns:createOrganizatonStatus"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
     <xs:complexType name="createOrganizationWorkflowId">
         <xs:sequence>
             <xs:element name="id" type="xs:string"/>
@@ -130,4 +146,15 @@
             <xs:enumeration value="OPEN_JOINT_STOCK_COMPANY"/>
         </xs:restriction>
     </xs:simpleType>
+
+    <xs:simpleType name="createOrganizatonStatus">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="INITIATED"/>
+            <xs:enumeration value="MONEY_TAKEN"/>
+            <xs:enumeration value="ORGANIZATION_CREATED"/>
+            <xs:enumeration value="MONEY_RETURNING"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+
 </xs:schema>

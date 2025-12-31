@@ -110,6 +110,22 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link OrganizationStatusRequest }
+     * 
+     */
+    public OrganizationStatusRequest createOrganizationStatusRequest() {
+        return new OrganizationStatusRequest();
+    }
+
+    /**
+     * Create an instance of {@link OrganizationStatusResponse }
+     * 
+     */
+    public OrganizationStatusResponse createOrganizationStatusResponse() {
+        return new OrganizationStatusResponse();
+    }
+
+    /**
      * Create an instance of {@link OrganizationWithPaging }
      * 
      */

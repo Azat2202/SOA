@@ -275,6 +275,9 @@ components:
     DatabaseVariant:
       type: string
       enum: [ MYSQL, POSTGRESQL ]
+    OrganizationStatus:
+      type: string
+      enum: [INITIATED, MONEY_TAKEN, ORGANIZATION_CREATED, MONEY_RETURNING ]
   parameters:
     pageParam:
       name: page
@@ -657,11 +660,11 @@ paths:
             type: string
       responses:
         '200':
-          description: Созданная организация
+          description: Статус создания организации
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Organization'
+                $ref: '#/components/schemas/OrganizationStatus'
         '404':
           description: Операция не найдена
         '402':
