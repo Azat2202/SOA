@@ -10,6 +10,8 @@ import {
     usePostOrganizationsDeleteByFullnameMutation,
     usePostOrgdirectoryFilterTurnoverByMinAnnualTurnoverAndMaxAnnualTurnoverMutation,
     usePostOrgdirectoryFilterTypeByTypeMutation,
+    useGetOrgdirectoryBalanceQuery,
+    usePostOrgdirectoryBalanceMutation,
     organizationsApi,
     OrganizationFilters,
     Organization,
@@ -43,6 +45,8 @@ const OrganizationsPage: React.FC = () => {
     const [deleteByFullname] = usePostOrganizationsDeleteByFullnameMutation();
     const [filterByTurnover] = usePostOrgdirectoryFilterTurnoverByMinAnnualTurnoverAndMaxAnnualTurnoverMutation();
     const [filterByType] = usePostOrgdirectoryFilterTypeByTypeMutation();
+    const {data: balanceData, refetch: refetchBalance} = useGetOrgdirectoryBalanceQuery();
+    const [addBalance, {isLoading: isAddingBalance}] = usePostOrgdirectoryBalanceMutation();
 
     // Load organizations on component mount and when filters/sorting change
     useEffect(() => {
@@ -275,6 +279,17 @@ const OrganizationsPage: React.FC = () => {
     //   }
     // };
 
+    const handleAddBalance = async () => {
+        try {
+            const currentBalance = balanceData?.balance || 0;
+            await addBalance({balance: {balance: currentBalance + 10000}}).unwrap();
+            toast.success('Balance topped up by 10000!');
+            refetchBalance();
+        } catch (error: any) {
+            toast.error(`Error adding balance: ${error.data?.message || error.message}`);
+        }
+    };
+
     const handleEditOrganization = (organization: OrganizationRead) => {
         setEditingOrganization(organization);
         editFormRef.current?.scrollIntoView({
@@ -297,7 +312,7 @@ const OrganizationsPage: React.FC = () => {
                     <div className="card">
                         <div className="card-body" ref={editFormRef}>
                             <div className="row">
-                                <div className="col-12 mb-3">
+                                <div className="col-12 mb-3 d-flex align-items-center gap-3">
                                     <button
                                         className="btn btn-primary"
                                         onClick={() => {
@@ -311,6 +326,16 @@ const OrganizationsPage: React.FC = () => {
                                     >
                                         ➕ Create Organization
                                     </button>
+                                    <div className="d-flex align-items-center gap-2">
+                                        <span>Balance: <strong>{balanceData?.balance ?? 0}</strong></span>
+                                        <button
+                                            className="btn btn-success btn-sm"
+                                            onClick={handleAddBalance}
+                                            disabled={isAddingBalance}
+                                        >
+                                            {isAddingBalance ? '...' : '+10000'}
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 

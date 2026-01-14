@@ -115,6 +115,43 @@ const injectedRtkApi = api.injectEndpoints({
         body: queryArg.pagination,
       }),
     }),
+    postOrgdirectoryOrganization: build.mutation<
+      PostOrgdirectoryOrganizationApiResponse,
+      PostOrgdirectoryOrganizationApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/orgdirectory/organization`,
+        method: "POST",
+        body: queryArg.organization,
+      }),
+    }),
+    getOrgdirectoryOrganization: build.query<
+      GetOrgdirectoryOrganizationApiResponse,
+      GetOrgdirectoryOrganizationApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/orgdirectory/organization`,
+        params: {
+          uuid: queryArg.uuid,
+        },
+      }),
+    }),
+    getOrgdirectoryBalance: build.query<
+      GetOrgdirectoryBalanceApiResponse,
+      GetOrgdirectoryBalanceApiArg
+    >({
+      query: () => ({ url: `/orgdirectory/balance` }),
+    }),
+    postOrgdirectoryBalance: build.mutation<
+      PostOrgdirectoryBalanceApiResponse,
+      PostOrgdirectoryBalanceApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/orgdirectory/balance`,
+        method: "POST",
+        body: queryArg.balance,
+      }),
+    }),
   }),
   overrideExisting: false,
 });
@@ -185,6 +222,24 @@ export type PostOrgdirectoryFilterTypeByTypeApiResponse =
 export type PostOrgdirectoryFilterTypeByTypeApiArg = {
   type: "PUBLIC" | "TRUST" | "OPEN_JOINT_STOCK_COMPANY";
   pagination: Pagination;
+};
+export type PostOrgdirectoryOrganizationApiResponse =
+  /** status 201 UUID воркфлоу по созданию организации */ OrganizationPayment;
+export type PostOrgdirectoryOrganizationApiArg = {
+  organization: Organization;
+};
+export type GetOrgdirectoryOrganizationApiResponse =
+  /** status 200 Статус создания организации */ OrganizationStatus;
+export type GetOrgdirectoryOrganizationApiArg = {
+  uuid: string;
+};
+export type GetOrgdirectoryBalanceApiResponse =
+  /** status 200 Баланс */ Balance;
+export type GetOrgdirectoryBalanceApiArg = void;
+export type PostOrgdirectoryBalanceApiResponse =
+  /** status 200 Успешное пополнение */ Balance;
+export type PostOrgdirectoryBalanceApiArg = {
+  balance: Balance;
 };
 export type Coordinates = {
   /** Значение должно быть больше -366 */
@@ -305,6 +360,19 @@ export type OrganizationFilters = {
   };
 };
 export type DatabaseVariant = "MYSQL" | "POSTGRESQL";
+export type OrganizationPayment = {
+  /** Идентификатор воркфлоу создания организации */
+  id?: string;
+};
+export type OrganizationStatus =
+  | "INITIATED"
+  | "MONEY_TAKEN"
+  | "ORGANIZATION_CREATED"
+  | "MONEY_RETURNING";
+export type Balance = {
+  /** Количество денег в копейках */
+  balance?: number;
+};
 export const {
   usePostOrganizationsMutation,
   usePostOrganizationsFilterMutation,
@@ -318,4 +386,8 @@ export const {
   useGetOrganizationsQuantityByTurnoverQuery,
   usePostOrgdirectoryFilterTurnoverByMinAnnualTurnoverAndMaxAnnualTurnoverMutation,
   usePostOrgdirectoryFilterTypeByTypeMutation,
+  usePostOrgdirectoryOrganizationMutation,
+  useGetOrgdirectoryOrganizationQuery,
+  useGetOrgdirectoryBalanceQuery,
+  usePostOrgdirectoryBalanceMutation,
 } = injectedRtkApi;
