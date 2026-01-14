@@ -282,7 +282,7 @@ const OrganizationsPage: React.FC = () => {
     const handleAddBalance = async () => {
         try {
             const currentBalance = balanceData?.balance || 0;
-            await addBalance({balance: {balance: currentBalance + 10000}}).unwrap();
+            await addBalance({balance: {balance: 10000}}).unwrap();
             toast.success('Balance topped up by 10000!');
             refetchBalance();
         } catch (error: any) {
@@ -312,7 +312,7 @@ const OrganizationsPage: React.FC = () => {
                     <div className="card">
                         <div className="card-body" ref={editFormRef}>
                             <div className="row">
-                                <div className="col-12 mb-3 d-flex align-items-center gap-3">
+                                <div className="col-12 mb-3 d-flex align-items-center justify-content-between">
                                     <button
                                         className="btn btn-primary"
                                         onClick={() => {
@@ -326,7 +326,7 @@ const OrganizationsPage: React.FC = () => {
                                     >
                                         ➕ Create Organization
                                     </button>
-                                    <div className="d-flex align-items-center gap-2">
+                                    <div className="d-flex align-items-center gap-2 border rounded shadow-sm px-3 py-2">
                                         <span>Balance: <strong>{balanceData?.balance ?? 0}</strong></span>
                                         <button
                                             className="btn btn-success btn-sm"
