@@ -12,6 +12,7 @@ import {
     usePostOrgdirectoryFilterTypeByTypeMutation,
     useGetOrgdirectoryBalanceQuery,
     usePostOrgdirectoryBalanceMutation,
+    usePostOrgdirectoryOrganizationMutation,
     organizationsApi,
     OrganizationFilters,
     Organization,
@@ -20,6 +21,7 @@ import {
 } from '../store/types.generated';
 import OrganizationForm from './OrganizationForm';
 import CompactOrganizationTable from './CompactOrganizationTable';
+import OrganizationCreationModal from './OrganizationCreationModal';
 
 const OrganizationsPage: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -34,6 +36,8 @@ const OrganizationsPage: React.FC = () => {
     const [empStats, setEmpStats] = useState(0);
     const [turnoverStats, setTurnoverStats] = useState(0);
     const [orgSearch, setOrgSearch] = useState<OrganizationRead | null>(null);
+    const [showCreationModal, setShowCreationModal] = useState(false);
+    const [workflowUuid, setWorkflowUuid] = useState<string | null>(null);
 
     const editFormRef = useRef<HTMLDivElement>(null);
 
@@ -47,6 +51,7 @@ const OrganizationsPage: React.FC = () => {
     const [filterByType] = usePostOrgdirectoryFilterTypeByTypeMutation();
     const {data: balanceData, refetch: refetchBalance} = useGetOrgdirectoryBalanceQuery();
     const [addBalance, {isLoading: isAddingBalance}] = usePostOrgdirectoryBalanceMutation();
+    const [createOrgAsync] = usePostOrgdirectoryOrganizationMutation();
 
     // Load organizations on component mount and when filters/sorting change
     useEffect(() => {
@@ -93,14 +98,25 @@ const OrganizationsPage: React.FC = () => {
 
     const handleCreateOrganization = async (organizationData: Organization) => {
         try {
-            await createOrganization({organization: organizationData}).unwrap();
-            toast.success('Organization created!');
-            setShowForm(false);
-            loadOrganizations();
+            const result = await createOrgAsync({organization: organizationData}).unwrap();
+            if (result.id) {
+                setWorkflowUuid(result.id);
+                setShowCreationModal(true);
+                setShowForm(false);
+            } else {
+                toast.error('Failed to get workflow UUID');
+            }
         } catch (error: any) {
             console.error('Error creating organization:', error);
             toast.error(`Error creating organization: ${error.data?.message || error.message}`);
         }
+    };
+
+    const handleCloseCreationModal = () => {
+        setShowCreationModal(false);
+        setWorkflowUuid(null);
+        loadOrganizations();
+        refetchBalance();
     };
 
     const handleUpdateOrganization = async (id: number, organizationData: Organization) => {
@@ -389,6 +405,12 @@ const OrganizationsPage: React.FC = () => {
                     </div>
                 </div>
             </div>
+            {showCreationModal && workflowUuid && (
+                <OrganizationCreationModal
+                    workflowUuid={workflowUuid}
+                    onClose={handleCloseCreationModal}
+                />
+            )}
         </div>
     );
 };

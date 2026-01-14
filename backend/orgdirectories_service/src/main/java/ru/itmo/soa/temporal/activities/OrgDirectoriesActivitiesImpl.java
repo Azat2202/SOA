@@ -23,6 +23,8 @@ public class OrgDirectoriesActivitiesImpl implements OrgDirectoriesActivities {
 
     @Override
     public void takeMoney(MoneyKopecks moneyKopecks) {
+        if (balanceRepository.getBalanceById(BalanceRepository.BALANCE_KEY).getBalanceKopecks() < moneyKopecks.getMoney())
+            throw new RuntimeException("Not enough money");
         balanceRepository.removeBalance(moneyKopecks.getMoney());
     }
 

@@ -54,6 +54,7 @@ public class OrganizationWorkflowImpl implements OrganizationWorkflow {
                             .build()
             );
 
+            Workflow.sleep(5000); // just for test :)
             orgDirectoriesActivities.takeMoney(newOrganizationCost);
             createOrganizationStatus = CreateOrganizationStatus.MONEY_TAKEN;
             Workflow.sleep(5000); // just for test :)

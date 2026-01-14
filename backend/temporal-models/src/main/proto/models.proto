@@ -65,4 +65,5 @@ enum CreateOrganizationStatus {
   ORGANIZATION_CREATED = 2;
 
   MONEY_RETURNING = 101;
+  NOT_ENOUGH_MONEY = 102;
 }
