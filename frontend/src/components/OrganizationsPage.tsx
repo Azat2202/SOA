@@ -10,6 +10,9 @@ import {
     usePostOrganizationsDeleteByFullnameMutation,
     usePostOrgdirectoryFilterTurnoverByMinAnnualTurnoverAndMaxAnnualTurnoverMutation,
     usePostOrgdirectoryFilterTypeByTypeMutation,
+    useGetOrgdirectoryBalanceQuery,
+    usePostOrgdirectoryBalanceMutation,
+    usePostOrgdirectoryOrganizationMutation,
     organizationsApi,
     OrganizationFilters,
     Organization,
@@ -18,6 +21,7 @@ import {
 } from '../store/types.generated';
 import OrganizationForm from './OrganizationForm';
 import CompactOrganizationTable from './CompactOrganizationTable';
+import OrganizationCreationModal from './OrganizationCreationModal';
 
 const OrganizationsPage: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -32,6 +36,8 @@ const OrganizationsPage: React.FC = () => {
     const [empStats, setEmpStats] = useState(0);
     const [turnoverStats, setTurnoverStats] = useState(0);
     const [orgSearch, setOrgSearch] = useState<OrganizationRead | null>(null);
+    const [showCreationModal, setShowCreationModal] = useState(false);
+    const [workflowUuid, setWorkflowUuid] = useState<string | null>(null);
 
     const editFormRef = useRef<HTMLDivElement>(null);
 
@@ -43,6 +49,9 @@ const OrganizationsPage: React.FC = () => {
     const [deleteByFullname] = usePostOrganizationsDeleteByFullnameMutation();
     const [filterByTurnover] = usePostOrgdirectoryFilterTurnoverByMinAnnualTurnoverAndMaxAnnualTurnoverMutation();
     const [filterByType] = usePostOrgdirectoryFilterTypeByTypeMutation();
+    const {data: balanceData, refetch: refetchBalance} = useGetOrgdirectoryBalanceQuery();
+    const [addBalance, {isLoading: isAddingBalance}] = usePostOrgdirectoryBalanceMutation();
+    const [createOrgAsync] = usePostOrgdirectoryOrganizationMutation();
 
     // Load organizations on component mount and when filters/sorting change
     useEffect(() => {
@@ -89,14 +98,25 @@ const OrganizationsPage: React.FC = () => {
 
     const handleCreateOrganization = async (organizationData: Organization) => {
         try {
-            await createOrganization({organization: organizationData}).unwrap();
-            toast.success('Organization created!');
-            setShowForm(false);
-            loadOrganizations();
+            const result = await createOrgAsync({organization: organizationData}).unwrap();
+            if (result.id) {
+                setWorkflowUuid(result.id);
+                setShowCreationModal(true);
+                setShowForm(false);
+            } else {
+                toast.error('Failed to get workflow UUID');
+            }
         } catch (error: any) {
             console.error('Error creating organization:', error);
             toast.error(`Error creating organization: ${error.data?.message || error.message}`);
         }
+    };
+
+    const handleCloseCreationModal = () => {
+        setShowCreationModal(false);
+        setWorkflowUuid(null);
+        loadOrganizations();
+        refetchBalance();
     };
 
     const handleUpdateOrganization = async (id: number, organizationData: Organization) => {
@@ -275,6 +295,17 @@ const OrganizationsPage: React.FC = () => {
     //   }
     // };
 
+    const handleAddBalance = async () => {
+        try {
+            const currentBalance = balanceData?.balance || 0;
+            await addBalance({balance: {balance: 10000}}).unwrap();
+            toast.success('Balance topped up by 10000!');
+            refetchBalance();
+        } catch (error: any) {
+            toast.error(`Error adding balance: ${error.data?.message || error.message}`);
+        }
+    };
+
     const handleEditOrganization = (organization: OrganizationRead) => {
         setEditingOrganization(organization);
         editFormRef.current?.scrollIntoView({
@@ -297,7 +328,7 @@ const OrganizationsPage: React.FC = () => {
                     <div className="card">
                         <div className="card-body" ref={editFormRef}>
                             <div className="row">
-                                <div className="col-12 mb-3">
+                                <div className="col-12 mb-3 d-flex align-items-center justify-content-between">
                                     <button
                                         className="btn btn-primary"
                                         onClick={() => {
@@ -311,6 +342,16 @@ const OrganizationsPage: React.FC = () => {
                                     >
                                         ➕ Create Organization
                                     </button>
+                                    <div className="d-flex align-items-center gap-2 border rounded shadow-sm px-3 py-2">
+                                        <span>Balance: <strong>{balanceData?.balance ?? 0}</strong></span>
+                                        <button
+                                            className="btn btn-success btn-sm"
+                                            onClick={handleAddBalance}
+                                            disabled={isAddingBalance}
+                                        >
+                                            {isAddingBalance ? '...' : '+10000'}
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
@@ -364,6 +405,12 @@ const OrganizationsPage: React.FC = () => {
                     </div>
                 </div>
             </div>
+            {showCreationModal && workflowUuid && (
+                <OrganizationCreationModal
+                    workflowUuid={workflowUuid}
+                    onClose={handleCloseCreationModal}
+                />
+            )}
         </div>
     );
 };

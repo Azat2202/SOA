@@ -1,6 +1,7 @@
 package org.openapitools.configuration;
 
 import ru.itmo.gen.model.DatabaseVariant;
+import ru.itmo.gen.model.OrganizationStatus;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +23,15 @@ public class EnumConverterConfiguration {
             @Override
             public DatabaseVariant convert(String source) {
                 return DatabaseVariant.fromValue(source);
+            }
+        };
+    }
+    @Bean(name = "org.openapitools.configuration.EnumConverterConfiguration.organizationStatusConverter")
+    Converter<String, OrganizationStatus> organizationStatusConverter() {
+        return new Converter<String, OrganizationStatus>() {
+            @Override
+            public OrganizationStatus convert(String source) {
+                return OrganizationStatus.fromValue(source);
             }
         };
     }
