@@ -16,6 +16,7 @@ import jakarta.xml.bind.annotation.XmlType;
  *     &lt;enumeration value="MONEY_TAKEN"/&gt;
  *     &lt;enumeration value="ORGANIZATION_CREATED"/&gt;
  *     &lt;enumeration value="MONEY_RETURNING"/&gt;
+ *     &lt;enumeration value="NOT_ENOUGH_MONEY"/&gt;
  *   &lt;/restriction&gt;
  * &lt;/simpleType&gt;
  * </pre>
@@ -28,7 +29,8 @@ public enum CreateOrganizatonStatus {
     INITIATED,
     MONEY_TAKEN,
     ORGANIZATION_CREATED,
-    MONEY_RETURNING;
+    MONEY_RETURNING,
+    NOT_ENOUGH_MONEY;
 
     public String value() {
         return name();

@@ -368,7 +368,8 @@ export type OrganizationStatus =
   | "INITIATED"
   | "MONEY_TAKEN"
   | "ORGANIZATION_CREATED"
-  | "MONEY_RETURNING";
+  | "MONEY_RETURNING"
+  | "NOT_ENOUGH_MONEY";
 export type Balance = {
   /** Количество денег в копейках */
   balance?: number;

@@ -29,7 +29,9 @@ public enum OrganizationStatus {
   
   ORGANIZATION_CREATED("ORGANIZATION_CREATED"),
   
-  MONEY_RETURNING("MONEY_RETURNING");
+  MONEY_RETURNING("MONEY_RETURNING"),
+  
+  NOT_ENOUGH_MONEY("NOT_ENOUGH_MONEY");
 
   private final String value;
 

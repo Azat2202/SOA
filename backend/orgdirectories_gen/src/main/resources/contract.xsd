@@ -153,6 +153,7 @@
             <xs:enumeration value="MONEY_TAKEN"/>
             <xs:enumeration value="ORGANIZATION_CREATED"/>
             <xs:enumeration value="MONEY_RETURNING"/>
+            <xs:enumeration value="NOT_ENOUGH_MONEY"/>
         </xs:restriction>
     </xs:simpleType>
 

@@ -2,18 +2,22 @@ package ru.itmo.soa.temporal.workflows;
 
 import io.temporal.activity.ActivityOptions;
 import io.temporal.common.RetryOptions;
+import io.temporal.failure.ActivityFailure;
+import io.temporal.failure.ApplicationFailure;
 import io.temporal.spring.boot.WorkflowImpl;
 import io.temporal.workflow.Saga;
 import io.temporal.workflow.Workflow;
 import org.springframework.stereotype.Service;
 import ru.itmo.activities.OrgDirectoriesActivities;
 import ru.itmo.activities.OrganizationActivities;
+import ru.itmo.soa.temporal.exceptions.NotEnoughMoney;
 import ru.itmo.temporal_models.CreateOrganizationStatus;
 import ru.itmo.temporal_models.MoneyKopecks;
 import ru.itmo.temporal_models.Organization;
 import ru.itmo.workflows.OrganizationWorkflow;
 
 import java.time.Duration;
+import java.util.Objects;
 
 @Service
 @WorkflowImpl(taskQueues = "${spring.temporal.task-queue}")
@@ -62,8 +66,16 @@ public class OrganizationWorkflowImpl implements OrganizationWorkflow {
 
             organizationActivities.createOrganization(organization);
             createOrganizationStatus = CreateOrganizationStatus.ORGANIZATION_CREATED;
-        } catch (Exception e) {
+        } catch (ActivityFailure e) {
             saga.compensate();
+            Throwable cause = e.getCause();
+            if (cause instanceof ApplicationFailure) {
+                ApplicationFailure af = (ApplicationFailure) cause;
+                if (af.getType().equals(NotEnoughMoney.class.getName())) {
+                    createOrganizationStatus = CreateOrganizationStatus.NOT_ENOUGH_MONEY;
+                    return;
+                }
+            }
             createOrganizationStatus = CreateOrganizationStatus.MONEY_RETURNING;
         }
     }
