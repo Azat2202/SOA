@@ -1,0 +1,128 @@
+
+package ru.itmo.soa.gen;
+
+import java.util.ArrayList;
+import java.util.List;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
+
+
+/**
+ * <p>Java class for anonymous complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="organizations" type="{http://www.itmo.ru/soa/gen}organization" maxOccurs="unbounded"/&gt;
+ *         &lt;element name="totalCount" type="{http://www.w3.org/2001/XMLSchema}int"/&gt;
+ *         &lt;element name="page" type="{http://www.w3.org/2001/XMLSchema}int"/&gt;
+ *         &lt;element name="size" type="{http://www.w3.org/2001/XMLSchema}int"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
+ * </pre>
+ * 
+ * 
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "", propOrder = {
+    "organizations",
+    "totalCount",
+    "page",
+    "size"
+})
+@XmlRootElement(name = "organizationWithPaging")
+public class OrganizationWithPaging {
+
+    @XmlElement(required = true)
+    protected List<Organization> organizations;
+    protected int totalCount;
+    protected int page;
+    protected int size;
+
+    /**
+     * Gets the value of the organizations property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the Jakarta XML Binding object.
+     * This is why there is not a <CODE>set</CODE> method for the organizations property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getOrganizations().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Organization }
+     * 
+     * 
+     */
+    public List<Organization> getOrganizations() {
+        if (organizations == null) {
+            organizations = new ArrayList<Organization>();
+        }
+        return this.organizations;
+    }
+
+    /**
+     * Gets the value of the totalCount property.
+     * 
+     */
+    public int getTotalCount() {
+        return totalCount;
+    }
+
+    /**
+     * Sets the value of the totalCount property.
+     * 
+     */
+    public void setTotalCount(int value) {
+        this.totalCount = value;
+    }
+
+    /**
+     * Gets the value of the page property.
+     * 
+     */
+    public int getPage() {
+        return page;
+    }
+
+    /**
+     * Sets the value of the page property.
+     * 
+     */
+    public void setPage(int value) {
+        this.page = value;
+    }
+
+    /**
+     * Gets the value of the size property.
+     * 
+     */
+    public int getSize() {
+        return size;
+    }
+
+    /**
+     * Sets the value of the size property.
+     * 
+     */
+    public void setSize(int value) {
+        this.size = value;
+    }
+
+}

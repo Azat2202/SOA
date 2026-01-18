@@ -18,6 +18,25 @@ services:
     restart: unless-stopped
     networks:
       - backend
+  db-orgdirectories:
+    image: postgres:15
+    container_name: db-orgdirectories
+    environment:
+      - POSTGRES_DB=study
+      - POSTGRES_USER=study
+      - POSTGRES_PASSWORD=study
+    ports:
+      - 5400:5432
+    volumes:
+      - db-orgdirectories-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U study -d study" ]
+      interval: 5s
+      timeout: 1s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - backend
   nginx:
     image: nginx:alpine
     container_name: nginx
@@ -107,6 +126,7 @@ services:
       - 127.0.0.11
     networks:
       - backend
+      - temporal-network
     depends_on:
       consul-dns:
         condition: service_started
@@ -133,6 +153,30 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+  orgdirectories-rest:
+    build:
+      context: ./backend
+      dockerfile: orgdirectories_rest.Dockerfile
+    image: docker.io/azat222/soa:orgdirectories-rest
+    container_name: orgdirectories-rest
+    environment:
+      CONFIG_SERVER: "http://orgdirectories-config-server:8888"
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8085:8085"
+    dns:
+      - 172.28.0.11
+      - 127.0.0.11
+    networks:
+      - backend
+    depends_on:
+      consul-dns:
+        condition: service_started
+      orgdirectories-eureka:
+        condition: service_healthy
+      orgdirectories:
+        condition: service_started
+
   organizations:
     build:
       context: ./backend
@@ -156,6 +200,7 @@ services:
     networks:
       backend:
         ipv4_address: 172.28.0.20
+      temporal-network:
   frontend:
     build:
       context: ./frontend
@@ -166,9 +211,66 @@ services:
       - "81:80"
     networks:
       - frontend
+  postgresql:
+    container_name: postgresql
+    environment:
+      POSTGRES_PASSWORD: temporal
+      POSTGRES_USER: temporal
+    image: postgres:12-alpine
+    networks:
+      - temporal-network
+    ports:
+      - 5431:5432
+    volumes:
+      - /var/lib/postgresql/data
+  temporal:
+    container_name: temporal
+    depends_on:
+      - postgresql
+    environment:
+      - DB=postgres12
+      - DB_PORT=5432
+      - POSTGRES_USER=temporal
+      - POSTGRES_PWD=temporal
+      - POSTGRES_SEEDS=postgresql
+      - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development-sql.yaml
+      - TEMPORAL_ADDRESS=temporal:7233
+      - TEMPORAL_CLI_ADDRESS=temporal:7233
+    image: temporalio/auto-setup:1.29.1
+    networks:
+      - temporal-network
+    ports:
+      - 7233:7233
+    volumes:
+      - ./dynamicconfig:/etc/temporal/config/dynamicconfig
+  temporal-admin-tools:
+    container_name: temporal-admin-tools
+    depends_on:
+      - temporal
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+      - TEMPORAL_CLI_ADDRESS=temporal:7233
+    image: temporalio/admin-tools:1.29
+    networks:
+      - temporal-network
+    stdin_open: true
+    tty: true
+  temporal-ui:
+    container_name: temporal-ui
+    depends_on:
+      - temporal
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+      - TEMPORAL_CORS_ORIGINS=http://localhost:3000
+    image: temporalio/ui:2.44.0
+    networks:
+      - temporal-network
+    ports:
+      - 8070:8080
 
 volumes:
   db-organizations-data:
+  db-orgdirectories-data:
 
 networks:
   backend:
@@ -178,3 +280,5 @@ networks:
         - subnet: 172.28.0.0/16
   frontend:
     name: frontend
+  temporal-network:
+    name: temporal-network

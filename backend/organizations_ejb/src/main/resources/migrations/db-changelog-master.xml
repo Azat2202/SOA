@@ -9,4 +9,8 @@
 	<changeSet id="1758756120-update-seq" author="azat" dbms="postgresql">
 		<sqlFile path="1758756120-update-seq.sql" relativeToChangelogFile="true"/>
 	</changeSet>
+	<changeSet id="1767135798_name_unique" author="azat" dbms="postgresql">
+		<sqlFile path="1767135798_name_unique.sql" relativeToChangelogFile="true"/>
+	</changeSet>
+
 </databaseChangeLog>

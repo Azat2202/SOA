@@ -1,0 +1,90 @@
+
+package ru.itmo.soa.gen;
+
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
+
+
+/**
+ * <p>Java class for address complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="address"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="street" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="town" type="{http://www.itmo.ru/soa/gen}location"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
+ * </pre>
+ * 
+ * 
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "address", propOrder = {
+    "street",
+    "town"
+})
+public class Address {
+
+    @XmlElement(required = true)
+    protected String street;
+    @XmlElement(required = true)
+    protected Location town;
+
+    /**
+     * Gets the value of the street property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getStreet() {
+        return street;
+    }
+
+    /**
+     * Sets the value of the street property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setStreet(String value) {
+        this.street = value;
+    }
+
+    /**
+     * Gets the value of the town property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Location }
+     *     
+     */
+    public Location getTown() {
+        return town;
+    }
+
+    /**
+     * Sets the value of the town property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Location }
+     *     
+     */
+    public void setTown(Location value) {
+        this.town = value;
+    }
+
+}

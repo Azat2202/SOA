@@ -6,8 +6,12 @@ info:
 servers:
   - url: https://localhost
     description: localhost ssl
-  - url: http://localhost:8080
-    description: localhost
+  - url: http://localhost:80
+    description: localhost 80
+  - url: http://localhost:8085
+    description: orgdirectories rest
+  - url: http://localhost:8083
+    description: orgdirectories gateway
   - url: http://localhost:8081
     description: Organizations service
 
@@ -20,6 +24,20 @@ tags:
 
 components:
   schemas:
+    OrganizationPayment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Идентификатор воркфлоу создания организации
+    Balance:
+      type: object
+      properties:
+        balance:
+          type: integer
+          format: int64
+          description: Количество денег в копейках
     Pagination:
       type: object
       properties:
@@ -257,6 +275,9 @@ components:
     DatabaseVariant:
       type: string
       enum: [ MYSQL, POSTGRESQL ]
+    OrganizationStatus:
+      type: string
+      enum: [INITIATED, MONEY_TAKEN, ORGANIZATION_CREATED, MONEY_RETURNING, NOT_ENOUGH_MONEY ]
   parameters:
     pageParam:
       name: page
@@ -607,3 +628,75 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OrganizationArray'
+  /orgdirectory/organization:
+    post:
+      tags:
+        - OrgDirectories
+      summary: Добавить новую организацию с оплатой размещения
+      description: Создает новую организацию в коллекции
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Organization'
+      responses:
+        '201':
+          description: UUID воркфлоу по созданию организации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationPayment'
+    get:
+      tags:
+        - OrgDirectories
+      summary: Получить статус созданной организации
+      description: Возвращает статус операции
+      parameters:
+        - name: uuid
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Статус создания организации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationStatus'
+        '404':
+          description: Операция не найдена
+        '402':
+          description: Недостаточно средств
+        '500':
+          description: Проблема при создании организации, попробуйте еще раз
+  /orgdirectory/balance:
+    get:
+      tags:
+        - OrgDirectories
+      summary: Получить баланс
+      responses:
+        '200':
+          description: Баланс
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Balance'
+    post:
+      tags:
+        - OrgDirectories
+      summary: Пополнить счет
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Balance'
+      responses:
+        '200':
+          description: Успешное пополнение
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Balance'
