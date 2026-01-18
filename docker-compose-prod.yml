@@ -1,0 +1,294 @@
+services:
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WATCHTOWER_NOTIFICATIONS=shoutrrr
+      - WATCHTOWER_NOTIFICATION_URL=telegram://<BOT_TOKEN>@telegram/?channels=-1003166477307
+    command: --interval 15
+    restart: unless-stopped
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl/server.crt:/etc/nginx/ssl/server.crt:ro
+      - ./nginx/ssl/server.key:/etc/nginx/ssl/server.key:ro
+      - ./nginx/logs:/var/log/nginx
+    networks:
+      - backend
+      - frontend
+    depends_on:
+      - frontend
+      - consul
+      - organizations
+      - orgdirectories
+      - orgdirectories-eureka
+      - orgdirectories-gateway
+  db:
+    image: postgres:15
+    container_name: db-organizations
+    environment:
+      - POSTGRES_DB=study
+      - POSTGRES_USER=study
+      - POSTGRES_PASSWORD=study
+    ports:
+      - 5433:5432
+    volumes:
+      - db-organizations-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U study -d study" ]
+      interval: 5s
+      timeout: 1s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - backend
+  db-orgdirectories:
+    image: postgres:15
+    container_name: db-orgdirectories
+    environment:
+      - POSTGRES_DB=study
+      - POSTGRES_USER=study
+      - POSTGRES_PASSWORD=study
+    ports:
+      - 5400:5432
+    volumes:
+      - db-orgdirectories-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U study -d study" ]
+      interval: 5s
+      timeout: 1s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - backend
+  consul:
+    image: consul:1.15.4
+    container_name: consul-server
+    ports:
+      - "8500:8500"
+      - "8600:8600/udp"
+    command: consul agent -dev -client=0.0.0.0 -ui
+    networks:
+      backend:
+        ipv4_address: 172.28.0.10
+    healthcheck:
+      test: [ "CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8500/v1/status/leader" ]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+  consul-dns:
+    image: coredns/coredns:latest
+    container_name: consul-dns
+    command: -conf /Corefile
+    volumes:
+      - ./consul-dns/Corefile:/Corefile:ro
+    networks:
+      backend:
+        ipv4_address: 172.28.0.11
+    depends_on:
+      consul:
+        condition: service_healthy
+  orgdirectories-eureka:
+    build:
+      context: ./backend
+      dockerfile: orgdirectories_eureka.Dockerfile
+    image: docker.io/azat222/soa:orgdirectories_eureka
+    container_name: orgdirectories-eureka
+    ports:
+      - "8761:8761"
+    networks:
+      - backend
+    healthcheck:
+      test: [ "CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8761/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  orgdirectories-config-server:
+    build:
+      context: ./backend
+      dockerfile: orgdirectories_config_server.Dockerfile
+    image: docker.io/azat222/soa:orgdirectories_config_server
+    container_name: orgdirectories-config-server
+    ports:
+      - "8888:8888"
+    networks:
+      - backend
+  orgdirectories:
+    build:
+      context: ./backend
+      dockerfile: orgdirectories.Dockerfile
+    image: docker.io/azat222/soa:orgdirectories
+    container_name: orgdirectories
+    environment:
+      CONFIG_SERVER: "http://orgdirectories-config-server:8888"
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8082:8082"
+    dns:
+      - 172.28.0.11
+      - 127.0.0.11
+    networks:
+      - backend
+      - temporal-network
+    depends_on:
+      consul-dns:
+        condition: service_started
+      orgdirectories-eureka:
+        condition: service_healthy
+  orgdirectories-gateway:
+    build:
+      context: ./backend
+      dockerfile: orgdirectories_gateway.Dockerfile
+    image: docker.io/azat222/soa:orgdirectories_gateway
+    container_name: orgdirectories-gateway
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      CONFIG_SERVER: "http://orgdirectories-config-server:8888"
+    ports:
+      - "8083:8080"
+    networks:
+      - backend
+    depends_on:
+      orgdirectories-eureka:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  orgdirectories-rest:
+    build:
+      context: ./backend
+      dockerfile: orgdirectories_rest.Dockerfile
+    image: docker.io/azat222/soa:orgdirectories-rest
+    container_name: orgdirectories-rest
+    environment:
+      CONFIG_SERVER: "http://orgdirectories-config-server:8888"
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8085:8085"
+    dns:
+      - 172.28.0.11
+      - 127.0.0.11
+    networks:
+      - backend
+    depends_on:
+      consul-dns:
+        condition: service_started
+      orgdirectories-eureka:
+        condition: service_healthy
+      orgdirectories:
+        condition: service_started
+
+  organizations:
+    build:
+      context: ./backend
+      dockerfile: organizations.Dockerfile
+    image: docker.io/azat222/soa:organizations
+    container_name: organizations
+    environment:
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_DB: study
+      DATABASE_USERNAME: study
+      DATABASE_PASSWORD: study
+      CONSUL_HOST: consul
+      CONSUL_PORT: 8500
+      SERVICE_NAME: organizations-service
+      SERVICE_PORT: 8080
+      SERVICE_ID: organizations-1
+      HOST_ADDRESS: 172.28.0.20
+    ports:
+      - "8081:8081"
+    networks:
+      backend:
+        ipv4_address: 172.28.0.20
+      temporal-network:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: frontend.Dockerfile
+    container_name: frontend
+    image: docker.io/azat222/soa:frontend
+    ports:
+      - "81:80"
+    networks:
+      - frontend
+  postgresql:
+    container_name: postgresql
+    environment:
+      POSTGRES_PASSWORD: temporal
+      POSTGRES_USER: temporal
+    image: postgres:12-alpine
+    networks:
+      - temporal-network
+    ports:
+      - 5431:5432
+    volumes:
+      - /var/lib/postgresql/data
+  temporal:
+    container_name: temporal
+    depends_on:
+      - postgresql
+    environment:
+      - DB=postgres12
+      - DB_PORT=5432
+      - POSTGRES_USER=temporal
+      - POSTGRES_PWD=temporal
+      - POSTGRES_SEEDS=postgresql
+      - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development-sql.yaml
+      - TEMPORAL_ADDRESS=temporal:7233
+      - TEMPORAL_CLI_ADDRESS=temporal:7233
+    image: temporalio/auto-setup:1.29.1
+    networks:
+      - temporal-network
+    ports:
+      - 7233:7233
+    volumes:
+      - ./dynamicconfig:/etc/temporal/config/dynamicconfig
+  temporal-admin-tools:
+    container_name: temporal-admin-tools
+    depends_on:
+      - temporal
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+      - TEMPORAL_CLI_ADDRESS=temporal:7233
+    image: temporalio/admin-tools:1.29
+    networks:
+      - temporal-network
+    stdin_open: true
+    tty: true
+  temporal-ui:
+    container_name: temporal-ui
+    depends_on:
+      - temporal
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+      - TEMPORAL_CORS_ORIGINS=http://localhost:3000
+    image: temporalio/ui:2.44.0
+    networks:
+      - temporal-network
+    ports:
+      - 8070:8080
+
+volumes:
+  db-organizations-data:
+  db-orgdirectories-data:
+
+networks:
+  backend:
+    name: backend
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
+  frontend:
+    name: frontend
+  temporal-network:
+    name: temporal-network
